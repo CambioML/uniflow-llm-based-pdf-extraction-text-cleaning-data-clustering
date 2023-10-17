@@ -1,5 +1,7 @@
 """Flow class."""
+import os
 from typing import Sequence
+from dotenv import load_dotenv
 from uniflow.node.node import Node
 from uniflow.flow.flow import Flow
 from uniflow.op.basic.preprocess_op import PreprocessOp
@@ -8,9 +10,13 @@ from uniflow.op.basic.model_inf_op import ModelInfOp
 from uniflow.op.basic.data_output_op import DataOutOp
 import openai
 
+# NOTE: Configure your openai api key with python-dotenv.
+# Load environment variables from .env file
+load_dotenv()
 
-# NOTE: Configure your openai api key here
-openai.api_key = ""
+# Get the OpenAI API key from the environment variables
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 
 class DataGenFlow(Flow):

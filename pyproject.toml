@@ -9,6 +9,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+spacy = "^3.7.0"
+pandas = "2.0.3"
+clean-text = "0.6.0"
+python-dotenv = "^1.0.0"
+lmqg = "0.1.1"
+openai = "^0.28.1"
+torch = "^1.12.1"
 
 
 [build-system]
