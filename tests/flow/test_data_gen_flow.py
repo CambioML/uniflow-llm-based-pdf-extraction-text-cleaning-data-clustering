@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import patch
 import pandas as pd
 from uniflow.flow.flow_data_gen import DataGenFlow
-from uniflow.op.basic.model_inf_op import ModelInfOp
+from uniflow.op.qa_gen.model_inf_op import ModelInfOp
 
 class TestDataGen(unittest.TestCase):
     """Test data generation flow."""
