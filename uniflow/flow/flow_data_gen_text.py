@@ -2,9 +2,9 @@
 from typing import Sequence
 from uniflow.node.node import Node
 from uniflow.flow.flow import Flow
-from uniflow.op.basic.preprocess_text_op import PreprocessTextOp
-from uniflow.op.basic.lmqg_op import LMQGOp
-from uniflow.op.basic.data_output_text_op import DataOutTextOp
+from uniflow.op.pdf_qa_gen.preprocess_text_op import PreprocessTextOp
+from uniflow.op.pdf_qa_gen.lmqg_op import LMQGOp
+from uniflow.op.pdf_qa_gen.data_output_text_op import DataOutTextOp
 
 
 
