@@ -4,10 +4,10 @@ from typing import Sequence
 from dotenv import load_dotenv
 from uniflow.node.node import Node
 from uniflow.flow.flow import Flow
-from uniflow.op.basic.preprocess_op import PreprocessOp
-from uniflow.op.basic.prompt_eng_op import PromptEngOp
-from uniflow.op.basic.model_inf_op import ModelInfOp
-from uniflow.op.basic.data_output_op import DataOutOp
+from uniflow.op.qa_gen.preprocess_op import PreprocessOp
+from uniflow.op.qa_gen.prompt_eng_op import PromptEngOp
+from uniflow.op.qa_gen.model_inf_op import ModelInfOp
+from uniflow.op.qa_gen.data_output_op import DataOutOp
 import openai
 
 # NOTE: Configure your openai api key with python-dotenv.
