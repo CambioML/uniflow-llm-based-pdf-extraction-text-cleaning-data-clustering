@@ -3,6 +3,7 @@ from typing import Any, Mapping
 import re
 from uniflow.op.basic.linear_op import LinearOp
 from cleantext import clean
+import uniflow.flow.constants as constants
 
 class PreprocessOp(LinearOp):
     """Preprocess operation."""
@@ -17,7 +18,7 @@ class PreprocessOp(LinearOp):
             Mapping[str, Any]: Output value dict.
         """
 
-        qaa = value_dict["qaa"].copy(deep=True)
+        qaa = value_dict[constants.QAA_KEY].copy(deep=True)
 
         # Personal Identification Information (PII) removal and other preprocessing using cleantext
 
@@ -46,16 +47,16 @@ class PreprocessOp(LinearOp):
                 lang="en",  # set to 'de' for German special handling
             )
 
-        question_l_raw = qaa["Question"].to_list()
+        question_l_raw = qaa[constants.QUESTION_KEY].to_list()
         question_l = [f_clean(p) for p in question_l_raw]
-        answer_l_raw = qaa["Answer"].to_list()
+        answer_l_raw = qaa[constants.ANSWER_KEY].to_list()
         answer_l = [f_clean(p) for p in answer_l_raw]
-        qaa["Question"] = question_l
-        qaa["Answer"] = answer_l
+        qaa[constants.QUESTION_KEY] = question_l
+        qaa[constants.ANSWER_KEY] = answer_l
 
         # Dataset customized clenaup
-        answer_l_raw = qaa["Answer"].to_list()
-        qaa["Answer"] = [
+        answer_l_raw = qaa[constants.ANSWER_KEY].to_list()
+        qaa[constants.ANSWER_KEY] = [
             re.compile(r"<.*?>|More\.\.\.", flags=re.IGNORECASE).sub("", p)
             for p in answer_l_raw
         ]  # Remove HTML tags/markups
