@@ -2,6 +2,7 @@
 from typing import Any, Mapping
 import re
 from uniflow.op.basic.linear_op import LinearOp
+import uniflow.flow.constants as constants
 
 class PreprocessTextOp(LinearOp):
     """Dataset customized clenaup and split into list of paragraphs"""
@@ -15,7 +16,7 @@ class PreprocessTextOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
-        context = value_dict["context"][:]
+        context = value_dict[constants.CONTEXT_KEY][:]
         # Lowercase
         context = context.lower()
         # Remove leading/trailing whitespace
