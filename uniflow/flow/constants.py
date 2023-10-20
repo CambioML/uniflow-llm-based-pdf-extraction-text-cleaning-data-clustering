@@ -10,3 +10,7 @@ QAPAIR_DF_KEY = "QApair_df"
 
 #TEXT Constants
 CONTEXT_KEY = "context"
+
+#SELF INSTRUCTED Constants
+HTML_KEY = "html"
+PAGES_KEY = "pages"
