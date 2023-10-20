@@ -25,13 +25,12 @@ class DataOutTextOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
-        # -----------------------------------------------------------------
 
         qaa_raw = copy.deepcopy(value_dict["qaa_raw"])
         QApair_flat = [qa for qas in qaa_raw for qa in qas]
 
 
-        QApair_df = pd.DataFrame(QApair_flat, columns=["Qustion", "Answer"])
+        QApair_df = pd.DataFrame(QApair_flat, columns=["Question", "Answer"])
         dir_cur = os.getcwd()
         QApair_df.to_csv(os.path.join(f"{dir_cur}/data/output", "output_qa_text.csv"), index=False)
 

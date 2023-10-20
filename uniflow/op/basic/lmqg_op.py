@@ -28,7 +28,7 @@ class LMQGOp(LinearOp):
 
 
 
-        # Download the en_core_web_sm model explicitly
+        # Download the en_core_web_sm model manually
         list_dir = subprocess.Popen(["python", "-m", "spacy", "download", "en_core_web_sm"])
         list_dir.wait()
 
