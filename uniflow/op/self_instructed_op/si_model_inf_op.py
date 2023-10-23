@@ -38,7 +38,7 @@ class SIModelInfOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
-        print("Starting SIModelInfOp!!")
+        print("Starting SIModelInfOp!")
 
         pages = value_dict[constants.PAGES_KEY][:]
 
@@ -103,21 +103,21 @@ class SIModelInfOp(LinearOp):
             print(f"{i} Training Content:\n {docs[:100]}...")
             response = chain_trn({"context": docs}, return_only_outputs=True)
             text = response['text']
-            print("Page ",str(i), "  ", text, "\n ========================== \n")
+            print("Page ",str(i), "\n", text, "\n ========================== \n")
             for item in text.split("Q:"):
-                print('Processing ', item, '\nLength', len(item))
+                # print('Processing ', item, '\nLength', len(item))
                 if(len(item)>0):
                     one_q_a = item.strip()
                     #print("one_q_a = ",one_q_a, "===")
                     if("A:" in one_q_a):
                         question = one_q_a.split("A:")[0].strip()+"[Page "+str(i)+"]"
-                        print("Question: ", question)
+                        # print("Question: ", question)
                         text_line_q.append(question)
 
                         text_line_in.append('')
 
                         answer = one_q_a.split("A:")[1].strip()
-                        print("Answer: ",answer)
+                        # print("Answer: ",answer)
                         text_line_a.append(answer)
 
             print("=== processed page ", i, "questions generated ", len(text_line_q), " ===")
