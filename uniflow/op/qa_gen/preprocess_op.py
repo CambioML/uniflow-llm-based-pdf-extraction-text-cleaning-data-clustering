@@ -18,7 +18,7 @@ class PreprocessOp(LinearOp):
             Mapping[str, Any]: Output value dict.
         """
 
-        qaa = value_dict[constants.QAA_KEY].copy(deep=True)
+        qaa = value_dict[constants.QAPAIR_DF_KEY].copy(deep=True)
 
         # Personal Identification Information (PII) removal and other preprocessing using cleantext
 
