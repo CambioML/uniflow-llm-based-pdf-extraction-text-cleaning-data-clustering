@@ -10,7 +10,7 @@ from uniflow.op.self_instructed_op.data_output_si_op import DataOutSIOp
 class SelfInstructedGenFlow(Flow):
     """Data generation from HTML via Self Instructed Fine tuning."""
 
-    def _run(self, nodes: Sequence[Node]) -> Sequence[Node]:
+    def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run flow.
 
         Args:

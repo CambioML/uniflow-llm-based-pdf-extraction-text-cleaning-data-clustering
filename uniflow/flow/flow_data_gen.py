@@ -22,7 +22,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 class DataGenFlow(Flow):
     """Data generation flow class."""
 
-    def _run(self, nodes: Sequence[Node]) -> Sequence[Node]:
+    def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run flow.
 
         Args:
