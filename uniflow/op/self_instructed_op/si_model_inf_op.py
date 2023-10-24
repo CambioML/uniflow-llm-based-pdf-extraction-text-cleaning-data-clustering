@@ -1,5 +1,6 @@
 """Model inference operation."""
 import copy
+import logging
 
 from typing import Any, Mapping
 from uniflow.op.basic.linear_op import LinearOp
@@ -29,6 +30,11 @@ class SIModelInfOp(LinearOp):
     Returns:
         Sequence[Node]: Output nodes.
     """
+    def __init__(self, name: str):
+        """Initialize SIModelInfOp class."""
+        super().__init__(name)
+        self._logger = logging.getLogger(__name__)
+        self._logger.setLevel(logging.INFO)
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Call the language model to generate outputs for the prompt.
@@ -38,7 +44,7 @@ class SIModelInfOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
-        print("Starting SIModelInfOp!")
+        self._logger.info("Starting SIModelInfOp...")
 
         pages = value_dict[constants.PAGES_KEY][:]
 
@@ -50,14 +56,14 @@ class SIModelInfOp(LinearOp):
         tokenizer.pad_token = tokenizer.eos_token
 
         # initialize model
-        print("1. Initializing model...")
+        self._logger.info("1. Initializing model...")
         model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,
             device_map=device_map,
             offload_folder="./offload",
         )
 
-        print("2. Initializing pipeline...")
+        self._logger.info("2. Initializing pipeline...")
         # initialize pipeline
         pipe = pipeline(
             "text-generation",
@@ -90,50 +96,47 @@ class SIModelInfOp(LinearOp):
         )
 
         # Create LangChain LLMChain
-        print("3. Creating LangChain LLMChain...")
+        self._logger.info("3. Creating LangChain LLMChain...")
         chain_trn = LLMChain(
             llm=llm,
             prompt=PROMPT_trn,
         )
-        print("1-3 Complete!")
+        self._logger.info("1-3 Complete!")
 
         text_line_q = []
         text_line_in = []
         text_line_a = []
 
+        self._logger.info("Starting to process pages...")
         for i in range(len(pages)):
             docs = pages[i].page_content
-            print(f"{i} Training Content:\n {docs[:100]}...")
+            self._logger.info(f"Processing page {i + 1} of {len(pages)}...")
+            self._logger.debug(f"Training Content:\n {docs[:100]}...")
             response = chain_trn({"context": docs}, return_only_outputs=True)
             text = response["text"]
-            print("Page ", str(i), "\n", text, "\n ========================== \n")
+            self._logger.debug(f"Page {i + 1} \n {text} \n ========================== \n")
             for item in text.split("Q:"):
-                # print('Processing ', item, '\nLength', len(item))
+                self._logger.debug(f"Processing {item}\nLength {len(item)}")
                 if len(item) > 0:
                     one_q_a = item.strip()
-                    # print("one_q_a = ",one_q_a, "===")
+                    self._logger.debug(f"one_q_a = {one_q_a} ===")
                     if "A:" in one_q_a:
                         question = (
                             one_q_a.split("A:")[0].strip() + "[Page " + str(i) + "]"
                         )
-                        # print("Question: ", question)
+                        self._logger.debug(f"Question: {question}")
                         text_line_q.append(question)
 
                         text_line_in.append("")
 
                         answer = one_q_a.split("A:")[1].strip()
-                        # print("Answer: ",answer)
+                        self._logger.debug(f"Answer: {answer}")
                         text_line_a.append(answer)
 
-            print(
-                "=== processed page ",
-                i,
-                "questions generated ",
-                len(text_line_q),
-                " ===",
-            )
+            self._logger.info(f"=== processed page {i + 1} | total questions generated: {len(text_line_q)} ===")
 
-        print("SIModelInfOp Complete!")
+        self._logger.info("Page processing complete!")
+        self._logger.info("SIModelInfOp Complete!")
 
         return {
             "text_line_q": text_line_q,
