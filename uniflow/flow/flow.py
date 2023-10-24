@@ -1,6 +1,7 @@
 """Flow class."""
 import copy
 import uniflow.flow.constants as constants
+import logging
 
 from typing import Any, Mapping, Sequence
 from uniflow.node.node import Node
@@ -12,6 +13,7 @@ class Flow:
     def __init__(self):
         """Initialize Flow class."""
         self._root = None
+        logging.basicConfig(format='%(levelname)s: %(message)s')
 
     def __call__(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Run flow.
