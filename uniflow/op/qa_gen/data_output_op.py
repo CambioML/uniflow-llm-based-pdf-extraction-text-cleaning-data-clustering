@@ -8,6 +8,7 @@ import json
 import ast
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
+from uniflow.op.utils import check_path_exists
 
 
 class DataOutOp(LinearOp):
@@ -72,6 +73,7 @@ class DataOutOp(LinearOp):
         output_name = "output_qa_augment.json"
         current_directory = os.getcwd()
         output_dir = f"{current_directory}/tests/data/output/"
+        check_path_exists(output_dir)
         jdump(qaa_augmented_raw, os.path.join(output_dir, output_name))
 
         QApair_dict = []

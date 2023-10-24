@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
 import uniflow.flow.constants as constants
+from uniflow.op.utils import check_path_exists
 
 
 class DataOutTextOp(LinearOp):
@@ -34,8 +35,10 @@ class DataOutTextOp(LinearOp):
             QApair_flat, columns=[constants.QUESTION_KEY, constants.ANSWER_KEY]
         )
         dir_cur = os.getcwd()
+        save_path = os.path.join(dir_cur, "data/output")
+        check_path_exists(save_path)
         QApair_df.to_csv(
-            os.path.join(f"{dir_cur}/data/output", "output_qa_text.csv"), index=False
+            os.path.join(save_path, "output_qa_text.csv"), index=False
         )
 
         return {constants.QAPAIR_DF_KEY: QApair_df}
