@@ -8,6 +8,7 @@ OPS_SCOPE = []
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 def clear_ops_name():
     """Clear ops name."""
     OPS_NAME.clear()

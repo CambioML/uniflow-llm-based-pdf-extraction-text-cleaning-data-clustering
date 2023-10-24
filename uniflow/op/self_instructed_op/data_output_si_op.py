@@ -6,7 +6,7 @@ import os
 import logging
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
-from uniflow.flow.constants import (ANSWER_KEY, QAPAIR_DF_KEY, QUESTION_KEY)
+from uniflow.flow.constants import ANSWER_KEY, QAPAIR_DF_KEY, QUESTION_KEY
 from uniflow.op.utils import check_path_exists
 
 
@@ -18,6 +18,7 @@ class DataOutSIOp(LinearOp):
     Returns:
         Sequence[Node]: Output nodes.
     """
+
     def __init__(self, name: str):
         """Initialize DataOutSIOp class."""
         super().__init__(name)

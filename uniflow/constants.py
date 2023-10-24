@@ -10,5 +10,5 @@ flows_dict = {
     "flow_data_gen": DataGenFlow,
     "flow_data_gen_text": DataGenTextFlow,
     "flow_text_plus_data_gen": TextPlusDataGenFlow,
-    "flow_self_instructed_gen": SelfInstructedGenFlow
+    "flow_self_instructed_gen": SelfInstructedGenFlow,
 }

@@ -37,8 +37,6 @@ class DataOutTextOp(LinearOp):
         dir_cur = os.getcwd()
         save_path = os.path.join(dir_cur, "data/output")
         check_path_exists(save_path)
-        QApair_df.to_csv(
-            os.path.join(save_path, "output_qa_text.csv"), index=False
-        )
+        QApair_df.to_csv(os.path.join(save_path, "output_qa_text.csv"), index=False)
 
         return {constants.QAPAIR_DF_KEY: QApair_df}

@@ -30,6 +30,7 @@ class SIModelInfOp(LinearOp):
     Returns:
         Sequence[Node]: Output nodes.
     """
+
     def __init__(self, name: str):
         """Initialize SIModelInfOp class."""
         super().__init__(name)
@@ -114,7 +115,9 @@ class SIModelInfOp(LinearOp):
             self._logger.debug(f"Training Content:\n {docs[:100]}...")
             response = chain_trn({"context": docs}, return_only_outputs=True)
             text = response["text"]
-            self._logger.debug(f"Page {i + 1} \n {text} \n ========================== \n")
+            self._logger.debug(
+                f"Page {i + 1} \n {text} \n ========================== \n"
+            )
             for item in text.split("Q:"):
                 self._logger.debug(f"Processing {item}\nLength {len(item)}")
                 if len(item) > 0:
@@ -133,7 +136,9 @@ class SIModelInfOp(LinearOp):
                         self._logger.debug(f"Answer: {answer}")
                         text_line_a.append(answer)
 
-            self._logger.info(f"=== processed page {i + 1} | total questions generated: {len(text_line_q)} ===")
+            self._logger.info(
+                f"=== processed page {i + 1} | total questions generated: {len(text_line_q)} ==="
+            )
 
         self._logger.info("Page processing complete!")
         self._logger.info("SIModelInfOp Complete!")
