@@ -22,7 +22,7 @@ class Flow:
         Returns:
             Mapping[str, Any]: Output value dict."""
         nodes = self._enter(value_dict)
-        nodes = self._run(nodes)
+        nodes = self.run(nodes)
         output_dict = self._exit(nodes)
         return output_dict
 
@@ -48,7 +48,7 @@ class Flow:
         self._root = Node(name=constants.ROOT_NAME, value_dict=value_dict)
         return [self._root]
 
-    def _run(self, nodes: Sequence[Node]) -> Sequence[Node]:
+    def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run flow.
 
         Args:

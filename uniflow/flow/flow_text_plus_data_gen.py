@@ -10,30 +10,28 @@ import uniflow.flow.constants as constants
 class TextPlusDataGenFlow(Flow):
     """Data generation (from text) plus additional data generation flow class."""
 
-    def _run(self, nodes: Sequence[Node]) -> Sequence[Node]:
-        #Run data text gen flow
-        CONTEXT_MAX_PRINT_LEN = 300
-        print("Starting DataGenTextFlow!")
-        print("Context:\n{0}{1}".format(nodes[0].value_dict[constants.CONTEXT_KEY][:CONTEXT_MAX_PRINT_LEN], "...[truncated]" if len(nodes[0].value_dict['context']) > CONTEXT_MAX_PRINT_LEN else ""))
-        data_gen_text_flow = DataGenTextFlow()
-        text_output_dict = data_gen_text_flow(nodes[0].value_dict)
-        print('DataGenTextFlow complete!')
+    def __init__(self):
+        """Initialize Text Plus Data Gen Flow class."""
+        super().__init__()
+        self._data_gen_text_flow = DataGenTextFlow()
+        self._data_gen_flow = DataGenFlow()
 
-        #Run data gen flow
-        MAX_QA_PAIRS = 10
-        qaa_input = text_output_dict['output'][0]['QApair_df'][:MAX_QA_PAIRS]
-        print(f"Starting DataGenFlow!\nQApair_df:\n{qaa_input}")
-        data_gen_flow = DataGenFlow()
-        data_gen_input_dict = {constants.QAA_KEY: qaa_input}
-        self._node_data_out = data_gen_flow(data_gen_input_dict)
-
-    def _exit(self, nodes) -> Mapping[str, Any]:
-        """Exit flow.
+    def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
+        """Run Text Plus Data Gen Flow.
 
         Args:
-            nodes (Sequence[Node]): Nodes.
+            nodes: Sequence of nodes to run.
 
         Returns:
-            Mapping[str, Any]: Output value dict.
+            Sequence of nodes.
         """
-        return self._node_data_out
+        # Run DataTextGen flow
+        print("Starting DataGenTextFlow...")
+        data_gen_text_out_nodes = self._data_gen_text_flow.run(nodes)
+        print("DataGenTextFlow complete!")
+
+        # Run DataGenFlow
+        print("Starting DataGenFlow...")
+        data_gen_out_nodes = self._data_gen_flow.run(data_gen_text_out_nodes)
+        print("DataGenFlow complete!")
+        return data_gen_out_nodes

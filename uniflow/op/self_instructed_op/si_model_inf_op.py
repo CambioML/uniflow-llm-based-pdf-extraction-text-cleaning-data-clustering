@@ -49,7 +49,7 @@ class SIModelInfOp(LinearOp):
         tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
         tokenizer.pad_token = tokenizer.eos_token
 
-        #initialize model
+        # initialize model
         print("1. Initializing model...")
         model = AutoModelForCausalLM.from_pretrained(
             BASE_MODEL,
@@ -58,35 +58,38 @@ class SIModelInfOp(LinearOp):
         )
 
         print("2. Initializing pipeline...")
-        #initialize pipeline
-        pipe = pipeline('text-generation',
-                model=model,
-                tokenizer=tokenizer,
-                #use_cache=True,
-                #do_sample=True,
-                #temperature = 0.3,
-                ##top_p = 0.92,
-                #top_k=5,
-                #max_length=1000,
-                device_map="auto",
-                max_new_tokens=768,
-                num_return_sequences=1,
-                repetition_penalty = 1.2,
-                eos_token_id=tokenizer.eos_token_id,
-                pad_token_id=tokenizer.pad_token_id,
+        # initialize pipeline
+        pipe = pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=tokenizer,
+            # use_cache=True,
+            # do_sample=True,
+            # temperature = 0.3,
+            ##top_p = 0.92,
+            # top_k=5,
+            # max_length=1000,
+            device_map="auto",
+            max_new_tokens=768,
+            num_return_sequences=1,
+            repetition_penalty=1.2,
+            eos_token_id=tokenizer.eos_token_id,
+            pad_token_id=tokenizer.pad_token_id,
         )
 
         llm = HuggingFacePipeline(pipeline=pipe)
 
-        #Create prompt template
+        # Create prompt template
 
         prompt_template_trn = """<s>[INST] Generate one question from each paragraph in the context, provide answer to each question in a few sentences according to the context. Present the question within one single line starting with 'Q: ' and the answer within one single line starting with "A: ". Add " == End == " at the end of each answer.
 
         {context} [/INST] </s>
         """
-        PROMPT_trn = PromptTemplate(template=prompt_template_trn, input_variables=["context"])
+        PROMPT_trn = PromptTemplate(
+            template=prompt_template_trn, input_variables=["context"]
+        )
 
-        #Create LangChain LLMChain
+        # Create LangChain LLMChain
         print("3. Creating LangChain LLMChain...")
         chain_trn = LLMChain(
             llm=llm,
@@ -102,28 +105,38 @@ class SIModelInfOp(LinearOp):
             docs = pages[i].page_content
             print(f"{i} Training Content:\n {docs[:100]}...")
             response = chain_trn({"context": docs}, return_only_outputs=True)
-            text = response['text']
-            print("Page ",str(i), "\n", text, "\n ========================== \n")
+            text = response["text"]
+            print("Page ", str(i), "\n", text, "\n ========================== \n")
             for item in text.split("Q:"):
                 # print('Processing ', item, '\nLength', len(item))
-                if(len(item)>0):
+                if len(item) > 0:
                     one_q_a = item.strip()
-                    #print("one_q_a = ",one_q_a, "===")
-                    if("A:" in one_q_a):
-                        question = one_q_a.split("A:")[0].strip()+"[Page "+str(i)+"]"
+                    # print("one_q_a = ",one_q_a, "===")
+                    if "A:" in one_q_a:
+                        question = (
+                            one_q_a.split("A:")[0].strip() + "[Page " + str(i) + "]"
+                        )
                         # print("Question: ", question)
                         text_line_q.append(question)
 
-                        text_line_in.append('')
+                        text_line_in.append("")
 
                         answer = one_q_a.split("A:")[1].strip()
                         # print("Answer: ",answer)
                         text_line_a.append(answer)
 
-            print("=== processed page ", i, "questions generated ", len(text_line_q), " ===")
+            print(
+                "=== processed page ",
+                i,
+                "questions generated ",
+                len(text_line_q),
+                " ===",
+            )
 
         print("SIModelInfOp Complete!")
 
         return {
-            "text_line_q": text_line_q, "text_line_in": text_line_in, "text_line_a": text_line_a
+            "text_line_q": text_line_q,
+            "text_line_in": text_line_in,
+            "text_line_a": text_line_a,
         }

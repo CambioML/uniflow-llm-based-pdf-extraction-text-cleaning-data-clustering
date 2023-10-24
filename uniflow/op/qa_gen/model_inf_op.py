@@ -31,8 +31,8 @@ class ModelInfOp(LinearOp):
                 prompt=batch_inputs_string,
                 model="text-davinci-003",
                 temperature=0.2,
-                max_tokens=1000  # The maximum number of tokens to generate in the completion
+                max_tokens=1000,  # The maximum number of tokens to generate in the completion
             )
-            results_string = completion_batch['choices'][0]['text']
+            results_string = completion_batch["choices"][0]["text"]
             qaa_augmented_raw.append(results_string)
         return {"qaa_augmented_raw": qaa_augmented_raw}

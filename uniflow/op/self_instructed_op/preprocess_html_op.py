@@ -6,6 +6,7 @@ from cleantext import clean
 import uniflow.flow.constants as constants
 from langchain.document_loaders import UnstructuredHTMLLoader
 
+
 class PreprocessHTMLOp(LinearOp):
     """Preprocess HTML operation."""
 
@@ -20,7 +21,7 @@ class PreprocessHTMLOp(LinearOp):
         """
 
         html_in = value_dict[constants.HTML_KEY][:]
-        loader = UnstructuredHTMLLoader("./"+html_in)
+        loader = UnstructuredHTMLLoader("./" + html_in)
         data = loader.load()
         pages = loader.load_and_split()
         print("html_in: ", html_in)
