@@ -5,7 +5,8 @@ from typing import Any, Mapping
 import os
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
-import uniflow.flow.constants as constants
+from uniflow.flow.constants import (ANSWER_KEY, QAPAIR_DF_KEY, QUESTION_KEY)
+from uniflow.op.utils import check_path_exists
 
 
 class DataOutSIOp(LinearOp):
@@ -26,29 +27,22 @@ class DataOutSIOp(LinearOp):
             Mapping[str, Any]: Output value dict.
         """
         # -----------------------------------------------------------------
-
         print("Starting DataOutSIOp!")
         QApair_df = pd.DataFrame()
-        print("text_line_in", value_dict["text_line_in"])
 
-        QApair_df[constants.QUESTION_KEY] = value_dict["text_line_q"]
+        QApair_df[QUESTION_KEY] = value_dict["text_line_q"]
         QApair_df["input"] = value_dict["text_line_in"]
-        QApair_df[constants.ANSWER_KEY] = value_dict["text_line_a"]
-
-        # qaa_raw = copy.deepcopy(value_dict["qaa_raw"])
-        # QApair_flat = [qa for qas in qaa_raw for qa in qas]
+        QApair_df[ANSWER_KEY] = value_dict["text_line_a"]
 
         dir_cur = os.getcwd()
+        save_path = os.path.join(dir_cur, "data/output")
+        check_path_exists(save_path)
         QApair_df.to_csv(
-            os.path.join(f"{dir_cur}/data/output", "QA_output_selfinstruct.csv"),
+            os.path.join(save_path, "QA_output_self-instruct.csv"),
             index=False,
         )
 
-        # QApair_df = pd.DataFrame(QApair_flat, columns=[constants.QUESTION_KEY, constants.ANSWER_KEY])
-        # dir_cur = os.getcwd()
-        # QApair_df.to_csv(os.path.join(f"{dir_cur}/data/output", "output_qa_text.csv"), index=False)
-
-        print(f"Created {constants.QAPAIR_DF_KEY}: {QApair_df}")
+        print(f"Created {QAPAIR_DF_KEY}: {QApair_df}")
         print("DataOutSIOp complete!")
 
-        return {constants.QAPAIR_DF_KEY: QApair_df}
+        return {QAPAIR_DF_KEY: QApair_df}
