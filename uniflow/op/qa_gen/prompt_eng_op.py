@@ -24,7 +24,9 @@ class PromptEngOp(LinearOp):
             Mapping[str, Any]: Output value dict.
         """
         qaa = value_dict["qaa_processed"].copy(deep=True)
-        qaa_list = qaa[[constants.QUESTION_KEY, constants.ANSWER_KEY]].to_dict("records")
+        qaa_list = qaa[[constants.QUESTION_KEY, constants.ANSWER_KEY]].to_dict(
+            "records"
+        )
         prompts = """Paraphrase the below question and answer pair in 3 different ways.
             Try not to repeat the verb for each pair to maximize diversity.
             Return everything in an array of JSON object in this format: ######{"_question":"string", "_answer":"string"}
@@ -36,7 +38,10 @@ class PromptEngOp(LinearOp):
             listof_prompt_QA = []
             for _, task_dict in enumerate(QA_list):
                 single_prompt_QA = prompts + "\n"
-                (question, answer) = task_dict[constants.QUESTION_KEY], task_dict[constants.ANSWER_KEY]
+                (question, answer) = (
+                    task_dict[constants.QUESTION_KEY],
+                    task_dict[constants.ANSWER_KEY],
+                )
                 question = re.sub(r"\s+", " ", question).strip().rstrip(":")
                 answer = "<noinput>" if answer.lower() == "" else answer
                 single_prompt_QA += f"######\n"

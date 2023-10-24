@@ -7,7 +7,6 @@ from uniflow.op.pdf_qa_gen.lmqg_op import LMQGOp
 from uniflow.op.pdf_qa_gen.data_output_text_op import DataOutTextOp
 
 
-
 class DataGenTextFlow(Flow):
     """Data generation (from text) flow class."""
 

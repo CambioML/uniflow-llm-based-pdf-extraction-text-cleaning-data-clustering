@@ -5,6 +5,7 @@ from uniflow.op.basic.linear_op import LinearOp
 from cleantext import clean
 import uniflow.flow.constants as constants
 
+
 class PreprocessOp(LinearOp):
     """Preprocess operation."""
 

@@ -8,7 +8,6 @@ from uniflow.op.basic.linear_op import LinearOp
 import uniflow.flow.constants as constants
 
 
-
 class DataOutTextOp(LinearOp):
     """Output data operation.
 
@@ -19,7 +18,7 @@ class DataOutTextOp(LinearOp):
     """
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
-        """ Write generated question answer pairs to csv file
+        """Write generated question answer pairs to csv file
         Args:
             value_dict (Mapping[str, Any]): Input value dict.
 
@@ -31,9 +30,12 @@ class DataOutTextOp(LinearOp):
         qaa_raw = copy.deepcopy(value_dict["qaa_raw"])
         QApair_flat = [qa for qas in qaa_raw for qa in qas]
 
-
-        QApair_df = pd.DataFrame(QApair_flat, columns=[constants.QUESTION_KEY, constants.ANSWER_KEY])
+        QApair_df = pd.DataFrame(
+            QApair_flat, columns=[constants.QUESTION_KEY, constants.ANSWER_KEY]
+        )
         dir_cur = os.getcwd()
-        QApair_df.to_csv(os.path.join(f"{dir_cur}/data/output", "output_qa_text.csv"), index=False)
+        QApair_df.to_csv(
+            os.path.join(f"{dir_cur}/data/output", "output_qa_text.csv"), index=False
+        )
 
         return {constants.QAPAIR_DF_KEY: QApair_df}

@@ -6,9 +6,8 @@ from uniflow.op.basic.linear_op import LinearOp
 from lmqg import TransformersQG
 
 
-
 class LMQGOp(LinearOp):
-    """ Use LMQG to generate questions and answers from paragraphs.
+    """Use LMQG to generate questions and answers from paragraphs.
     Args:
         nodes (Sequence[Node]): Input nodes.
 
@@ -26,18 +25,18 @@ class LMQGOp(LinearOp):
         """
         paragraphs = copy.deepcopy(value_dict["paragraphs"])
 
-
-
         # Download the en_core_web_sm model explicitly
-        list_dir = subprocess.Popen(["python", "-m", "spacy", "download", "en_core_web_sm"])
+        list_dir = subprocess.Popen(
+            ["python", "-m", "spacy", "download", "en_core_web_sm"]
+        )
         list_dir.wait()
 
-         # Load the en_core_web_sm package in poetry
-        #nlp = spacy.load("en_core_web_sm")
+        # Load the en_core_web_sm package in poetry
+        # nlp = spacy.load("en_core_web_sm")
 
         # initialize model
         # set max length of a paragraph as 1024
-        model = TransformersQG(model='lmqg/t5-base-squad-qg-ae', max_length=1024)
+        model = TransformersQG(model="lmqg/t5-base-squad-qg-ae", max_length=1024)
         # paragraph to generate pairs of question and answer
 
         question_answer = model.generate_qa(paragraphs)

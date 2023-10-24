@@ -9,19 +9,28 @@ import uniflow.flow.constants as constants
 
 class TextPlusDataGenFlow(Flow):
     """Data generation (from text) plus additional data generation flow class."""
+
     def __init__(self):
         """Initialize Text Plus Data Gen Flow class."""
-        self._root = None
+        super().__init__()
         self._data_gen_text_flow = DataGenTextFlow()
         self._data_gen_flow = DataGenFlow()
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
-        #Run DataTextGen flow
+        """Run Text Plus Data Gen Flow.
+
+        Args:
+            nodes: Sequence of nodes to run.
+
+        Returns:
+            Sequence of nodes.
+        """
+        # Run DataTextGen flow
         print("Starting DataGenTextFlow...")
         data_gen_text_out_nodes = self._data_gen_text_flow.run(nodes)
         print("DataGenTextFlow complete!")
 
-        #Run DataGenFlow
+        # Run DataGenFlow
         print("Starting DataGenFlow...")
         data_gen_out_nodes = self._data_gen_flow.run(data_gen_text_out_nodes)
         print("DataGenFlow complete!")

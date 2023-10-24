@@ -10,7 +10,6 @@ import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
 
 
-
 class DataOutOp(LinearOp):
     """Output data operation.
 
@@ -21,7 +20,7 @@ class DataOutOp(LinearOp):
     """
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
-        """ Output the augmented data to a json file.
+        """Output the augmented data to a json file.
             Then sanity check the augmented data and output it to a csv file.
         Args:
             value_dict (Mapping[str, Any]): Input value dict.
@@ -29,9 +28,10 @@ class DataOutOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
+
         # --------- helper functions --------------------------------------
         def _make_w_io_base(f, mode: str):
-            """ Make a writable io base object from a string path to a file.
+            """Make a writable io base object from a string path to a file.
             Args:
                 f: A string path to the location on disk.
                 mode: Mode for opening the file.
@@ -65,6 +65,7 @@ class DataOutOp(LinearOp):
             else:
                 raise ValueError(f"Unexpected type: {type(obj)}")
             f.close()
+
         # -----------------------------------------------------------------
 
         qaa_augmented_raw = copy.deepcopy(value_dict["qaa_augmented_raw"])

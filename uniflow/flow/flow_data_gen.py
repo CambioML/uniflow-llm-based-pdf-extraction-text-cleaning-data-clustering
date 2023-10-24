@@ -18,7 +18,6 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-
 class DataGenFlow(Flow):
     """Data generation flow class."""
 
