@@ -18,7 +18,7 @@ from langchain.llms import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 
-from uniflow.flow.constants import (ANSWER_LABEL, PAGES_KEY, QUESTION_LABEL)
+from uniflow.flow.constants import ANSWER_LABEL, PAGES_KEY, QUESTION_LABEL
 
 
 class SIModelInfOp(LinearOp):
@@ -124,7 +124,10 @@ class SIModelInfOp(LinearOp):
                     self._logger.debug(f"one_q_a = {one_q_a} ===")
                     if "A:" in one_q_a:
                         question = (
-                            one_q_a.split(ANSWER_LABEL)[0].strip() + "[Page " + str(i) + "]"
+                            one_q_a.split(ANSWER_LABEL)[0].strip()
+                            + "[Page "
+                            + str(i)
+                            + "]"
                         )
                         self._logger.debug(f"Question: {question}")
                         text_line_q.append(question)
