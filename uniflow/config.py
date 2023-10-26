@@ -1,12 +1,12 @@
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 QA_FACTOR = 3
 
 
-def set_qa_factor(factor):
+def set_qa_factor(factor: int):
     """Set QA Factor
 
     Args:
@@ -17,6 +17,12 @@ def set_qa_factor(factor):
     """
     global QA_FACTOR
     logger.debug(f"Setting QA_FACTOR: {factor}")
+    if factor <= 1:
+        factor = 1
+        logger.debug(f"Setting QA_FACTOR to 1")
+        logger.warn(
+            f"QA_FACTOR is set to 1. This will not generate any additional QA pairs."
+        )
     QA_FACTOR = factor
 
 
