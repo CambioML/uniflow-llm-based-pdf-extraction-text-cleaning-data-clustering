@@ -14,3 +14,5 @@ CONTEXT_KEY = "context"
 # SELF INSTRUCTED Constants
 HTML_KEY = "html"
 PAGES_KEY = "pages"
+QUESTION_LABEL = "Q: "
+ANSWER_LABEL = "A: "

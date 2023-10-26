@@ -38,7 +38,6 @@ class DataOutSIOp(LinearOp):
         QApair_df = pd.DataFrame()
 
         QApair_df[QUESTION_KEY] = value_dict["text_line_q"]
-        QApair_df["input"] = value_dict["text_line_in"]
         QApair_df[ANSWER_KEY] = value_dict["text_line_a"]
 
         dir_cur = os.getcwd()
