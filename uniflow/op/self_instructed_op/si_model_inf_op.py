@@ -20,6 +20,9 @@ from langchain.chains import LLMChain
 
 from uniflow.flow.constants import ANSWER_LABEL, PAGES_KEY, QUESTION_LABEL
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 
 class SIModelInfOp(LinearOp):
     """Model inference operation for Self-Instructed fine tuning.
@@ -34,16 +37,14 @@ class SIModelInfOp(LinearOp):
     def __init__(self, name: str):
         """Initialize SIModelInfOp class."""
         super().__init__(name)
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.INFO)
 
-        self._logger.info("Initializing SIModelInfOp...")
+        logger.info("Initializing SIModelInfOp...")
         BASE_MODEL = "mistralai/Mistral-7B-Instruct-v0.1"
 
         device_map = "auto"
 
         # initialize model
-        self._logger.info("1. Initializing model...")
+        logger.info("1. Initializing model...")
 
         tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
         tokenizer.pad_token = tokenizer.eos_token
@@ -55,7 +56,7 @@ class SIModelInfOp(LinearOp):
         )
 
         # initialize pipeline
-        self._logger.info("2. Initializing pipeline...")
+        logger.info("2. Initializing pipeline...")
         pipe = pipeline(
             "text-generation",
             model=model,
@@ -86,12 +87,12 @@ class SIModelInfOp(LinearOp):
         )
 
         # Create LangChain LLMChain
-        self._logger.info("3. Creating LangChain LLMChain...")
+        logger.info("3. Creating LangChain LLMChain...")
         self._chain_trn = LLMChain(
             llm=llm,
             prompt=PROMPT_trn,
         )
-        self._logger.info("SIModelInfOp initialization Complete!")
+        logger.info("SIModelInfOp initialization Complete!")
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Call the language model to generate outputs for the prompt.
@@ -101,7 +102,7 @@ class SIModelInfOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
-        self._logger.info("Starting SIModelInfOp transform...")
+        logger.info("Starting SIModelInfOp transform...")
         pages = value_dict[PAGES_KEY][:]
 
         text_line_q = []
@@ -110,18 +111,18 @@ class SIModelInfOp(LinearOp):
 
         for i in range(len(pages)):
             docs = pages[i].page_content
-            self._logger.info(f"Processing page {i + 1} of {len(pages)}...")
-            self._logger.debug(f"Training Content:\n {docs[:100]}...")
+            logger.info(f"Processing page {i + 1} of {len(pages)}...")
+            logger.debug(f"Training Content:\n {docs[:100]}...")
             response = self._chain_trn({"context": docs}, return_only_outputs=True)
             text = response["text"]
-            self._logger.debug(
+            logger.debug(
                 f"Page {i + 1} \n {text} \n ========================== \n"
             )
             for item in text.split(QUESTION_LABEL):
-                self._logger.debug(f"Processing {item}\nLength {len(item)}")
+                logger.debug(f"Processing {item}\nLength {len(item)}")
                 if len(item) > 0:
                     one_q_a = item.strip()
-                    self._logger.debug(f"one_q_a = {one_q_a} ===")
+                    logger.debug(f"one_q_a = {one_q_a} ===")
                     if "A:" in one_q_a:
                         question = (
                             one_q_a.split(ANSWER_LABEL)[0].strip()
@@ -129,20 +130,20 @@ class SIModelInfOp(LinearOp):
                             + str(i)
                             + "]"
                         )
-                        self._logger.debug(f"Question: {question}")
+                        logger.debug(f"Question: {question}")
                         text_line_q.append(question)
 
                         text_line_in.append("")
 
                         answer = one_q_a.split(ANSWER_LABEL)[1].strip()
-                        self._logger.debug(f"Answer: {answer}")
+                        logger.debug(f"Answer: {answer}")
                         text_line_a.append(answer)
 
-            self._logger.info(
+            logger.info(
                 f"=== processed page {i + 1} | total questions generated: {len(text_line_q)} ==="
             )
 
-        self._logger.info("SIModelInfOp transform complete!")
+        logger.info("SIModelInfOp transform complete!")
 
         return {
             "text_line_q": text_line_q,
