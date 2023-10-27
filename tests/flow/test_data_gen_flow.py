@@ -10,6 +10,13 @@ from unittest.mock import patch
 import pandas as pd
 from uniflow.flow.flow_data_gen import DataGenFlow
 from uniflow.op.qa_gen.model_inf_op import ModelInfOp
+from uniflow.flow.constants import (
+    ANSWER_KEY,
+    OUTPUT_NAME,
+    QAPAIR_DF_KEY,
+    QUESTION_KEY,
+    ROOT_NAME
+    )
 
 class TestDataGen(unittest.TestCase):
     """Test data generation flow."""
@@ -18,17 +25,17 @@ class TestDataGen(unittest.TestCase):
     def test_data_gen(self, mock_transform):
         # Load dummy data
         data_in = {
-            "Question": ["How are you?", "Coffee or Tea?", "Iced or cold?"],
-            "Answer": ["I am fine.", "Coffee.", "Iced."]
+            QUESTION_KEY: ["How are you?", "Coffee or Tea?", "Iced or cold?"],
+            ANSWER_KEY: ["I am fine.", "Coffee.", "Iced."]
             }
         qaa = pd.DataFrame(data_in)
 
         # Questions and answers as root node
-        input_dict = {"qaa": qaa}
+        input_dict = {QAPAIR_DF_KEY: qaa}
         # mock the language model inference as outputting 3 augmented questions/answers
         # for each input by appending "1", "2", "3" to the original question/answer.
-        mock_q = [[q+"1", q+"2", q+"3"] for q in data_in["Question"]]
-        mock_a = [[a+"1", a+"2", a+"3"] for a in data_in["Answer"]]
+        mock_q = [[q+"1", q+"2", q+"3"] for q in data_in[QUESTION_KEY]]
+        mock_a = [[a+"1", a+"2", a+"3"] for a in data_in[ANSWER_KEY]]
         # prepared mocked output using the same format as the real output
         qaa_augmented_raw = []
         for i in range(len(mock_q)):
@@ -46,26 +53,26 @@ class TestDataGen(unittest.TestCase):
         output_dict = flow(input_dict)
 
         # Assert that the output_dict contains the correct number of outputs
-        self.assertEqual(len(output_dict["output"]), 1)
+        self.assertEqual(len(output_dict[OUTPUT_KEY]), 1)
 
         expected_output = {
-            "QApair_df": pd.DataFrame({
+            QAPAIR_DF_KEY: pd.DataFrame({
                 "_question": [q for ql in mock_q for q in ql],
                 "_answer": [a for al in mock_a for a in al]
             }),
             "error_list": []
         }
         # Assert that the output_dict contains the expected augmented questions/answers
-        self.assertEqual((output_dict["output"][0]['QApair_df']
-                          == expected_output["QApair_df"]).all().all(), True)
+        self.assertEqual((output_dict[OUTPUT_KEY][0][QAPAIR_DF_KEY]
+                          == expected_output[QAPAIR_DF_KEY]).all().all(), True)
         # Assert that the output_dict contains the expected empty error_list
         self.assertEqual(
-            output_dict["output"][0]['error_list'], expected_output["error_list"])
+            output_dict[OUTPUT_KEY][0]['error_list'], expected_output["error_list"])
 
         # Test root property
-        self.assertEqual(flow.root.name, "root")
+        self.assertEqual(flow.root.name, ROOT_NAME)
         # Test root value_dict
-        assert (flow.root.value_dict["qaa"]["Question"]
-                == input_dict["qaa"]["Question"]).all()
-        assert (flow.root.value_dict["qaa"]["Answer"]
-                == input_dict["qaa"]["Answer"]).all()
+        assert (flow.root.value_dict[QAPAIR_DF_KEY][QUESTION_KEY]
+                == input_dict[QAPAIR_DF_KEY][QUESTION_KEY]).all()
+        assert (flow.root.value_dict[QAPAIR_DF_KEY][ANSWER_KEY]
+                == input_dict[QAPAIR_DF_KEY][ANSWER_KEY]).all()
