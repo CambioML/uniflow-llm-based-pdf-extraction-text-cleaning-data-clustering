@@ -17,14 +17,16 @@ class TestOp(unittest.TestCase):
         self.op_name = "test_op"
         self.op = DummyOp(self.op_name)
 
-    def test_init(self):
-        #TODO: fix test to get rid of ERROR: test_op already exists
-        # self.assertEqual(self.op._scope_name, self.op_name)
-        # self.assertEqual(self.op._count, 0)
-        # self.assertIn(self.op_name, utils.OPS_NAME)
+    def tearDown(self):
+        utils.OPS_NAME.clear()
 
-        # with self.assertRaises(ValueError):
-        #     DummyOp(self.op_name)
+    def test_init(self):
+        self.assertEqual(self.op._scope_name, self.op_name)
+        self.assertEqual(self.op._count, 0)
+        self.assertIn(self.op_name, utils.OPS_NAME)
+
+        with self.assertRaises(ValueError):
+            DummyOp(self.op_name)
 
     def test_del(self):
         self.assertIn(self.op_name, utils.OPS_NAME)
