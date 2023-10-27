@@ -17,6 +17,9 @@ class TestOp(unittest.TestCase):
         self.op_name = "test_op"
         self.op = DummyOp(self.op_name)
 
+    def tearDown(self):
+        utils.OPS_NAME.clear()
+
     def test_init(self):
         self.assertEqual(self.op._scope_name, self.op_name)
         self.assertEqual(self.op._count, 0)
