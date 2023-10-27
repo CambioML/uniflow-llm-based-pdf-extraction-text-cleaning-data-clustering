@@ -6,6 +6,8 @@ from uniflow.flow.flow import Flow
 from uniflow.flow.flow_data_gen_text import DataGenTextFlow
 from uniflow.flow.flow_data_gen import DataGenFlow
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class TextPlusDataGenFlow(Flow):
     """Data generation (from text) plus additional data generation flow class."""
@@ -15,8 +17,6 @@ class TextPlusDataGenFlow(Flow):
         super().__init__()
         self._data_gen_text_flow = DataGenTextFlow()
         self._data_gen_flow = DataGenFlow()
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.INFO)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Text Plus Data Gen Flow.
@@ -28,12 +28,12 @@ class TextPlusDataGenFlow(Flow):
             Sequence of nodes.
         """
         # Run DataTextGen flow
-        self._logger.info("Starting DataGenTextFlow...")
+        logger.info("Starting DataGenTextFlow...")
         data_gen_text_out_nodes = self._data_gen_text_flow.run(nodes)
-        self._logger.info("DataGenTextFlow complete!")
+        logger.info("DataGenTextFlow complete!")
 
         # Run DataGenFlow
-        self._logger.info("Starting DataGenFlow...")
+        logger.info("Starting DataGenFlow...")
         data_gen_out_nodes = self._data_gen_flow.run(data_gen_text_out_nodes)
-        self._logger.info("DataGenFlow complete!")
+        logger.info("DataGenFlow complete!")
         return data_gen_out_nodes
