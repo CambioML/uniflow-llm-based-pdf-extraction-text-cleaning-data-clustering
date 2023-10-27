@@ -53,7 +53,7 @@ class TestDataGen(unittest.TestCase):
         output_dict = flow(input_dict)
 
         # Assert that the output_dict contains the correct number of outputs
-        self.assertEqual(len(output_dict[OUTPUT_KEY]), 1)
+        self.assertEqual(len(output_dict[OUTPUT_NAME]), 1)
 
         expected_output = {
             QAPAIR_DF_KEY: pd.DataFrame({
@@ -63,11 +63,11 @@ class TestDataGen(unittest.TestCase):
             "error_list": []
         }
         # Assert that the output_dict contains the expected augmented questions/answers
-        self.assertEqual((output_dict[OUTPUT_KEY][0][QAPAIR_DF_KEY]
+        self.assertEqual((output_dict[OUTPUT_NAME][0][QAPAIR_DF_KEY]
                           == expected_output[QAPAIR_DF_KEY]).all().all(), True)
         # Assert that the output_dict contains the expected empty error_list
         self.assertEqual(
-            output_dict[OUTPUT_KEY][0]['error_list'], expected_output["error_list"])
+            output_dict[OUTPUT_NAME][0]['error_list'], expected_output["error_list"])
 
         # Test root property
         self.assertEqual(flow.root.name, ROOT_NAME)
