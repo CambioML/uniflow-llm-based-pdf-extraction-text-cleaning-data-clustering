@@ -5,13 +5,14 @@ import logging
 
 from typing import Any, Mapping, Sequence
 from uniflow.node.node import Node
-
+from uniflow.op.basic.linear_op import LinearOp
 
 class Flow:
     """Flow class."""
 
     def __init__(self):
         """Initialize Flow class."""
+        self._linear_op = LinearOp("linear_op")
         self._root = None
         logging.basicConfig(format="%(levelname)s [%(module)s]: %(message)s")
 
@@ -59,7 +60,7 @@ class Flow:
         Returns:
             Sequence[Node]: Nodes.
         """
-        return nodes
+        return self._linear_op(nodes)
 
     def _exit(self, nodes) -> Mapping[str, Any]:
         """Exit flow.
