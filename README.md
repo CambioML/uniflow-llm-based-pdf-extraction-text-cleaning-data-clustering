@@ -6,7 +6,7 @@
   <a href="https://join.slack.com/t/cambiomlworkspace/shared_invite/zt-1zes33rmt-20Rag043uvExUaUdvt5_xQ"><img src="https://badgen.net/badge/Join/Community/cyan?icon=slack" alt="Slack" /></a>
 </p>
 
-`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or data using one of or multiple `uniflow` flows, including `DataGenFlow`, `DataGenTextFlow`, `TextPlusDataGenFlow`, and `SelfInstructedGenFlow`.
+`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or other unstructured data using one of or multiple `uniflow` flows, including `DataGenFlow`, `DataGenTextFlow`, `TextPlusDataGenFlow`, and `SelfInstructedGenFlow`.
 
 Built by [CambioML](https://www.cambioml.com/).
 
@@ -23,10 +23,10 @@ See more details at the [full installation](https://github.com/CambioML/uniflow/
 `uniflow` lets you easily generate synthetic data from raw text (including `.txt`, `.html`, `.pdf`, etc.). Here are the flows for common applications:
 
 ### Augment Structured Data
-Given existing structured sample data (e.g. Question-Answer (QA) pairs), augment more QA pairs using the `DataGenFlow` interface.
+Given existing structured data (e.g. sample Question-Answer (QA) pairs), augment more QA pairs using the `DataGenFlow` interface.
 
 #### Example
-First, load a raw structured file (e.g. `.csv`) with Question and Answer columns.
+First, load a structured data file (e.g. `.csv`) with Question and Answer columns.
 ```
 # Initiate flow
 flow = DataGenFlow()
@@ -34,7 +34,7 @@ flow = DataGenFlow()
 qaa = pd.read_csv(f"{YOUR_CSV_FILE}", encoding = "utf8")`
 ```
 
-Then you can generate more data from the original structured data.
+Then you can generate more QA pairs from the original structured data.
 ```
 input_dict = {"qaa": qaa[:]}
 output_dict = flow(input_dict)
