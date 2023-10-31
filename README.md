@@ -6,18 +6,27 @@
   <a href="https://join.slack.com/t/cambiomlworkspace/shared_invite/zt-1zes33rmt-20Rag043uvExUaUdvt5_xQ"><img src="https://badgen.net/badge/Join/Community/cyan?icon=slack" alt="Slack" /></a>
 </p>
 
-`uniflow` is a unified flow interface for synthetic data generation. Generate synthetic data from text and data using a one of the many `uniflow` flows, including `DataGenFlow`, `DataGenTextFlow`, `TextPlusDataGenFlow`, and `SelfInstructedGenFlow`.
+`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or data using one of or multiple `uniflow` flows, including `DataGenFlow`, `DataGenTextFlow`, `TextPlusDataGenFlow`, and `SelfInstructedGenFlow`.
 
 Built by [CambioML](https://www.cambioml.com/).
 
-## Features
-`uniflow` lets you easily generate synthetic data from text and data. Here are the flows for common applications:
+## Quick Install
 
-### Data Generation from Data
-Generate more Question-Answer pair data from some sample data using the `DataGenFlow` interface.
+```
+pip3 install uniflow
+```
+
+See more details at the [full installation](https://github.com/CambioML/uniflow/tree/main#Installation).
+
+
+## Features
+`uniflow` lets you easily generate synthetic data from raw text (including `.txt`, `.html`, `.pdf`, etc.). Here are the flows for common applications:
+
+### Augment Structured Data
+Given existing structured sample data (e.g. Question-Answer (QA) pairs), augment more QA pairs using the `DataGenFlow` interface.
 
 #### Example
-First, load a csv file with Question and Answer columns.
+First, load a raw structured file (e.g. `.csv`) with Question and Answer columns.
 ```
 # Initiate flow
 flow = DataGenFlow()
@@ -25,50 +34,50 @@ flow = DataGenFlow()
 qaa = pd.read_csv(f"{YOUR_CSV_FILE}", encoding = "utf8")`
 ```
 
-Then you can generate more data from the loaded data.
+Then you can generate more data from the original structured data.
 ```
 input_dict = {"qaa": qaa[:]}
 output_dict = flow(input_dict)
 
 ```
-### Data Generation from Text
-Generate Question-Answer pair data from text using the `DataGenTextFlow` interface.
+### Generate Structured Data from Unstructured Text
+Generate structured data (e.g. Question-Answer pairs) from unstructured text using the `DataGenTextFlow` interface.
 
 #### Example
-First, load a text from which you would like to generate the Question-Answer data.
+First, load a text file (e.g. `.txt`) from which you would like to generate the Question-Answer pairs.
 ```
 with open(os.path.join(f"{YOUR_FILE_PATH}", "YOUR_FILE.txt"), "r") as file:
     context = file.read()
 ```
-Then you can generate the Question-Answer data from the text.
+Then you can generate the Question-Answer pairs from the text.
 ```
 flow = DataGenTextFlow()
 input_dict = {"context": context}
 output_dict = flow(input_dict)
 ```
 
-### Data Generation from Text plus Data
-Using the `TextPlusDataGenFlow`, you can run the previous two flows in sequence to generate data from text, and then generate additional data from the generated data.
+### Generate and Augment Structured Data from Unstructured Text
+Using the `TextPlusDataGenFlow`, you can run the previous two flows in sequence to generate structured data from unstructured text, and then augment more data from the structured data.
 
 #### Example
-First, load a text from which you would like to generate the Question-Answer data.
+First, load a raw text file (e.g. `.txt`) from which you would like to generate the structured data (e.g. Question-Answer pairs).
 ```
 with open(os.path.join(f"{YOUR_FILE_PATH}", "YOUR_FILE.txt"), "r") as file:
     context = file.read()
 ```
-Then you can generate the Question-Answer data from the text.
+Then you can generate the Question-Answer pairs from the raw text.
 ```
 flow = TextPlusDataGenFlow()
 input_dict = {"context": context}
 output_dict = flow(input_dict)
 ```
 
-### Self Instructed Fine Tuning
-Generate data from html text, and then fine tune the model on the generated data using the `SelfInstructedGenFlow` interface.
+### Generate Structured Data from Unstructured Text (Self Instructed)
+Generate data from unstructured text using the `SelfInstructedGenFlow` interface.
 
-First, place your html file in the same directory as your python file.
+First, place your raw text file (e.g. `.html`) in the same directory as your python file.
 
-Then you can generate the Question-Answer data from the html.
+Then you can generate the structured data (e.g. Question-Answer pairs) from the raw text.
 ```
 # Initiate flow
 flow = SelfInstructedGenFlow()
@@ -87,7 +96,7 @@ conda create -n uniflow python=3.10 -y
 conda activate uniflow  # some OS requires `source activate uniflow`
 ```
 
-Then install `flow` and the compatible [pytorch based on your os](https://pytorch.org/get-started/locally/)
+Then install `flow` and the compatible [pytorch based on your OS](https://pytorch.org/get-started/locally/):
 ```
 pip3 install uniflow
 pip3 install torch
