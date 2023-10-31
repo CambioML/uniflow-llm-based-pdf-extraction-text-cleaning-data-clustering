@@ -14,6 +14,15 @@ class LMQGOp(LinearOp):
     Returns:
         Sequence[Node]: Output nodes.
     """
+    def __init__(self, name: str):
+        """Initialize LMQGOp class."""
+        super().__init__(name)
+
+        logger.info("Initializing LMQGOp...")
+        # initialize model
+        # set max length of a paragraph as 1024
+        self._model = TransformersQG(model="lmqg/t5-base-squad-qg-ae", max_length=1024)
+        logger.info("LMQGPagesOp initialization complete!")
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Call the language model by lmqg to generate outputs for the prompt.
@@ -34,12 +43,11 @@ class LMQGOp(LinearOp):
         # Load the en_core_web_sm package in poetry
         # nlp = spacy.load("en_core_web_sm")
 
-        # initialize model
-        # set max length of a paragraph as 1024
-        model = TransformersQG(model="lmqg/t5-base-squad-qg-ae", max_length=1024)
-        # paragraph to generate pairs of question and answer
-
-        question_answer = model.generate_qa(paragraphs)
-        # the output is a list of tuple (question, answer)
+        question_answer = []
+        for i in range(len(paragraphs)):
+            logger.info(f"Generating question and answer for paragraph {i + 1} of {len(paragraphs)}")
+            output = model.generate_qa(paragraphs[i])
+            question_answer.extend(output)
+            # the output is a list of tuple (question, answer)
 
         return {"qaa_raw": question_answer}
