@@ -3,6 +3,10 @@ from typing import Any, Mapping
 import re
 from uniflow.op.basic.linear_op import LinearOp
 import uniflow.flow.constants as constants
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class PreprocessTextOp(LinearOp):
@@ -17,6 +21,7 @@ class PreprocessTextOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
+        logger.info("Preprocessing text content input...")
         context = value_dict[constants.CONTEXT_KEY][:]
         # Lowercase
         context = context.lower()
@@ -28,5 +33,7 @@ class PreprocessTextOp(LinearOp):
         context = re.compile("<.*?>").sub("", context)
         # split it into paragraphs where there are 2+ consecutive newline characters
         paragraphs = re.split(r"\n{2,}", context)
+        logger.debug(f"paragraphs: {paragraphs}")
+        logger.info("Preprocessing text content input...Done!")
 
         return {"paragraphs": paragraphs}

@@ -8,7 +8,7 @@ import uniflow.flow.constants as constants
 from langchain.document_loaders import UnstructuredHTMLLoader
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 class PreprocessHTMLOp(LinearOp):

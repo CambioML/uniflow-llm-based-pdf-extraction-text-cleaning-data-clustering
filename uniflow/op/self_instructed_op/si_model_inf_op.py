@@ -115,9 +115,7 @@ class SIModelInfOp(LinearOp):
             logger.debug(f"Training Content:\n {docs[:100]}...")
             response = self._chain_trn({"context": docs}, return_only_outputs=True)
             text = response["text"]
-            logger.debug(
-                f"Page {i + 1} \n {text} \n ========================== \n"
-            )
+            logger.debug(f"Page {i + 1} \n {text} \n ========================== \n")
             for item in text.split(QUESTION_LABEL):
                 logger.debug(f"Processing {item}\nLength {len(item)}")
                 if len(item) > 0:

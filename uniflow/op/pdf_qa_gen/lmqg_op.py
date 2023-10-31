@@ -4,6 +4,11 @@ import copy
 from typing import Any, Mapping
 from uniflow.op.basic.linear_op import LinearOp
 from lmqg import TransformersQG
+from uniflow.flow.constants import ERROR_LIST
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class LMQGOp(LinearOp):
@@ -14,6 +19,16 @@ class LMQGOp(LinearOp):
     Returns:
         Sequence[Node]: Output nodes.
     """
+
+    def __init__(self, name: str):
+        """Initialize LMQGOp class."""
+        super().__init__(name)
+
+        logger.info("Initializing LMQGOp...")
+        # initialize model
+        # set max length of a paragraph as 1024
+        self._model = TransformersQG(model="lmqg/t5-base-squad-qg-ae", max_length=1024)
+        logger.info("LMQGPagesOp initialization complete!")
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Call the language model by lmqg to generate outputs for the prompt.
@@ -26,20 +41,27 @@ class LMQGOp(LinearOp):
         paragraphs = copy.deepcopy(value_dict["paragraphs"])
 
         # Download the en_core_web_sm model explicitly
-        list_dir = subprocess.Popen(
-            ["python", "-m", "spacy", "download", "en_core_web_sm"]
-        )
-        list_dir.wait()
+        # list_dir = subprocess.Popen(
+        #     ["python", "-m", "spacy", "download", "en_core_web_sm"]
+        # )
+        # list_dir.wait()
 
         # Load the en_core_web_sm package in poetry
         # nlp = spacy.load("en_core_web_sm")
 
-        # initialize model
-        # set max length of a paragraph as 1024
-        model = TransformersQG(model="lmqg/t5-base-squad-qg-ae", max_length=1024)
-        # paragraph to generate pairs of question and answer
+        question_answer = []
+        error_list = []
 
-        question_answer = model.generate_qa(paragraphs)
-        # the output is a list of tuple (question, answer)
+        for i, paragraph in enumerate(paragraphs):
+            logger.info(
+                f"Generating question and answer pairs for paragraph {i + 1} of {len(paragraphs)}"
+            )
+            try:
+                output = self._model.generate_qa([paragraph])
+                question_answer.extend(output)
+                # the output is a list of tuple (question, answer)
+            except Exception as e:
+                logger.warning(f"Exception in paragraph {i + 1}: {repr(e)}")
+                error_list.append({"paragraph": paragraph, "error": repr(e)})
 
-        return {"qaa_raw": question_answer}
+        return {"qaa_raw": question_answer, ERROR_LIST: error_list}

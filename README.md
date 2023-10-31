@@ -1,4 +1,4 @@
-# 🌊 🔀 uniflow
+# 🌊 uniflow
 <p align="center">
   <a href="/LICENSE"><img alt="License Apache-2.0" src="https://img.shields.io/github/license/cambioml/uniflow?style=flat-square"></a>
   <a href="https://pypi.org/project/uniflow"><img src="https://img.shields.io/pypi/v/uniflow.svg" alt="pypi_status" /></a>

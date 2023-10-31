@@ -1,6 +1,8 @@
 ROOT_NAME = "root"
 INPUT_NAME = "input"
 OUTPUT_NAME = "output"
+INPUT_FILE = "input_file"
+ERROR_LIST = "error_list"
 
 # QA Constants
 QUESTION_KEY = "Question"
