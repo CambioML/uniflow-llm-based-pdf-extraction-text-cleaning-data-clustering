@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 
 
 class SIModelInfOp(LinearOp):
-    """Model inference operation for Self-Instructed fine tuning.
+    """Model inference operation for Self-Instructed Data Generation.
 
     Args:
         nodes (Sequence[Node]): Input nodes.
