@@ -5,7 +5,7 @@ from typing import Any, Mapping
 import os
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
-import uniflow.flow.constants as constants
+from uniflow.flow.constants import QUESTION_KEY, ANSWER_KEY, ERROR_LIST, QAPAIR_DF_KEY
 from uniflow.op.utils import check_path_exists
 
 
@@ -29,14 +29,13 @@ class DataOutTextOp(LinearOp):
         # -----------------------------------------------------------------
 
         qaa_raw = copy.deepcopy(value_dict["qaa_raw"])
+        error_list = copy.deepcopy(value_dict[ERROR_LIST])
         QApair_flat = [qa for qas in qaa_raw for qa in qas]
 
-        QApair_df = pd.DataFrame(
-            QApair_flat, columns=[constants.QUESTION_KEY, constants.ANSWER_KEY]
-        )
+        QApair_df = pd.DataFrame(QApair_flat, columns=[QUESTION_KEY, ANSWER_KEY])
         dir_cur = os.getcwd()
         save_path = os.path.join(dir_cur, "data/output")
         check_path_exists(save_path)
         QApair_df.to_csv(os.path.join(save_path, "output_qa_text.csv"), index=False)
 
-        return {constants.QAPAIR_DF_KEY: QApair_df}
+        return {QAPAIR_DF_KEY: QApair_df, ERROR_LIST: error_list}

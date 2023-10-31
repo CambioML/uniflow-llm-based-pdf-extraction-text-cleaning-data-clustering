@@ -6,7 +6,7 @@ import uniflow.flow.constants as constants
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class PreprocessTextOp(LinearOp):

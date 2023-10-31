@@ -4,6 +4,11 @@ import copy
 from typing import Any, Mapping
 from uniflow.op.basic.linear_op import LinearOp
 from lmqg import TransformersQG
+from uniflow.flow.constants import ERROR_LIST
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class LMQGOp(LinearOp):
@@ -14,6 +19,7 @@ class LMQGOp(LinearOp):
     Returns:
         Sequence[Node]: Output nodes.
     """
+
     def __init__(self, name: str):
         """Initialize LMQGOp class."""
         super().__init__(name)
@@ -35,19 +41,27 @@ class LMQGOp(LinearOp):
         paragraphs = copy.deepcopy(value_dict["paragraphs"])
 
         # Download the en_core_web_sm model explicitly
-        list_dir = subprocess.Popen(
-            ["python", "-m", "spacy", "download", "en_core_web_sm"]
-        )
-        list_dir.wait()
+        # list_dir = subprocess.Popen(
+        #     ["python", "-m", "spacy", "download", "en_core_web_sm"]
+        # )
+        # list_dir.wait()
 
         # Load the en_core_web_sm package in poetry
         # nlp = spacy.load("en_core_web_sm")
 
         question_answer = []
-        for i in range(len(paragraphs)):
-            logger.info(f"Generating question and answer for paragraph {i + 1} of {len(paragraphs)}")
-            output = model.generate_qa(paragraphs[i])
-            question_answer.extend(output)
-            # the output is a list of tuple (question, answer)
+        error_list = []
 
-        return {"qaa_raw": question_answer}
+        for i, paragraph in enumerate(paragraphs):
+            logger.info(
+                f"Generating question and answer pairs for paragraph {i + 1} of {len(paragraphs)}"
+            )
+            try:
+                output = self._model.generate_qa([paragraph])
+                question_answer.extend(output)
+                # the output is a list of tuple (question, answer)
+            except Exception as e:
+                logger.warning(f"Exception in paragraph {i + 1}: {repr(e)}")
+                error_list.append({"paragraph": paragraph, "error": repr(e)})
+
+        return {"qaa_raw": question_answer, ERROR_LIST: error_list}
