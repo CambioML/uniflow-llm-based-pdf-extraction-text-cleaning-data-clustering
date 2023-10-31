@@ -7,6 +7,7 @@ from typing import Any, Mapping, Sequence
 from uniflow.node.node import Node
 from uniflow.op.basic.linear_op import LinearOp
 
+
 class Flow:
     """Flow class."""
 

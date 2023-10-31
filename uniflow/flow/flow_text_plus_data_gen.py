@@ -9,6 +9,7 @@ from uniflow.flow.flow_data_gen import DataGenFlow
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 class TextPlusDataGenFlow(Flow):
     """Data generation (from text) plus additional data generation flow class."""
 
