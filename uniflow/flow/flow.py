@@ -73,5 +73,6 @@ class Flow:
             Mapping[str, Any]: Output value dict.
         """
         return {
-            constants.OUTPUT_NAME: [copy.deepcopy(node.value_dict) for node in nodes]
+            constants.OUTPUT_NAME: [copy.deepcopy(node.value_dict) for node in nodes],
+            constants.ROOT_NAME: self._root
         }

@@ -56,7 +56,7 @@ class Op(abc.ABC):
     def unique_name(self) -> str:
         """Unique name of the op."""
         self._increase_count()
-        return f"{self._scope_name}:{self._count}"
+        return f"{self._scope_name}_{self._count}"
 
     @abc.abstractmethod
     def __call__(self, *args: Sequence[Node]) -> Sequence[Node]:
