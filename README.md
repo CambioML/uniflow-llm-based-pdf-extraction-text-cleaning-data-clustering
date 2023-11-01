@@ -6,7 +6,7 @@
   <a href="https://join.slack.com/t/cambiomlworkspace/shared_invite/zt-1zes33rmt-20Rag043uvExUaUdvt5_xQ"><img src="https://badgen.net/badge/Join/Community/cyan?icon=slack" alt="Slack" /></a>
 </p>
 
-`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or other unstructured data using one of or multiple `uniflow` flows, including `DataGenFlow`, `DataGenTextFlow`, `TextPlusDataGenFlow`, and `SelfInstructedGenFlow`.
+`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or other unstructured data using one of or multiple `uniflow` flows, including flows to [augment structured data](#augment-structured-data), [generate structured data from unstructured text](#generate-structured-data-from-unstructured-text), and [generate structured data from unstructured text (self instructed)](#generate-structured-data-from-unstructured-text-self-instructed).
 
 Built by [CambioML](https://www.cambioml.com/).
 
@@ -39,13 +39,16 @@ Here is a table of the different flows and their corresponding keys.
 | [Generate and Augment Structured Data from Unstructured Text](#generate-and-augment-structured-data-from-unstructured-text) | flow_text_plus_data_gen | INPUT_FILE |
 | [Generate Structured Data from Unstructured Text (Self Instructed)](#generate-structured-data-from-unstructured-text-self-instructed) | flow_self_instructed_gen | HTML_KEY |
 
-The **Input Dictionary Key** referenced in the above table is used to label the input dictionary for each specific flow.
+The **Input Dictionary Key** referenced in the above table is used as the key for the input dictionary for each specific flow. They are imported from `uniflow.flow.constants`
+
 ```
+from uniflow.flow.constants import INPUT_DICTIONARY_KEY
 input_dict = {INPUT_DICTIONARY_KEY: input_data}
 ```
 
 For example, if you are using the `Augment Structured Data Flow`, then the input dictionary key should be `QAPAIR_DF_KEY`.
 ```
+from uniflow.flow.constants import QAPAIR_DF_KEY
 input_dict = {QAPAIR_DF_KEY: input_data}
 ```
 
