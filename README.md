@@ -6,7 +6,7 @@
   <a href="https://join.slack.com/t/cambiomlworkspace/shared_invite/zt-1zes33rmt-20Rag043uvExUaUdvt5_xQ"><img src="https://badgen.net/badge/Join/Community/cyan?icon=slack" alt="Slack" /></a>
 </p>
 
-`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or other unstructured data using one of or multiple `uniflow` flows, including `DataGenFlow`, `DataGenTextFlow`, `TextPlusDataGenFlow`, and `SelfInstructedGenFlow`.
+`uniflow` is a unified interface for synthetic data generation. You can generate and augment synthetic data from raw text or other unstructured data using one of or multiple `uniflow` flows, including flows to [augment structured data](#augment-structured-data), [generate structured data from unstructured text](#generate-structured-data-from-unstructured-text), and [generate structured data from unstructured text (self instructed)](#generate-structured-data-from-unstructured-text-self-instructed).
 
 Built by [CambioML](https://www.cambioml.com/).
 
