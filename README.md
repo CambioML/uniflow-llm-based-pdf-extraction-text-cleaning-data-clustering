@@ -16,76 +16,86 @@ Built by [CambioML](https://www.cambioml.com/).
 pip3 install uniflow
 ```
 
-See more details at the [full installation](https://github.com/CambioML/uniflow/tree/main#Installation).
+See more details at the [full installation](#installation).
 
+## Overview
+For all the flows, you must first import the Client interface and the `uniflow` constants.
 
-## Features
+```
+from uniflow.client import Client
+from uniflow.flow.constants import (OUTPUT_NAME, QAPAIR_DF_KEY, ...)
+```
+
+Then you can create a `Client` object to run the a particular flow.
+```
+client = Client(YOUR_FLOW_KEY)
+```
+
+Here is a table of the different flows and their corresponding keys.
+| Flow | Key | Input Dictionary Key |
+| ------------- | ------------- | ------------- |
+| [Augment Structured Data](#augment-structured-data) | flow_data_gen  | QAPAIR_DF_KEY |
+| [Generate Structured Data from Unstructured Text](#generate-structured-data-from-unstructured-text) | flow_data_gen_text | INPUT_FILE |
+| [Generate and Augment Structured Data from Unstructured Text](#generate-and-augment-structured-data-from-unstructured-text) | flow_text_plus_data_gen | INPUT_FILE |
+| [Generate Structured Data from Unstructured Text (Self Instructed)](#generate-structured-data-from-unstructured-text-self-instructed) | flow_self_instructed_gen | HTML_KEY |
+
+The **Input Dictionary Key** referenced in the above table is used to label the input dictionary for each specific flow.
+```
+input_dict = {INPUT_DICTIONARY_KEY: input_data}
+```
+
+For example, if you are using the `Augment Structured Data Flow`, then the input dictionary key should be `QAPAIR_DF_KEY`.
+```
+input_dict = {QAPAIR_DF_KEY: input_data}
+```
+
+You can have multiple dictionaries in the input list, each with a different structured data file.
+```
+input_list = [input_dict1, input_dict2,...]
+```
+
+Next, you can use the `client` object to run the flow on the input list.
+```
+output_list = client.run(input_list)
+```
+
+The output list will have the same number of dictionaries as the input list, with each dictionary containing the corresponding generated QA pairs.
+
+All of the flows will have the output QA pairs in a dataframe under the `QAPAIR_DF_KEY` key. You can access the output dataframe using the `OUTPUT_NAME` constant.
+
+```
+output_dict1 = output_list[0]
+output_dict1[OUTPUT_NAME][0][QAPAIR_DF_KEY] #this will print the output QA dataframe
+```
+### Examples
+For more examples, check out the [QA Generation](example/qa_generation) and [Self-Instructed](example/self_instructed_ft) folders.
+
+## Flows
 `uniflow` lets you easily generate synthetic data from raw text (including `.txt`, `.html`, `.pdf`, etc.). Here are the flows for common applications:
 
 ### Augment Structured Data
-Given existing structured data (e.g. sample Question-Answer (QA) pairs), augment more QA pairs using the `DataGenFlow` interface.
+Given existing structured data (e.g. sample Question-Answer (QA) pairs), augment more QA pairs using the `Client("flow-data-gen")` interface.
 
 #### Example
-First, load a structured data file (e.g. `.csv`) with Question and Answer columns.
-```
-# Initiate flow
-flow = DataGenFlow()
-# Load data
-qaa = pd.read_csv(f"{YOUR_CSV_FILE}", encoding = "utf8")`
-```
+Check out this [example](example/qa_generation/README.md#augment-structured-data) and this [notebook](example/qa_generation/data_generation.ipynb) to get started.
 
-Then you can generate more QA pairs from the original structured data.
-```
-input_dict = {"qaa": qaa[:]}
-output_dict = flow(input_dict)
-
-```
 ### Generate Structured Data from Unstructured Text
-Generate structured data (e.g. Question-Answer pairs) from unstructured text using the `DataGenTextFlow` interface.
+Generate structured data (e.g. Question-Answer pairs) from unstructured text using the `Client("flow-data-gen-text")` interface.
 
 #### Example
-First, load a text file (e.g. `.txt`) from which you would like to generate the Question-Answer pairs.
-```
-with open(os.path.join(f"{YOUR_FILE_PATH}", "YOUR_FILE.txt"), "r") as file:
-    context = file.read()
-```
-Then you can generate the Question-Answer pairs from the text.
-```
-flow = DataGenTextFlow()
-input_dict = {"context": context}
-output_dict = flow(input_dict)
-```
+Check out this [example](example/qa_generation/README.md#generate-structured-data-from-unstructured-text) and this [notebook](example/qa_generation/data_generation_text.ipynb) to get started.
 
 ### Generate and Augment Structured Data from Unstructured Text
-Using the `TextPlusDataGenFlow`, you can run the previous two flows in sequence to generate structured data from unstructured text, and then augment more data from the structured data.
+Using the `Client("flow_text_plus_data_gen")` interface, you can run the previous two flows in sequence to generate structured data from unstructured text, and then augment more data from the structured data.
 
 #### Example
-First, load a raw text file (e.g. `.txt`) from which you would like to generate the structured data (e.g. Question-Answer pairs).
-```
-with open(os.path.join(f"{YOUR_FILE_PATH}", "YOUR_FILE.txt"), "r") as file:
-    context = file.read()
-```
-Then you can generate the Question-Answer pairs from the raw text.
-```
-flow = TextPlusDataGenFlow()
-input_dict = {"context": context}
-output_dict = flow(input_dict)
-```
+Check out this [example](example/qa_generation/README.md#generate-and-augment-structured-data-from-unstructured-text) and this [notebook](example/qa_generation/text_plus_data_generation.ipynb) to get started.
 
 ### Generate Structured Data from Unstructured Text (Self Instructed)
-Generate data from unstructured text using the `SelfInstructedGenFlow` interface.
+Generate data from unstructured text using the `Client("flow_self_instructed_gen")` interface. This flow generates question answer pairs from unstructured `.html` files.
 
-First, place your raw text file (e.g. `.html`) in the same directory as your python file.
-
-Then you can generate the structured data (e.g. Question-Answer pairs) from the raw text.
-```
-# Initiate flow
-flow = SelfInstructedGenFlow()
-input_dict = {constants.HTML_KEY: YOUR_HTML_FILE_PATH}
-
-# Run flow
-output_dict = flow(input_dict)
-```
+#### Example
+Check out this [example](example/self_instructed_ft/README.md) and this [notebook](example/self_instructed_ft/demo_self_instruct_ft.ipynb) to get started.
 
 ## Installation
 To get started with `uniflow`, you can install it using `pip` in a `conda` environment.
@@ -112,8 +122,16 @@ Congrats you have finished the installation!
 ## Dev Setup
 If you are interested in contributing to us, here are the preliminary development setups.
 
-### Backend Dev Setup
+### API keys
+If you are running one of the following flows, you will have to set up your OpenAI API key.
+- flow_data_gen
+- flow_text_plus_data_gen
+
+To do so, create a `.env` file in your root uniflow folder. Then add the following line to the `.env` file:
 ```
+OPENAI_API_KEY=YOUR_API_KEY
+```
+### Backend Dev Setup
 conda create -n uniflow python=3.10
 conda activate uniflow
 cd uniflow
@@ -126,3 +144,5 @@ If you are on EC2, you can launch a GPU instance with the following config:
     <img src="example/image/readme_ec2_ami.jpg" alt="Alt text" width="50%" height="50%"/>
 - EBS: at least 100G
     <img src="example/image/readme_ec2_storage.png" alt="Alt text" width="50%" height="50%"/>
+
+```
