@@ -28,7 +28,7 @@ class LMQGOp(LinearOp):
         # initialize model
         # set max length of a paragraph as 1024
         self._model = TransformersQG(model="lmqg/t5-base-squad-qg-ae", max_length=1024)
-        logger.info("LMQGPagesOp initialization complete!")
+        logger.info("LMQGOp initialization complete!")
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Call the language model by lmqg to generate outputs for the prompt.

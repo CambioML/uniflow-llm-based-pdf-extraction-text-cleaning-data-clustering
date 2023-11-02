@@ -31,26 +31,20 @@ Then you can create a `Client` object to run the a particular flow.
 client = Client(YOUR_FLOW_KEY)
 ```
 
-Here is a table of the different flows and their corresponding keys.
-| Flow | Key | Input Dictionary Key |
+Here is a table of the different flows and their corresponding keys, and input file types.
+| Flow | Key |
 | ------------- | ------------- | ------------- |
-| [Augment Structured Data](#augment-structured-data) | flow_data_gen  | QAPAIR_DF_KEY |
-| [Generate Structured Data from Unstructured Text](#generate-structured-data-from-unstructured-text) | flow_data_gen_text | INPUT_FILE |
-| [Generate and Augment Structured Data from Unstructured Text](#generate-and-augment-structured-data-from-unstructured-text) | flow_text_plus_data_gen | INPUT_FILE |
-| [Generate Structured Data from Unstructured Text (Self Instructed)](#generate-structured-data-from-unstructured-text-self-instructed) | flow_self_instructed_gen | HTML_KEY |
+| [Augment Structured Data](#augment-structured-data) | flow_data_gen  | .csv |
+| [Generate Structured Data from Unstructured Text](#generate-structured-data-from-unstructured-text) | flow_data_gen_text | .txt, .html |
+| [Generate and Augment Structured Data from Unstructured Text](#generate-and-augment-structured-data-from-unstructured-text) | flow_text_plus_data_gen | .txt, .html |
+| [Generate Structured Data from Unstructured Text (Self Instructed)](#generate-structured-data-from-unstructured-text-self-instructed) | flow_self_instructed_gen | .html |
 
-The **Input Dictionary Key** referenced in the above table is used as the key for the input dictionary for each specific flow. They are imported from `uniflow.flow.constants`
-
+Every flow takes a list of input dictionaries. Each dictionary has its own input file, with the `INPUT_FILE` key as shown below:
 ```
-from uniflow.flow.constants import INPUT_DICTIONARY_KEY
-input_dict = {INPUT_DICTIONARY_KEY: input_data}
+from uniflow.flow.constants import INPUT_FILE
+input_dict = {INPUT_FILE: input_file}
 ```
-
-For example, if you are using the `Augment Structured Data Flow`, then the input dictionary key should be `QAPAIR_DF_KEY`.
-```
-from uniflow.flow.constants import QAPAIR_DF_KEY
-input_dict = {QAPAIR_DF_KEY: input_data}
-```
+The `input_file` is the full path to the input data file.
 
 You can have multiple dictionaries in the input list, each with a different structured data file.
 ```
@@ -64,7 +58,14 @@ output_list = client.run(input_list)
 
 The output list will have the same number of dictionaries as the input list, with each dictionary containing the corresponding generated QA pairs.
 
-All of the flows will have the output QA pairs in a dataframe under the `QAPAIR_DF_KEY` key. You can access the output dataframe using the `OUTPUT_NAME` constant.
+All of the flows will have the output dictionary with the following listed at the OUTPUT_NAME key. Within the output dictionary, you have the following keys and corresponding values
+| Key | Description |
+| ------------- | ------------- |
+| `QAPAIR_DF_KEY` | The output QA dataframe |
+| `OUTPUT_FILE` | The output file path |
+| `ERROR_LIST` | List of any errors |
+
+Here's an example of how to access the output QA dataframe from the first output dictionary in the output list.
 
 ```
 output_dict1 = output_list[0]

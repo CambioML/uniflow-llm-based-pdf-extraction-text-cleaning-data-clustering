@@ -1,9 +1,13 @@
 """Model inference operation."""
 import copy
+import logging
 
 from typing import Any, Mapping
 from uniflow.op.basic.linear_op import LinearOp
 import openai
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class ModelInfOp(LinearOp):
@@ -24,9 +28,11 @@ class ModelInfOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
+        logger.info("Starting ModelInfOp...")
         qaa_list_encoded = copy.deepcopy(value_dict["qaa_list_encoded"])
         qaa_augmented_raw = []
-        for _, batch_inputs_string in enumerate(qaa_list_encoded):
+        for i, batch_inputs_string in enumerate(qaa_list_encoded):
+            logger.info(f"Running batch {i + 1} of {len(qaa_list_encoded)}...")
             completion_batch = openai.Completion.create(
                 prompt=batch_inputs_string,
                 model="text-davinci-003",
@@ -35,4 +41,5 @@ class ModelInfOp(LinearOp):
             )
             results_string = completion_batch["choices"][0]["text"]
             qaa_augmented_raw.append(results_string)
+        logger.info("ModelInfOp complete!")
         return {"qaa_augmented_raw": qaa_augmented_raw}

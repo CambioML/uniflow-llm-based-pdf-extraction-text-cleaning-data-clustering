@@ -7,8 +7,13 @@ import io
 import json
 import ast
 import pandas as pd
+import logging
 from uniflow.op.basic.linear_op import LinearOp
 from uniflow.op.utils import check_path_exists
+from uniflow.flow.constants import QAPAIR_DF_KEY, ERROR_LIST, OUTPUT_FILE
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class DataOutOp(LinearOp):
@@ -68,6 +73,7 @@ class DataOutOp(LinearOp):
             f.close()
 
         # -----------------------------------------------------------------
+        logger.info("Starting DataOutOp...")
 
         qaa_augmented_raw = copy.deepcopy(value_dict["qaa_augmented_raw"])
         output_name = "output_qa_augment.json"
@@ -96,6 +102,12 @@ class DataOutOp(LinearOp):
                         # print(str2dict['_answer'])
         QApair_df = pd.DataFrame(QApair_dict)
         output_name = "output_qa_augment.csv"
-        QApair_df.to_csv(os.path.join(output_dir, output_name), index=False)
+        output_file = os.path.join(output_dir, output_name)
+        QApair_df.to_csv(output_file, index=False)
+        logger.info("DataOutOp complete!")
 
-        return {"QApair_df": QApair_df, "error_list": error_list}
+        return {
+            QAPAIR_DF_KEY: QApair_df,
+            ERROR_LIST: error_list,
+            OUTPUT_FILE: output_file,
+        }

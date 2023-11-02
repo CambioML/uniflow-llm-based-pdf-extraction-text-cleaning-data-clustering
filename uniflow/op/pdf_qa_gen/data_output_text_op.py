@@ -5,7 +5,13 @@ from typing import Any, Mapping
 import os
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
-from uniflow.flow.constants import QUESTION_KEY, ANSWER_KEY, ERROR_LIST, QAPAIR_DF_KEY
+from uniflow.flow.constants import (
+    QUESTION_KEY,
+    ANSWER_KEY,
+    ERROR_LIST,
+    QAPAIR_DF_KEY,
+    OUTPUT_FILE,
+)
 from uniflow.op.utils import check_path_exists
 
 
@@ -36,6 +42,11 @@ class DataOutTextOp(LinearOp):
         dir_cur = os.getcwd()
         save_path = os.path.join(dir_cur, "data/output")
         check_path_exists(save_path)
-        QApair_df.to_csv(os.path.join(save_path, "output_qa_text.csv"), index=False)
+        output_file = os.path.join(save_path, "output_qa_text.csv")
+        QApair_df.to_csv(output_file, index=False)
 
-        return {QAPAIR_DF_KEY: QApair_df, ERROR_LIST: error_list}
+        return {
+            QAPAIR_DF_KEY: QApair_df,
+            ERROR_LIST: error_list,
+            OUTPUT_FILE: output_file,
+        }

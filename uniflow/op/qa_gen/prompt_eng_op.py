@@ -1,9 +1,13 @@
 """prompt engineering operation."""
 from typing import Any, Mapping
 import re
+import logging
 from uniflow.op.basic.linear_op import LinearOp
 from uniflow.flow.constants import QUESTION_KEY, ANSWER_KEY
 import uniflow.config as config
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class PromptEngOp(LinearOp):
@@ -24,6 +28,7 @@ class PromptEngOp(LinearOp):
         Returns:
             Mapping[str, Any]: Output value dict.
         """
+        logger.info("Starting PromptEngOp...")
         qaa = value_dict["qaa_processed"].copy(deep=True)
         qaa_list = qaa[[QUESTION_KEY, ANSWER_KEY]].to_dict("records")
         prompts = f"""Paraphrase the below question and answer pair in {config.get_qa_factor()} different ways.
@@ -53,4 +58,5 @@ class PromptEngOp(LinearOp):
             return listof_prompt_QA
 
         qaa_list_encoded = encode_prompt_QA(prompts, qaa_list)
+        logger.info("PromptEngOp Complete!")
         return {"qaa_list_encoded": qaa_list_encoded}

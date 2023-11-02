@@ -1,9 +1,14 @@
 """Preprocess operation."""
 from typing import Any, Mapping
 import re
+import logging
 from uniflow.op.basic.linear_op import LinearOp
 from cleantext import clean
+import pandas as pd
 from uniflow.flow.constants import QAPAIR_DF_KEY, QUESTION_KEY, ANSWER_KEY
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class PreprocessOp(LinearOp):
@@ -19,7 +24,9 @@ class PreprocessOp(LinearOp):
             Mapping[str, Any]: Output value dict.
         """
 
-        qaa = value_dict[QAPAIR_DF_KEY].copy(deep=True)
+        logger.info("Starting PreprocessOp...")
+        input_file = value_dict["input_file"]
+        qaa = pd.read_csv(input_file, encoding="utf8")
 
         # Personal Identification Information (PII) removal and other preprocessing using cleantext
 
@@ -61,5 +68,6 @@ class PreprocessOp(LinearOp):
             re.compile(r"<.*?>|More\.\.\.", flags=re.IGNORECASE).sub("", p)
             for p in answer_l_raw
         ]  # Remove HTML tags/markups
+        logger.info("PreprocessOp Complete!")
 
         return {"qaa_processed": qaa}
