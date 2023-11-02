@@ -17,7 +17,7 @@ class Flow:
         linear_op_name = "linear_op"
         counter = 0
         for item in utils.OPS_NAME:
-            if '/linear_op' in item:
+            if "/linear_op" in item:
                 counter += 1
         if counter > 0:
             linear_op_name = f"linear_op_{counter}"
