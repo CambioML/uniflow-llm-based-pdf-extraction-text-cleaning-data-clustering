@@ -4,7 +4,7 @@ import re
 import logging
 from uniflow.op.basic.linear_op import LinearOp
 from cleantext import clean
-import uniflow.flow.constants as constants
+from uniflow.flow.constants import INPUT_FILE, PAGES_KEY
 from langchain.document_loaders import UnstructuredHTMLLoader
 
 logger = logging.getLogger(__name__)
@@ -24,12 +24,12 @@ class PreprocessHTMLOp(LinearOp):
             Mapping[str, Any]: Output value dict.
         """
         logger.info("Starting Preprocess HTML...")
-        html_in = value_dict[constants.HTML_KEY][:]
-        loader = UnstructuredHTMLLoader("./" + html_in)
+        input_file = value_dict[INPUT_FILE]
+        logger.debug("input_file: %s", input_file)
+        loader = UnstructuredHTMLLoader(input_file)
         data = loader.load()
         pages = loader.load_and_split()
-        logger.debug("html_in: %s", html_in)
-        logger.info("Preprocess HTML Complete!")
         logger.debug("Output %s", pages)
+        logger.info("Preprocess HTML Complete!")
 
-        return {constants.PAGES_KEY: pages}
+        return {PAGES_KEY: pages}
