@@ -6,6 +6,8 @@ from uniflow.flow.flow import Flow
 from uniflow.flow.flow_data_gen_text import DataGenTextFlow
 from uniflow.flow.flow_data_gen import DataGenFlow
 
+from uniflow.flow.constants import OUTPUT_FILE, INPUT_FILE
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -37,6 +39,8 @@ class TextPlusDataGenFlow(Flow):
 
         # Run DataGenFlow
         logger.info("Starting DataGenFlow...")
+        for node in data_gen_text_out_nodes:
+            node.value_dict[INPUT_FILE] = node.value_dict.pop(OUTPUT_FILE)
         data_gen_out_nodes = self._data_gen_flow.run(data_gen_text_out_nodes)
         logger.info("DataGenFlow complete!")
         return data_gen_out_nodes
