@@ -11,6 +11,7 @@ from uniflow.flow.constants import (
     ERROR_LIST,
     QAPAIR_DF_KEY,
     OUTPUT_FILE,
+    OUTPUT_TEXT_PREFIX,
 )
 from uniflow.op.utils import check_path_exists
 
@@ -42,7 +43,8 @@ class DataOutTextOp(LinearOp):
         dir_cur = os.getcwd()
         save_path = os.path.join(dir_cur, "data/output")
         check_path_exists(save_path)
-        output_file = os.path.join(save_path, "output_qa_text.csv")
+        filename = OUTPUT_TEXT_PREFIX + "data.csv"
+        output_file = os.path.join(save_path, filename)
         QApair_df.to_csv(output_file, index=False)
 
         return {
