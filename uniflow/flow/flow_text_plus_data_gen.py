@@ -16,8 +16,10 @@ class TextPlusDataGenFlow(Flow):
     def __init__(self):
         """Initialize Text Plus Data Gen Flow class."""
         super().__init__()
+        logger.info("Initializing TextPlusDataGenFlow...")
         self._data_gen_text_flow = DataGenTextFlow()
         self._data_gen_flow = DataGenFlow()
+        logger.info("TextPlusDataGenFlow initialization complete!")
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Text Plus Data Gen Flow.
