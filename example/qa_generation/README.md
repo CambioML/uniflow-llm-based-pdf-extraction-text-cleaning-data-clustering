@@ -4,7 +4,9 @@
 ## Augment Structured Data
 The [`data_generation` notebook](data_generation.ipynb) shows how to use `uniflow` to generate more QA pairs from existing QA pairs.
 
-It loads the `qd_immigration.csv` file, takes the first 3 questions and answers, and generates more QA pairs from them.
+It loads the `qd_immigration_short.csv` file,  which has just the first 3 questions and answers, and generates more QA pairs from them.
+
+Then it runs on the full `qd_immigration.csv` file, which has 96 questions and answers, and generates more QA pairs from them. This will take significantly longer than the first example.
 
 ### Setup
 To get started, import Client and the input keys from `uniflow`:
@@ -32,10 +34,10 @@ config.set_qa_factor(5) # Set QA factor to 5 (default is 3)
 ```
 
 ### Input Format
-This flow expects the QAPAIR_DF_KEY to be the key for the input dictionary. The value for this key should be a Pandas DataFrame with the columns for questions and answers with the names QUESTION_KEY and ANSWER_KEY. You can look at [qd_immigration.csv](data/raw_input/qd_immigration.csv) for an example of the input format.
+This flow expects the `INPUT_FILE` key to be the key for the input dictionary. The value for this key should be the path to the `csv` file from which you want to generate the QA pairs. It must include question and answer columns with "Question" and "Answer" as the column names respectively. You can look at [qd_immigration.csv](data/raw_input/qd_immigration.csv) for an example of the input format.
 
 ```
-input_dict = {QAPAIR_DF_KEY: your_input_data}
+input_dict = {INPUT_FILE: your_input_file_path}
 ```
 ### Process
 Then you can run the flow on the input dictionaries:
