@@ -6,7 +6,7 @@ import os
 import logging
 import pandas as pd
 from uniflow.op.basic.linear_op import LinearOp
-from uniflow.flow.constants import ANSWER_KEY, QAPAIR_DF_KEY, QUESTION_KEY
+from uniflow.flow.constants import ANSWER_KEY, QAPAIR_DF_KEY, QUESTION_KEY, OUTPUT_FILE
 from uniflow.op.utils import check_path_exists
 
 logger = logging.getLogger(__name__)
@@ -40,12 +40,13 @@ class DataOutSIOp(LinearOp):
         dir_cur = os.getcwd()
         save_path = os.path.join(dir_cur, "data/output")
         check_path_exists(save_path)
+        output_file = os.path.join(save_path, "QA_output_self-instruct.csv")
         QApair_df.to_csv(
-            os.path.join(save_path, "QA_output_self-instruct.csv"),
+            output_file,
             index=False,
         )
 
         logger.debug(f"Created {QAPAIR_DF_KEY}: {QApair_df}")
         logger.info("DataOutSIOp complete!")
 
-        return {QAPAIR_DF_KEY: QApair_df}
+        return {QAPAIR_DF_KEY: QApair_df, OUTPUT_FILE: output_file}

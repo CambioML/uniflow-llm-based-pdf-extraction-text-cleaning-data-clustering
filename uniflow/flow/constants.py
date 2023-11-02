@@ -2,6 +2,7 @@ ROOT_NAME = "root"
 INPUT_NAME = "input"
 OUTPUT_NAME = "output"
 INPUT_FILE = "input_file"
+OUTPUT_FILE = "output_file"
 ERROR_LIST = "error_list"
 
 # QA Constants
@@ -14,7 +15,6 @@ QAPAIR_DF_KEY = "QApair_df"
 CONTEXT_KEY = "context"
 
 # SELF INSTRUCTED Constants
-HTML_KEY = "html"
 PAGES_KEY = "pages"
 QUESTION_LABEL = "Q: "
 ANSWER_LABEL = "A: "
