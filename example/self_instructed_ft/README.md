@@ -29,4 +29,4 @@ output_list = client.run(input_list)
 The raw html is processed and split. Then, `uniflow` untilizes the [`mistralai/Mistral-7B-Instruct-v0.1`](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1) HuggingFace model to generate one question per paragraph of content.
 
 ### Output
-The output Question-Answer pairs are saved to `QA_output_self-instruct.csv` file in the `./data/output` folder.
+The output Question-Answer pairs are saved to `output_self_instructed_data.csv` file in the `./data/output` folder.
