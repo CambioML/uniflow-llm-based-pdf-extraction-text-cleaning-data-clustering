@@ -6,6 +6,7 @@ import logging
 from typing import Any, Mapping, Sequence
 from uniflow.node.node import Node
 from uniflow.op.basic.linear_op import LinearOp
+import uniflow.op.utils as utils
 
 
 class Flow:
@@ -13,7 +14,14 @@ class Flow:
 
     def __init__(self):
         """Initialize Flow class."""
-        self._linear_op = LinearOp("linear_op")
+        linear_op_name = "linear_op"
+        counter = 0
+        for item in utils.OPS_NAME:
+            if '/linear_op' in item:
+                counter += 1
+        if counter > 0:
+            linear_op_name = f"linear_op_{counter}"
+        self._linear_op = LinearOp(linear_op_name)
         self._root = None
         logging.basicConfig(format="%(levelname)s [%(module)s]: %(message)s")
 
