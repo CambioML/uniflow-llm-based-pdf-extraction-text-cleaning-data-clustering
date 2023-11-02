@@ -32,7 +32,7 @@ client = Client(YOUR_FLOW_KEY)
 ```
 
 Here is a table of the different flows and their corresponding keys, and input file types.
-| Flow | Key |
+| Flow | Key | Input File Type |
 | ------------- | ------------- | ------------- |
 | [Augment Structured Data](#augment-structured-data) | flow_data_gen  | .csv |
 | [Generate Structured Data from Unstructured Text](#generate-structured-data-from-unstructured-text) | flow_data_gen_text | .txt, .html |
