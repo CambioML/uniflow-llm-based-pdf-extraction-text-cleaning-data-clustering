@@ -63,7 +63,7 @@ All of the flows will have the output dictionary with the following listed at th
 | ------------- | ------------- |
 | `QAPAIR_DF_KEY` | The output QA dataframe |
 | `OUTPUT_FILE` | The output file path |
-| `ERROR_LIST` | List of any errors |
+| `ERROR_LIST` (optional) | List of any errors |
 
 Here's an example of how to access the output QA dataframe from the first output dictionary in the output list.
 

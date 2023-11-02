@@ -49,7 +49,7 @@ The input QA pairs are run through an OpenAI model [text-davinci-003](https://pl
 
 
 ### Output
-The output Question-Answer pairs are saved to `csv` and `json` files called `output_qa_augment` in the `./tests/data/output` folder.
+The output Question-Answer pairs are saved to `csv` and `json` files called `output_qa_augment_data` in the `./data/output` folder.
 
 ## Generate Structured Data from Unstructured Text
 You can also use `uniflow` to generate QA pairs from raw text. The [`data_generation_text` notebook](data_generation_text.ipynb) shows how to use `uniflow` to generate QA pairs from raw text.
@@ -85,7 +85,7 @@ output_list = client.run(input_list)
 The raw text is first split into paragraphs. Then, the [lmqg](https://huggingface.co/lmqg) package is used to generate question-answer pairs from each paragraph. The number of QA pairs is determined by [lmqg](https://huggingface.co/lmqg), and is not configurable.
 
 ### Output
-The output Question-Answer pairs are saved to `output_qa_text.csv` file in the `./data/output` folder.
+The output Question-Answer pairs are saved to `output_qa_text_data.csv` file in the `./data/output` folder.
 
 ## Generate and Augment Structured Data from Unstructured Text
 This flow combines the previous two flows to generate QA pairs from raw text, and then augment more QA pairs from the generated QA pairs. The [`text_plus_data_generation` notebook](text_plus_data_generation.ipynb) shows how to use `uniflow` in this way.
@@ -125,5 +125,7 @@ output_list = client.run(input_list)
 First, the file is run through the [Generate Structured Data from Unstructured Text process](#process-1). Then, the output QA pairs are run through the [Augment Structured Data process](#process).
 
 ### Output
-The output Question-Answer pairs are saved to `csv` and `json` files called `output_qa_augment` in the `./tests/data/output` folder.
+The output Question-Answer pairs generated from the raw text are saved to `output_qa_text_data.csv` file in the `./data/output` folder.
+
+The augmented output Question-Answer pairs are saved to `csv` and `json` files called `output_qa_augment_data` in the `./data/output` folder.
 
