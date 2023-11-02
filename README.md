@@ -135,11 +135,14 @@ To do so, create a `.env` file in your root uniflow folder. Then add the followi
 OPENAI_API_KEY=YOUR_API_KEY
 ```
 ### Backend Dev Setup
+
+```
 conda create -n uniflow python=3.10
 conda activate uniflow
 cd uniflow
 pip3 install poetry --no-root
 ```
+
 ### EC2 Dev Setup
 If you are on EC2, you can launch a GPU instance with the following config:
 - EC2 `g4dn.xlarge` (if you want to run a pretrained LLM with 7B parameters)
@@ -147,5 +150,3 @@ If you are on EC2, you can launch a GPU instance with the following config:
     <img src="example/image/readme_ec2_ami.jpg" alt="Alt text" width="50%" height="50%"/>
 - EBS: at least 100G
     <img src="example/image/readme_ec2_storage.png" alt="Alt text" width="50%" height="50%"/>
-
-```
