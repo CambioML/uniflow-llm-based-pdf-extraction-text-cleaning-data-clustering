@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uniflow"
-version = "0.0.4"
+version = "0.0.5"
 description = "Unified flow interface for synthetic data generation and many more"
 authors = ["CambioML <wanwanaiai45@gmail.com>"]
 maintainers = ["Rachel Hu <goldpiggy@berkeley.edu>"]
