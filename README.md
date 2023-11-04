@@ -104,22 +104,26 @@ Check out this [example](example/self_instructed_ft/README.md) and this [noteboo
 ## Installation
 To get started with `uniflow`, you can install it using `pip` in a `conda` environment.
 
-First, create a conda environment on your terminal using:
+First, create and activate a conda environment on your terminal using:
 ```
 conda create -n uniflow python=3.10 -y
 conda activate uniflow  # some OS requires `source activate uniflow`
 ```
 
-Then install `flow` and the compatible [pytorch based on your OS](https://pytorch.org/get-started/locally/):
+Then install `uniflow`:
 ```
 pip3 install uniflow
-pip3 install torch
 ```
 
-Finally, if you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
-```
-pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
-```
+Finally, install the compatible [pytorch based on your OS](https://pytorch.org/get-started/locally/):
+- if you are on a CPU (e.g. laptop)
+  ```
+  pip3 install torch
+  ```
+- if you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
+  ```
+  pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
+  ```
 
 Congrats you have finished the installation!
 
