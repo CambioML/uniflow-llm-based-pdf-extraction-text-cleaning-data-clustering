@@ -118,24 +118,26 @@ class SIModelInfOp(LinearOp):
             logger.debug(f"Page {i + 1} \n {text} \n ========================== \n")
             for item in text.split(QUESTION_LABEL):
                 logger.debug(f"Processing {item}\nLength {len(item)}")
+                # TODO (Jojo): keep track of all the error list.
                 if len(item) > 0:
-                    one_q_a = item.strip()
-                    logger.debug(f"one_q_a = {one_q_a} ===")
-                    if "A:" in one_q_a:
-                        question = (
-                            one_q_a.split(ANSWER_LABEL)[0].strip()
-                            + "[Page "
-                            + str(i)
-                            + "]"
-                        )
-                        logger.debug(f"Question: {question}")
-                        text_line_q.append(question)
-
-                        text_line_in.append("")
-
-                        answer = one_q_a.split(ANSWER_LABEL)[1].strip()
-                        logger.debug(f"Answer: {answer}")
-                        text_line_a.append(answer)
+                    try:
+                        one_q_a = item.strip()
+                        logger.debug(f"one_q_a = {one_q_a} ===")
+                        if "A:" in one_q_a:
+                            question = (
+                                one_q_a.split(ANSWER_LABEL)[0].strip()
+                                + "[Page "
+                                + str(i)
+                                + "]"
+                            )
+                            answer = one_q_a.split(ANSWER_LABEL)[1].strip()
+                            logger.debug(f"Question: {question}")
+                            logger.debug(f"Answer: {answer}")
+                            text_line_q.append(question)
+                            text_line_in.append("")
+                            text_line_a.append(answer)
+                    except Exception as e:
+                        logger.warning(f"Error: {e}")
 
             logger.info(
                 f"=== processed page {i + 1} | total questions generated: {len(text_line_q)} ==="
