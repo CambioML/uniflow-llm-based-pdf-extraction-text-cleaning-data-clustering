@@ -6,6 +6,8 @@ from typing import Any, Dict, List
 from uniflow.model.config import ModelConfig
 from uniflow.model.server import ModelServerFactory
 
+RESPONSE = "response"
+
 
 class Model:
     """Model Class."""
@@ -49,7 +51,7 @@ class Model:
         Returns:
             Dict[str, Any]: Deserialized data.
         """
-        return [json.loads(d) for d in data]
+        return {RESPONSE: [json.loads(d) for d in data]}
 
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Run model.

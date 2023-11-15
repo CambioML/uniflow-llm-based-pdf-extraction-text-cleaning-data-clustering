@@ -1,13 +1,23 @@
 """Linear operation."""
 import copy
-
 from typing import Any, Mapping, Sequence
-from uniflow.op.op import Op
+
 from uniflow.node.node import Node
+from uniflow.op.op import Op
 
 
 class LinearOp(Op):
+    """Linear operation class."""
+
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
+        """Transform value dict.
+
+        Args:
+            value_dict (Mapping[str, Any]): Input value dict.
+
+        Returns:
+            Mapping[str, Any]: Output value dict.
+        """
         return copy.deepcopy(value_dict)
 
     def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
