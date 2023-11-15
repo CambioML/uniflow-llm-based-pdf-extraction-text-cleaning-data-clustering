@@ -179,10 +179,6 @@ example/flex/
 # mac
 .DS_Store
 
-# model checkpoint
-model/
-models/
-
 # poetry dist only
 /dist/
 

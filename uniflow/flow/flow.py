@@ -1,27 +1,17 @@
 """Flow class."""
 import copy
-import uniflow.flow.constants as constants
 import logging
-
 from typing import Any, Mapping, Sequence
+
+from uniflow.flow import constants
 from uniflow.node.node import Node
-from uniflow.op.basic.linear_op import LinearOp
-import uniflow.op.utils as utils
 
 
 class Flow:
     """Flow class."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize Flow class."""
-        linear_op_name = "linear_op"
-        counter = 0
-        for item in utils.OPS_NAME:
-            if "/linear_op" in item:
-                counter += 1
-        if counter > 0:
-            linear_op_name = f"linear_op_{counter}"
-        self._linear_op = LinearOp(linear_op_name)
         self._root = None
         logging.basicConfig(format="%(levelname)s [%(module)s]: %(message)s")
 
@@ -69,7 +59,7 @@ class Flow:
         Returns:
             Sequence[Node]: Nodes.
         """
-        return self._linear_op(nodes)
+        return nodes
 
     def _exit(self, nodes) -> Mapping[str, Any]:
         """Exit flow.
