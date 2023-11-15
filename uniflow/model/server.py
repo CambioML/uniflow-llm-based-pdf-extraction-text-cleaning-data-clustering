@@ -35,6 +35,15 @@ class ModelServerFactory:
             raise ValueError(f"No model server registered under '{name}'")
         return server_cls
 
+    @classmethod
+    def list(cls):
+        """List all registered model servers.
+
+        Returns:
+            List[str]: List of registered model server names.
+        """
+        return list(cls._servers.keys())
+
 
 class AbsModelServer:
     """Abstract Model Server Class."""

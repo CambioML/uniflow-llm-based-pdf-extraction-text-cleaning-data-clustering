@@ -30,3 +30,12 @@ class FlowFactory:
         if not flow_cls:
             raise ValueError(f"No flow registered under '{name}'")
         return flow_cls
+
+    @classmethod
+    def list(cls):
+        """List all registered flows.
+
+        Returns:
+            List[str]: List of registered flow names.
+        """
+        return list(cls._flows.keys())

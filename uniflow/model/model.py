@@ -44,7 +44,7 @@ class Model:
         """Deserialize data.
 
         Args:
-            data (str): Data to deserialize.
+            data (List[str]): Data to deserialize.
 
         Returns:
             Dict[str, Any]: Deserialized data.
@@ -64,3 +64,27 @@ class Model:
         data = self._model_server(data)
         data = self._deserialize(data)
         return data
+
+
+class OpenAIJsonModel(Model):
+    """OpenAI Json Model Class.
+
+    This is a bit strange because OpenAI's JSON API doesn't return JSON.
+    """
+
+    def _serialize(self, data: Dict[str, Any]) -> str:
+        output_strings = []
+
+        # Iterate over each key-value pair in the dictionary
+        for key, value in data.items():
+            if isinstance(value, list):
+                # Special handling for the "examples" list
+                for example in value:
+                    for ex_key, ex_value in example.items():
+                        output_strings.append(f"{ex_key}: {ex_value}")
+            else:
+                output_strings.append(f"{key}: {value}")
+
+        # Join all the strings into one large string, separated by new lines
+        output_string = "\n".join(output_strings)
+        return output_string
