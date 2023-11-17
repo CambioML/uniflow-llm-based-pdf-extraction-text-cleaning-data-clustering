@@ -19,6 +19,7 @@ class ModelFlow(Flow):
 
     def __init__(self) -> None:
         """Model Flow Constructor."""
+        super().__init__()
         self._model_op = ModelOp(
             name="model_op",
             model=JsonModel(
@@ -27,7 +28,6 @@ class ModelFlow(Flow):
                 few_shot_template=self.FEW_SHOT_TEMPLATE,
             ),
         )
-        super().__init__()
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Flow.
@@ -50,6 +50,7 @@ class OpenAIJsonModelFlow(Flow):
 
     def __init__(self) -> None:
         """OpenAI Json Model Flow Constructor."""
+        super().__init__()
         self._model_op = ModelOp(
             name="openai_json_model_op",
             model=OpenAIJsonModel(
@@ -58,7 +59,6 @@ class OpenAIJsonModelFlow(Flow):
                 few_shot_template=self.FEW_SHOT_TEMPLATE,
             ),
         )
-        super().__init__()
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Flow.
@@ -81,6 +81,7 @@ class HuggingFaceModelFlow(Flow):
 
     def __init__(self) -> None:
         """HuggingFace Model Flow Constructor."""
+        super().__init__()
         self._model_op = ModelOp(
             name="huggingface_model_op",
             model=Model(
@@ -91,7 +92,6 @@ class HuggingFaceModelFlow(Flow):
                 few_shot_template=self.FEW_SHOT_TEMPLATE,
             ),
         )
-        super().__init__()
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Flow.
