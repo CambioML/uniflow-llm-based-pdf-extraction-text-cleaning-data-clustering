@@ -1,8 +1,9 @@
 """Uniflow Client"""
 
 from typing import Any, List, Mapping
+
+from uniflow.flow.flow_factory import FlowFactory
 from uniflow.server import Server
-from uniflow.constants import flows_dict
 
 
 class Client:
@@ -15,7 +16,7 @@ class Client:
             flow_name (str): Name of the flow to run
 
         """
-        self._flow_cls = flows_dict[flow_name]
+        self._flow_cls = FlowFactory.get(flow_name)
 
     def run(self, input: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
