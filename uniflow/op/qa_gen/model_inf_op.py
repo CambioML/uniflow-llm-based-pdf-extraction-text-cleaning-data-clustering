@@ -39,11 +39,11 @@ class ModelInfOp(LinearOp):
                 messages=[
                     {"role": "user", "content": batch_inputs_string},
                 ],
-                model="text-davinci-003",
+                model="gpt-3.5-turbo",
                 temperature=0.2,
                 max_tokens=1000,  # The maximum number of tokens to generate in the completion
             )
-            results_string = completion_batch["choices"][0]["text"]
+            results_string = completion_batch.choices[0].message.content
             qaa_augmented_raw.append(results_string)
         logger.info("ModelInfOp complete!")
         return {"qaa_augmented_raw": qaa_augmented_raw}
