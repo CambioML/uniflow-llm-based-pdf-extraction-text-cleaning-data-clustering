@@ -17,11 +17,14 @@ class FlowFactory:
         cls._flows[name] = flow_cls
 
     @classmethod
-    def get(cls, name: str):
+    def get(cls, name: str) -> "Flow":
         """Get flow.
 
         Args:
             name (str): Flow name.
+
+        Returns:
+            Flow: Flow.
 
         Raises:
             ValueError: If no flow registered under the name.

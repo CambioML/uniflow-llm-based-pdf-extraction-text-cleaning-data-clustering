@@ -21,11 +21,14 @@ class ModelServerFactory:
         cls._servers[name] = server_cls
 
     @classmethod
-    def get(cls, name: str):
+    def get(cls, name: str) -> "AbsModelServer":
         """Get model server.
 
         Args:
             name (str): Model server name.
+
+        Returns:
+            AbsModelServer: Model server.
 
         Raises:
             ValueError: If no model server registered under the name.
@@ -68,7 +71,7 @@ class AbsModelServer:
 class OpenAIModelServer(AbsModelServer):
     """OpenAI Model Server Class."""
 
-    def __init__(self, model_config: ModelConfig):
+    def __init__(self, model_config: ModelConfig) -> None:
         # import in class level to avoid installing openai package
         from openai import OpenAI  # pylint: disable=import-outside-toplevel
 
@@ -115,4 +118,66 @@ class OpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    # Implement huggingface server here
+    def __init__(self, model_config: ModelConfig) -> None:
+        # import in class level to avoid installing transformers package
+        from transformers import pipeline  # pylint: disable=import-outside-toplevel
+        from transformers import (  # pylint: disable=import-outside-toplevel
+            AutoModelForCausalLM,
+            AutoTokenizer,
+        )
+
+        super().__init__(model_config)
+
+        # TODO: update config to use model_config
+        tokenizer = AutoTokenizer.from_pretrained(
+            self._model_config.model_name,
+        )
+        tokenizer.pad_token = tokenizer.eos_token
+
+        model = AutoModelForCausalLM.from_pretrained(
+            self._model_config.model_name,
+            device_map="auto",
+            offload_folder="./offload",
+            load_in_4bit=True,
+        )
+
+        self._pipeline = pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=tokenizer,
+            device_map="auto",
+            max_new_tokens=768,
+            num_return_sequences=1,
+            repetition_penalty=1.2,
+            eos_token_id=tokenizer.eos_token_id,
+            pad_token_id=tokenizer.pad_token_id,
+        )
+
+    def _preprocess(self, data: str) -> str:
+        """Preprocess data.
+
+        Args:
+            data (str): Data to preprocess.
+
+        Returns:
+            str: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: str) -> List[str]:
+        return [d["generated_text"] for d in data]
+
+    def __call__(self, data: str) -> str:
+        """Run model.
+
+        Args:
+            data (str): Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        data = self._preprocess(data)
+        data = self._pipeline(data)
+        data = self._postprocess(data)
+        print(data)
+        return data

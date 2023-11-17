@@ -3,7 +3,7 @@ from typing import Any, Dict, Sequence
 
 from uniflow.flow.flow import Flow
 from uniflow.model.config import ModelConfig
-from uniflow.model.model import Model, OpenAIJsonModel
+from uniflow.model.model import JsonModel, Model, OpenAIJsonModel
 from uniflow.node.node import Node
 from uniflow.op.model.model_op import ModelOp
 
@@ -21,7 +21,7 @@ class ModelFlow(Flow):
         """Model Flow Constructor."""
         self._model_op = ModelOp(
             name="model_op",
-            model=Model(
+            model=JsonModel(
                 model_name=self.MODEL_NAME,
                 model_config=self.MODEL_CONFIG(),
                 few_shot_template=self.FEW_SHOT_TEMPLATE,
@@ -55,6 +55,39 @@ class OpenAIJsonModelFlow(Flow):
             model=OpenAIJsonModel(
                 model_name=self.MODEL_NAME,
                 model_config=self.MODEL_CONFIG(response_format={"type": "json_object"}),
+                few_shot_template=self.FEW_SHOT_TEMPLATE,
+            ),
+        )
+        super().__init__()
+
+    def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
+        """Run Model Flow.
+
+        Args:
+            nodes (Sequence[Node]): Nodes to run.
+
+        Returns:
+            Sequence[Node]: Nodes after running.
+        """
+        return self._model_op(nodes)
+
+
+class HuggingFaceModelFlow(Flow):
+    """HuggingFace Model Flow Class."""
+
+    MODEL_NAME: str = "HuggingfaceModelServer"
+    MODEL_CONFIG: ModelConfig = ModelConfig
+    FEW_SHOT_TEMPLATE: Dict[str, Any] = FEW_SHOT_TEMPLATE
+
+    def __init__(self) -> None:
+        """HuggingFace Model Flow Constructor."""
+        self._model_op = ModelOp(
+            name="huggingface_model_op",
+            model=Model(
+                model_name=self.MODEL_NAME,
+                model_config=self.MODEL_CONFIG(
+                    model_name="mistralai/Mistral-7B-Instruct-v0.1"
+                ),
                 few_shot_template=self.FEW_SHOT_TEMPLATE,
             ),
         )
