@@ -179,5 +179,4 @@ class HuggingfaceModelServer(AbsModelServer):
         data = self._preprocess(data)
         data = self._pipeline(data)
         data = self._postprocess(data)
-        print(data)
         return data

@@ -1,8 +1,11 @@
 """Uniflow Server"""
 
 from concurrent import futures
-from typing import Any, List, Mapping, Tuple
 from queue import Queue
+from typing import Any, List, Mapping, Tuple
+
+from tqdm.auto import tqdm
+
 from uniflow.flow.flow import Flow
 from uniflow.op.op import OpScope
 
@@ -70,7 +73,8 @@ class Server:
                 for i, input_data in enumerate(input)
             }
             results = [None] * len(input)
-            for future in futures.as_completed(output_futures):
+
+            for future in tqdm(futures.as_completed(output_futures), total=len(input)):
                 index = output_futures[future]
                 results[index] = future.result()[1]
         return results
