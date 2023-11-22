@@ -179,5 +179,46 @@ class HuggingfaceModelServer(AbsModelServer):
         data = self._preprocess(data)
         data = self._pipeline(data)
         data = self._postprocess(data)
-        print(data)
+        return data
+
+
+class LMQGModelServer(AbsModelServer):
+    """Huggingface Model Server Class."""
+
+    def __init__(self, model_config: ModelConfig) -> None:
+        # import in class level to avoid installing transformers package
+        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
+
+        super().__init__(model_config)
+
+        self._model = TransformersQG(
+            model=self._model_config.model_name, max_length=1024
+        )
+
+    def _preprocess(self, data: str) -> str:
+        """Preprocess data.
+
+        Args:
+            data (str): Data to preprocess.
+
+        Returns:
+            str: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: str) -> List[str]:
+        return data
+
+    def __call__(self, data: str) -> str:
+        """Run model.
+
+        Args:
+            data (str): Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        data = self._preprocess(data)
+        data = self._model.generate_qa(data)
+        data = self._postprocess(data)
         return data
