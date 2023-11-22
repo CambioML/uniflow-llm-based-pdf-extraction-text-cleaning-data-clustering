@@ -8,6 +8,15 @@ from uniflow.model.config import ModelConfig
 from uniflow.model.server import ModelServerFactory
 
 RESPONSE = "response"
+ERROR = "error"
+
+
+class DeserializationException(Exception):
+    """Deserialization Exception."""
+
+    def __init__(self, message="Deserialization Exception"):
+        self.message = message
+        super().__init__(self.message)
 
 
 class Model:
@@ -56,7 +65,10 @@ class Model:
         Returns:
             Dict[str, Any]: Deserialized data.
         """
-        return {RESPONSE: data}
+        return {
+            RESPONSE: data,
+            ERROR: "Failed to deserialize 0 examples",
+        }
 
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Run model.
@@ -137,7 +149,20 @@ class FewShotModel(Model):
             )
             return result
 
-        return {RESPONSE: [filter_data(d) for d in data]}
+        error_count = 0
+        output_list = []
+
+        for d in data:
+            try:
+                output_list.append(filter_data(d))
+            except Exception:
+                error_count += 1
+                continue
+
+        return {
+            RESPONSE: output_list,
+            ERROR: f"Failed to deserialize {error_count} examples",
+        }
 
 
 class JsonModel(Model):
@@ -165,7 +190,19 @@ class JsonModel(Model):
         Returns:
             Dict[str, Any]: Deserialized data.
         """
-        return {RESPONSE: [json.loads(d) for d in data]}
+        output_list = []
+        error_count = 0
+
+        for d in data:
+            try:
+                output_list.append(json.loads(d))
+            except Exception:
+                error_count += 1
+                continue
+        return {
+            RESPONSE: output_list,
+            ERROR: f"Failed to deserialize {error_count} examples",
+        }
 
 
 class OpenAIJsonModel(JsonModel):
