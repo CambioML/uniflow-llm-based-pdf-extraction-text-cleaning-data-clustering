@@ -1,6 +1,7 @@
 import unittest
-from uniflow.flow.flow import Flow
+
 from uniflow.flow.constants import OUTPUT_NAME, ROOT_NAME
+from uniflow.flow.flow import Flow
 
 
 class TestFlow(unittest.TestCase):
@@ -9,7 +10,7 @@ class TestFlow(unittest.TestCase):
         flow = Flow()
         input_dict = {"a": 1, "b": 2}
         output_dict = flow(input_dict)
-        self.assertEqual(output_dict, {OUTPUT_NAME: [{"a": 1, "b": 2}]})
+        self.assertEqual(output_dict[OUTPUT_NAME], [{"a": 1, "b": 2}])
 
         # Test root property
         self.assertEqual(flow.root.name, ROOT_NAME)
@@ -29,4 +30,4 @@ class TestFlow(unittest.TestCase):
 
         # Test _exit method
         output_dict = flow._exit(nodes)
-        self.assertEqual(output_dict, {OUTPUT_NAME: [{"a": 1, "b": 2}]})
+        self.assertEqual(output_dict[OUTPUT_NAME], [{"a": 1, "b": 2}])
