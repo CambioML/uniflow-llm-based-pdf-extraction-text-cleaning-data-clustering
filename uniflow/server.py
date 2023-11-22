@@ -13,7 +13,7 @@ from uniflow.op.op import OpScope
 class Server:
     """Uniflow Server"""
 
-    def __init__(self, flow_cls: Flow, num_thread: int = 2) -> None:
+    def __init__(self, flow_cls: Flow, num_thread: int = 1) -> None:
         """Server constructor
 
         Args:
