@@ -11,14 +11,6 @@ RESPONSE = "response"
 ERROR = "error"
 
 
-class DeserializationException(Exception):
-    """Deserialization Exception."""
-
-    def __init__(self, message="Deserialization Exception"):
-        self.message = message
-        super().__init__(self.message)
-
-
 class Model:
     """Model Class."""
 
