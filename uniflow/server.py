@@ -18,7 +18,7 @@ class Server:
 
         Args:
             flow_cls (Flow): Flow class to run
-            num_thread (int, optional): Number of threads to run the flow. Defaults to 2.
+            num_thread (int, optional): Number of threads to run the flow. Defaults to 1.
         """
         self._flow_cls = flow_cls
         self._num_thread = num_thread
