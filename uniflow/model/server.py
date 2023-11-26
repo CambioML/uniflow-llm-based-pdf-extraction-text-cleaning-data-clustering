@@ -67,6 +67,39 @@ class AbsModelServer:
         """
         self._model_config = model_config
 
+    def _preprocess(self, data: str) -> str:
+        """Preprocess data.
+
+        Args:
+            data (str): Data to preprocess.
+
+        Returns:
+            str: Preprocessed data.
+        """
+        raise NotImplementedError
+
+    def __call__(self, data: str) -> str:
+        """Run model.
+
+        Args:
+            data (str): Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        raise NotImplementedError
+
+    def _postprocess(self, data: str) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (str): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        raise NotImplementedError
+
 
 class OpenAIModelServer(AbsModelServer):
     """OpenAI Model Server Class."""
@@ -90,6 +123,14 @@ class OpenAIModelServer(AbsModelServer):
         return data
 
     def _postprocess(self, data: str) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (str): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
         return [c.message.content for c in data.choices]
 
     def __call__(self, data: str) -> str:
@@ -165,6 +206,14 @@ class HuggingfaceModelServer(AbsModelServer):
         return data
 
     def _postprocess(self, data: str) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (str): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
         return [d["generated_text"] for d in data]
 
     def __call__(self, data: str) -> str:
@@ -207,6 +256,14 @@ class LMQGModelServer(AbsModelServer):
         return data
 
     def _postprocess(self, data: str) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (str): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
         return data
 
     def __call__(self, data: str) -> str:
