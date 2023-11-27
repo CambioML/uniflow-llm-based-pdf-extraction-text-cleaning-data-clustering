@@ -1,22 +1,23 @@
 """Uniflow Client"""
 
+from dataclasses import asdict
 from typing import Any, List, Mapping
 
-from uniflow.flow.flow_factory import FlowFactory
+from uniflow.config import Config
 from uniflow.server import Server
 
 
 class Client:
     """Uniflow Client"""
 
-    def __init__(self, flow_name: str) -> None:
+    def __init__(self, config: Config) -> None:
         """Client constructor
 
         Args:
-            flow_name (str): Name of the flow to run
+            config (Config): Config for the flow
 
         """
-        self._flow_cls = FlowFactory.get(flow_name)
+        self._config = config
 
     def run(self, input: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
@@ -28,7 +29,8 @@ class Client:
         Returns:
             List[Mapping[str, Any]]: List of outputs from the flow
         """
-        server = Server(self._flow_cls)
+        # convert config to dict for future remote calls
+        server = Server(asdict(self._config))
         output = server.run(input)
         return output
 

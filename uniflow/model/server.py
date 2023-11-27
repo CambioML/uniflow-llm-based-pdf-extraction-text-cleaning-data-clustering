@@ -1,8 +1,12 @@
 """Model Server Factory"""
 
-from typing import List
+from typing import Any, Dict, List
 
-from uniflow.model.config import ModelConfig
+from uniflow.model.config import (
+    HuggingfaceModelConfig,
+    LMQGModelConfig,
+    OpenAIModelConfig,
+)
 
 
 class ModelServerFactory:
@@ -59,11 +63,11 @@ class AbsModelServer:
         super().__init_subclass__()
         ModelServerFactory.register(cls.__name__, cls)
 
-    def __init__(self, model_config: ModelConfig) -> None:
+    def __init__(self, model_config: Dict[str, Any]) -> None:
         """Initialize AbsModelServer class.
 
         Args:
-            model_config (ModelConfig): Model config.
+            model_config (Dict[str, Any]): Model config.
         """
         self._model_config = model_config
 
@@ -104,11 +108,12 @@ class AbsModelServer:
 class OpenAIModelServer(AbsModelServer):
     """OpenAI Model Server Class."""
 
-    def __init__(self, model_config: ModelConfig) -> None:
+    def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing openai package
         from openai import OpenAI  # pylint: disable=import-outside-toplevel
 
         super().__init__(model_config)
+        self._model_config = OpenAIModelConfig(**self._model_config)
         self._client = OpenAI()
 
     def _preprocess(self, data: str) -> str:
@@ -159,7 +164,7 @@ class OpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    def __init__(self, model_config: ModelConfig) -> None:
+    def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
         from transformers import pipeline  # pylint: disable=import-outside-toplevel
         from transformers import (  # pylint: disable=import-outside-toplevel
@@ -168,6 +173,7 @@ class HuggingfaceModelServer(AbsModelServer):
         )
 
         super().__init__(model_config)
+        self._model_config = HuggingfaceModelConfig(**self._model_config)
 
         # TODO: update config to use model_config
         tokenizer = AutoTokenizer.from_pretrained(
@@ -234,11 +240,12 @@ class HuggingfaceModelServer(AbsModelServer):
 class LMQGModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    def __init__(self, model_config: ModelConfig) -> None:
+    def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
         from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
 
         super().__init__(model_config)
+        self._model_config = LMQGModelConfig(**self._model_config)
 
         self._model = TransformersQG(
             model=self._model_config.model_name, max_length=1024
