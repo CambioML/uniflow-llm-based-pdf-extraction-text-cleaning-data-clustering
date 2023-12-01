@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Mapping, Tuple
 from tqdm.auto import tqdm
 
 from uniflow.config import Config
-from uniflow.flow.flow import Flow
 from uniflow.flow.flow_factory import FlowFactory
 from uniflow.op.op import OpScope
 

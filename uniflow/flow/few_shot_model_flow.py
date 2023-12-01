@@ -2,7 +2,6 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.flow.flow import Flow
-from uniflow.model.config import ModelConfig
 from uniflow.model.model import FewShotModel
 from uniflow.node.node import Node
 from uniflow.op.model.model_op import ModelOp
