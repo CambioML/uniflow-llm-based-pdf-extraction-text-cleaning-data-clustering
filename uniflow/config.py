@@ -3,13 +3,9 @@
 from dataclasses import dataclass, field
 from typing import Dict
 
-from uniflow.model.config import (
-    HuggingfaceModelConfig,
-    LMQGModelConfig,
-    ModelConfig,
-    OpenAIJsonModelConfig,
-    OpenAIModelConfig,
-)
+from uniflow.model.config import (HuggingfaceModelConfig, LMQGModelConfig,
+                                  ModelConfig, OpenAIJsonModelConfig,
+                                  OpenAIModelConfig)
 
 
 @dataclass

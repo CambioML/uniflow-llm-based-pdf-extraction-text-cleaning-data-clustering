@@ -2,11 +2,8 @@
 
 from typing import Any, Dict, List
 
-from uniflow.model.config import (
-    HuggingfaceModelConfig,
-    LMQGModelConfig,
-    OpenAIModelConfig,
-)
+from uniflow.model.config import (HuggingfaceModelConfig, LMQGModelConfig,
+                                  OpenAIModelConfig)
 
 
 class ModelServerFactory:
@@ -166,11 +163,10 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from transformers import pipeline  # pylint: disable=import-outside-toplevel
+        from transformers import \
+            pipeline  # pylint: disable=import-outside-toplevel
         from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM,
-            AutoTokenizer,
-        )
+            AutoModelForCausalLM, AutoTokenizer)
 
         super().__init__(model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
@@ -242,7 +238,8 @@ class LMQGModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
+        from lmqg import \
+            TransformersQG  # pylint: disable=import-outside-toplevel
 
         super().__init__(model_config)
         self._model_config = LMQGModelConfig(**self._model_config)

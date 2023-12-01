@@ -1,12 +1,14 @@
+"""Op module for uniflow."""
 import abc
 from typing import Sequence
 
 import uniflow.op.utils as utils
-
 from uniflow.node.node import Node
 
 
 class OpScope:
+    """Op scope class for uniflow."""
+
     def __init__(self, name: str) -> None:
         """Op scope class constructor for uniflow.
 
@@ -25,6 +27,8 @@ class OpScope:
 
 
 class Op(abc.ABC):
+    """Op class for uniflow."""
+
     def __init__(self, name: str) -> None:
         """Constructor of op class for uniflow.
 

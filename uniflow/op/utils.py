@@ -1,6 +1,6 @@
 """ops utils"""
-import os
 import logging
+import os
 
 OPS_NAME = set()
 OPS_SCOPE = []
@@ -39,8 +39,8 @@ def check_path_exists(save_path: str) -> None:
         try:
             # Create the directory and any missing parent directories
             os.makedirs(save_path)
-            logger.info(f"Directory '{save_path}' created successfully.")
+            logger.info("Directory %s created successfully.", save_path)
         except OSError as e:
-            logger.info(f"Error creating directory '{save_path}': {e}")
+            logger.info("Error creating directory %s: %s", save_path, e)
     else:
-        logger.info(f"Directory '{save_path}' already exists.")
+        logger.info("Directory %s already exists.", save_path)
