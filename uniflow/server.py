@@ -49,8 +49,14 @@ class Server:
         Returns:
             Tuple[int, Mapping[str, Any]]: Index of the output, Output from the flow
         """
-        f = self._flow_queue.get()
-        output = f(input)
+        f = self._flow_queue.get(timeout=0)
+        ###########################################
+        # this is very import to prevent deadlock #
+        ###########################################
+        try:
+            output = f(input)
+        except Exception as e:
+            output = {"error": str(e)}
         self._flow_queue.put(f)
         return (index, output)
 
