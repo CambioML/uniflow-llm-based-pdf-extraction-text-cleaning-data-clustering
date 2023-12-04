@@ -16,18 +16,18 @@ class Model:
 
     def __init__(
         self,
-        model_name: str,
-        model_config: ModelConfig,
+        model_server: str,
         few_shot_template: Dict[str, Any],
+        model_config: Dict[str, Any],
     ) -> None:
         """Initialize Model class.
 
         Args:
-            model_name (str): Model name.
-            model_config (ModelConfig): Model config.
+            model_server (str): Model server name.
             few_shot_template (Dict[str, Any]): Few shot template.
+            model_config (Dict[str, Any]): Model config.
         """
-        model_server_cls = ModelServerFactory.get(model_name)
+        model_server_cls = ModelServerFactory.get(model_server)
         self._model_server = model_server_cls(model_config)
         self._few_shot_template = few_shot_template
 
@@ -82,11 +82,11 @@ class FewShotModel(Model):
 
     def __init__(
         self,
-        model_name: str,
+        model_server: str,
         model_config: ModelConfig,
         few_shot_template: Dict[str, Any],
     ) -> None:
-        super().__init__(model_name, model_config, few_shot_template)
+        super().__init__(model_server, few_shot_template, model_config)
         assert len(few_shot_template) == 2, "Few shot template must have 2 keys"
         # get keys from few shot template examples
         self._template_keys = list(few_shot_template.keys())

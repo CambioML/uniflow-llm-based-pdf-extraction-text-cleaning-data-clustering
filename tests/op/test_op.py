@@ -1,10 +1,10 @@
-from typing import Sequence
 import unittest
+from typing import Sequence
 from unittest.mock import MagicMock, patch
 
-from uniflow.op.op import Op
 import uniflow.op.utils as utils
 from uniflow.node.node import Node
+from uniflow.op.op import Op
 
 
 class DummyOp(Op):
@@ -47,8 +47,8 @@ class TestOp(unittest.TestCase):
         self.assertEqual(self.op.name(), self.op_name)
 
     def test_unique_name(self):
-        self.assertEqual(self.op.unique_name(), f"{self.op_name}:1")
-        self.assertEqual(self.op.unique_name(), f"{self.op_name}:2")
+        self.assertEqual(self.op.unique_name(), f"{self.op_name}_1")
+        self.assertEqual(self.op.unique_name(), f"{self.op_name}_2")
 
     def test_call(self):
         node = Node(name="node1", value_dict={"a": 1})

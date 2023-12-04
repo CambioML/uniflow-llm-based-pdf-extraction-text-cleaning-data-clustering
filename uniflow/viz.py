@@ -1,7 +1,6 @@
 """Module for visualizing the results of the computational graph."""
 
 from graphviz import Digraph
-from uniflow.node.node import Node
 
 
 class Viz:

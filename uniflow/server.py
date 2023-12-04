@@ -2,30 +2,40 @@
 
 from concurrent import futures
 from queue import Queue
-from typing import Any, List, Mapping, Tuple
+from typing import Any, Dict, List, Mapping, Tuple
 
 from tqdm.auto import tqdm
 
-from uniflow.flow.flow import Flow
+from uniflow.config import Config
+from uniflow.flow.flow_factory import FlowFactory
 from uniflow.op.op import OpScope
 
 
 class Server:
     """Uniflow Server"""
 
-    def __init__(self, flow_cls: Flow, num_thread: int = 2) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         """Server constructor
 
         Args:
-            flow_cls (Flow): Flow class to run
-            num_thread (int, optional): Number of threads to run the flow. Defaults to 2.
+            config (Flow): Flow class to run
+            num_thread (int, optional): Number of threads to run the flow. Defaults to 1.
         """
-        self._flow_cls = flow_cls
-        self._num_thread = num_thread
+        # convert from dict to config for type checking
+        self._config = Config(**config)
+
+        self._flow_cls = FlowFactory.get(self._config.flow_name)
+        self._num_thread = self._config.num_thread
         self._flow_queue = Queue(self._num_thread)
         for i in range(self._num_thread):
             with OpScope(name="thread_" + str(i)):
-                self._flow_queue.put(self._flow_cls())
+                self._flow_queue.put(
+                    self._flow_cls(
+                        self._config.model_server,
+                        self._config.few_shot_template,
+                        self._config.model_config,
+                    )
+                )
 
     def _run_flow(
         self, input: Mapping[str, Any], index: int
@@ -39,8 +49,14 @@ class Server:
         Returns:
             Tuple[int, Mapping[str, Any]]: Index of the output, Output from the flow
         """
-        f = self._flow_queue.get()
-        output = f(input)
+        f = self._flow_queue.get(timeout=0)
+        ###########################################
+        # this is very import to prevent deadlock #
+        ###########################################
+        try:
+            output = f(input)
+        except Exception as e:
+            output = {"error": str(e)}
         self._flow_queue.put(f)
         return (index, output)
 
