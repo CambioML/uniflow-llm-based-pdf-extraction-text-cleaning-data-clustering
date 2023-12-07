@@ -32,7 +32,7 @@ class Server:
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
-                        self._config.model_server,
+                        self._config.model_config["model_server"],
                         self._config.few_shot_template,
                         self._config.model_config,
                     )
