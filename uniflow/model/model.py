@@ -2,17 +2,17 @@
 import copy
 import json
 import logging
-import re
 from typing import Any, Dict, List
 
+from uniflow.model.config import ModelConfig
 from uniflow.model.server import ModelServerFactory
+from uniflow.schema import ContextQA
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 RESPONSE = "response"
 ERROR = "error"
-MAX_ATTEMPTS = 3
 
 
 class Model:
@@ -146,11 +146,43 @@ class FewShotModel(Model):
                 else:
                     output_strings.append(f"{key}: {value}")
 
-            # Join all the strings into one large string, separated by new lines
-            output_string = "\n".join(output_strings)
-            output.append(output_string)
-        return output
+        # Join all the strings into one large string, separated by new lines
+        output_string = "\n".join(output_strings)
+        return output_string
 
+    # def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
+    # def filter_data(d: str) -> Dict[str, str]:
+    #     """Filter data."""
+    #     pattern = "|".join(map(re.escape, self._example_keys))
+
+    #     segments = [
+    #         segment.strip(" :\n") for segment in re.split(pattern, d.lower())
+    #     ]
+
+    #     result = dict()
+    #     result.update(self._data)
+    #     result.update(
+    #         {
+    #             self._example_keys[-2]: segments[-2],
+    #             self._example_keys[-1]: segments[-1],
+    #         }
+    #     )
+    #     return result
+
+    # error_count = 0
+    # output_list = []
+
+    # for d in data:
+    #     try:
+    #         output_list.append(filter_data(d))
+    #     except Exception:
+    #         error_count += 1
+    #         continue
+
+    # return {
+    #     RESPONSE: output_list,
+    #     ERROR: f"Failed to deserialize {error_count} examples",
+    # }
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         def filter_data(d: str) -> Dict[str, str]:
             """Filter data."""
@@ -161,9 +193,7 @@ class FewShotModel(Model):
             ]
 
             result = dict()
-            # TODO: this is for OpenAI model which does not support batch
-            # update to not use 0 index only
-            result.update(self._data[0])
+            result.update(self._data)
             result.update(
                 {
                     self._example_keys[-2]: segments[-2],
@@ -174,17 +204,28 @@ class FewShotModel(Model):
 
         error_count = 0
         output_list = []
+        error_count = 0
+        error_list = []
+        error_context = []
 
         for d in data:
             try:
-                output_list.append(filter_data(d))
-            except Exception:
+                model_dict = ContextQA.parse_raw(d).dict()
+                output_list.append(model_dict)
+            except ValidationError as e:
                 error_count += 1
+                error_context.append(d)
+                error_list.append(str(e))
                 continue
-
+        if error_count == 0:
+            return {
+                RESPONSE: output_list,
+            }
         return {
             RESPONSE: output_list,
-            ERROR: f"No Error" if error_count==0 else f"Failed to deserialize {error_count} examples",
+            ERROR: f"No Error"
+            if error_count == 0
+            else f"Failed to deserialize {error_count} examples",
         }
 
 
@@ -200,12 +241,9 @@ class JsonModel(Model):
         Returns:
             List[str]: Serialized data.
         """
-        few_shot_data = []
-        for d in data:
-            few_shot_template_copy = copy.deepcopy(self._few_shot_template)
-            few_shot_template_copy.update(d)
-            few_shot_data.append(few_shot_template_copy)
-        return [json.dumps(d) for d in few_shot_data]
+        few_shot_template = copy.deepcopy(self._few_shot_template)
+        few_shot_template.update(data.dict())
+        return json.dumps(few_shot_template)
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
@@ -218,17 +256,27 @@ class JsonModel(Model):
         """
         output_list = []
         error_count = 0
+        error_list = []
+        error_context = []
 
         for d in data:
             try:
-                output_list.append(json.loads(d))
-            except Exception:
+                model_dict = ContextQA.parse_raw(d).dict()
+                output_list.append(model_dict)
+            except ValidationError as e:
                 error_count += 1
+                error_context.append(d)
+                error_list.append(str(e))
                 continue
+        if error_count == 0:
+            return {
+                RESPONSE: output_list,
+            }
         return {
             RESPONSE: output_list,
-            ERROR: f"No Error" if error_count==0 else f"Failed to deserialize {error_count} examples",
-
+            ERROR: f"No Error"
+            if error_count == 0
+            else f"Failed to deserialize {error_count} examples",
         }
 
 
