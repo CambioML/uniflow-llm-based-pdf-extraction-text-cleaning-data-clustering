@@ -40,6 +40,7 @@ class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
     model_name: str = "mistralai/Mistral-7B-Instruct-v0.1"
+    batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
 
 
@@ -48,4 +49,5 @@ class LMQGModelConfig(ModelConfig):
     """LMQG Model Config Class."""
 
     model_name: str = "lmqg/t5-base-squad-qg-ae"
+    batch_size: int = 1
     model_server: str = "LMQGModelServer"
