@@ -11,6 +11,7 @@ from uniflow.model.config import (
     OpenAIJsonModelConfig,
     OpenAIModelConfig,
 )
+from uniflow.schema import FewShotTemplate
 
 
 @dataclass
@@ -49,22 +50,7 @@ class OpenAIFewShotConfig:
 
     flow_name: str = "FewShotModelFlow"
     few_shot_template: Dict[str, str] = field(
-        default_factory=lambda: {
-            "instruction": """Generate one question and its corresponding answer based on the context.
-    Following the format of the examples below. The response must include original context, question, and answer.""",
-            "examples": [
-                {
-                    "context": """The quick brown fox jumps over the lazy dog.""",
-                    "question": """What is the color of the fox?""",
-                    "answer": """brown.""",
-                },
-                {
-                    "context": """The quick brown fox jumps over the lazy black dog.""",
-                    "question": """What is the color of the dog?""",
-                    "answer": """black.""",
-                },
-            ],
-        }
+        default_factory=lambda: FewShotTemplate().dict()
     )
     num_thread: int = 1
     model_config: ModelConfig = OpenAIModelConfig()
