@@ -4,7 +4,6 @@ import json
 import re
 from typing import Any, Dict, List
 
-from uniflow.model.config import ModelConfig
 from uniflow.model.server import ModelServerFactory
 
 RESPONSE = "response"
@@ -31,22 +30,32 @@ class Model:
         self._model_server = model_server_cls(model_config)
         self._few_shot_template = few_shot_template
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
-        output_strings = []
+    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
+        """Serialize data.
 
-        # Iterate over each key-value pair in the dictionary
-        for key, value in data.items():
-            if isinstance(value, list):
-                # Special handling for the "examples" list
-                for example in value:
-                    for ex_key, ex_value in example.items():
-                        output_strings.append(f"{ex_key}: {ex_value}")
-            else:
-                output_strings.append(f"{key}: {value}")
+        Args:
+            data (List[Dict[str, Any]]): Data to serialize.
 
-        # Join all the strings into one large string, separated by new lines
-        output_string = "\n".join(output_strings)
-        return output_string
+        Returns:
+            List[str]: Serialized data.
+        """
+        output = []
+        for d in data:
+            output_strings = []
+            # Iterate over each key-value pair in the dictionary
+            for key, value in d.items():
+                if isinstance(value, list):
+                    # Special handling for the "examples" list
+                    for example in value:
+                        for ex_key, ex_value in example.items():
+                            output_strings.append(f"{ex_key}: {ex_value}")
+                else:
+                    output_strings.append(f"{key}: {value}")
+
+            # Join all the strings into one large string, separated by new lines
+            output_string = "\n".join(output_strings)
+            output.append(output_string)
+        return output
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
@@ -55,21 +64,21 @@ class Model:
             data (List[str]): Data to deserialize.
 
         Returns:
-            Dict[str, Any]: Deserialized data.
+            List[Dict[str, Any]]: Deserialized data.
         """
         return {
             RESPONSE: data,
             ERROR: "Failed to deserialize 0 examples",
         }
 
-    def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Run model.
 
         Args:
-            data (Dict[str, Any]): Data to run.
+            data (List[Dict[str, Any]]): Data to run.
 
         Returns:
-            Dict[str, Any]: Output data.
+            List[Dict[str, Any]]: Output data.
         """
         data = self._serialize(data)
         data = self._model_server(data)
@@ -83,9 +92,16 @@ class FewShotModel(Model):
     def __init__(
         self,
         model_server: str,
-        model_config: ModelConfig,
         few_shot_template: Dict[str, Any],
+        model_config: Dict[str, Any],
     ) -> None:
+        """Initialize Few Shot Model class.
+
+        Args:
+            model_server (str): Model server name.
+            few_shot_template (Dict[str, Any]): Few shot template.
+            model_config (Dict[str, Any]): Model config.
+        """
         super().__init__(model_server, few_shot_template, model_config)
         assert len(few_shot_template) == 2, "Few shot template must have 2 keys"
         # get keys from few shot template examples
@@ -93,34 +109,36 @@ class FewShotModel(Model):
         self._example_keys = list(few_shot_template[self._template_keys[1]][0].keys())
         self._data = dict()
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
+    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
         """Serialize data.
 
         Args:
-            data (Dict[str, Any]): Data to serialize.
+            data (List[Dict[str, Any]]): Data to serialize.
 
         Returns:
-            str: Serialized data.
+            List[str]: Serialized data.
         """
         self._data = data
-        few_shot_template = copy.deepcopy(self._few_shot_template)
-        few_shot_template[self._template_keys[1]].append(data)
 
-        output_strings = []
+        output = []
+        for d in data:
+            few_shot_template = copy.deepcopy(self._few_shot_template)
+            few_shot_template[self._template_keys[1]].append(d)
+            output_strings = []
+            # Iterate over each key-value pair in the dictionary
+            for key, value in few_shot_template.items():
+                if isinstance(value, list):
+                    # Special handling for the "examples" list
+                    for example in value:
+                        for ex_key, ex_value in example.items():
+                            output_strings.append(f"{ex_key}: {ex_value}")
+                else:
+                    output_strings.append(f"{key}: {value}")
 
-        # Iterate over each key-value pair in the dictionary
-        for key, value in few_shot_template.items():
-            if isinstance(value, list):
-                # Special handling for the "examples" list
-                for example in value:
-                    for ex_key, ex_value in example.items():
-                        output_strings.append(f"{ex_key}: {ex_value}")
-            else:
-                output_strings.append(f"{key}: {value}")
-
-        # Join all the strings into one large string, separated by new lines
-        output_string = "\n".join(output_strings)
-        return output_string
+            # Join all the strings into one large string, separated by new lines
+            output_string = "\n".join(output_strings)
+            output.append(output_string)
+        return output
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         def filter_data(d: str) -> Dict[str, str]:
@@ -132,7 +150,9 @@ class FewShotModel(Model):
             ]
 
             result = dict()
-            result.update(self._data)
+            # TODO: this is for OpenAI model which does not support batch
+            # update to not use 0 index only
+            result.update(self._data[0])
             result.update(
                 {
                     self._example_keys[-2]: segments[-2],
@@ -160,18 +180,21 @@ class FewShotModel(Model):
 class JsonModel(Model):
     """Json Model Class."""
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
+    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
         """Serialize data.
 
         Args:
-            data (Dict[str, Any]): Data to serialize.
+            data (List[Dict[str, Any]]): Data to serialize.
 
         Returns:
-            str: Serialized data.
+            List[str]: Serialized data.
         """
-        few_shot_template = copy.deepcopy(self._few_shot_template)
-        few_shot_template.update(data)
-        return json.dumps(few_shot_template)
+        few_shot_data = []
+        for d in data:
+            few_shot_template_copy = copy.deepcopy(self._few_shot_template)
+            few_shot_template_copy.update(d)
+            few_shot_data.append(few_shot_template_copy)
+        return [json.dumps(d) for d in few_shot_data]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
@@ -180,7 +203,7 @@ class JsonModel(Model):
             data (List[str]): Data to deserialize.
 
         Returns:
-            Dict[str, Any]: Deserialized data.
+            List[Dict[str, Any]]: Deserialized data.
         """
         output_list = []
         error_count = 0
@@ -203,19 +226,29 @@ class OpenAIJsonModel(JsonModel):
     This is a bit strange because OpenAI's JSON API doesn't return JSON.
     """
 
-    def _serialize(self, data: Dict[str, Any]) -> str:
-        output_strings = []
+    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
+        """Serialize data.
 
-        # Iterate over each key-value pair in the dictionary
-        for key, value in data.items():
-            if isinstance(value, list):
-                # Special handling for the "examples" list
-                for example in value:
-                    for ex_key, ex_value in example.items():
-                        output_strings.append(f"{ex_key}: {ex_value}")
-            else:
-                output_strings.append(f"{key}: {value}")
+        Args:
+            data (List[Dict[str, Any]]): Data to serialize.
 
-        # Join all the strings into one large string, separated by new lines
-        output_string = "\n".join(output_strings)
-        return output_string
+        Returns:
+            List[str]: Serialized data.
+        """
+        output = []
+        for d in data:
+            output_strings = []
+            # Iterate over each key-value pair in the dictionary
+            for key, value in d.items():
+                if isinstance(value, list):
+                    # Special handling for the "examples" list
+                    for example in value:
+                        for ex_key, ex_value in example.items():
+                            output_strings.append(f"{ex_key}: {ex_value}")
+                else:
+                    output_strings.append(f"{key}: {value}")
+
+            # Join all the strings into one large string, separated by new lines
+            output_string = "\n".join(output_strings)
+            output.append(output_string)
+        return output

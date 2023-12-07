@@ -2,8 +2,11 @@
 
 from typing import Any, Dict, List
 
-from uniflow.model.config import (HuggingfaceModelConfig, LMQGModelConfig,
-                                  OpenAIModelConfig)
+from uniflow.model.config import (
+    HuggingfaceModelConfig,
+    LMQGModelConfig,
+    OpenAIModelConfig,
+)
 
 
 class ModelServerFactory:
@@ -113,18 +116,18 @@ class OpenAIModelServer(AbsModelServer):
         self._model_config = OpenAIModelConfig(**self._model_config)
         self._client = OpenAI()
 
-    def _preprocess(self, data: str) -> str:
+    def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
 
         Args:
-            data (str): Data to preprocess.
+            data (List[str]): Data to preprocess.
 
         Returns:
-            str: Preprocessed data.
+            List[str]: Preprocessed data.
         """
         return data
 
-    def _postprocess(self, data: str) -> List[str]:
+    def _postprocess(self, data: List[str]) -> List[str]:
         """Postprocess data.
 
         Args:
@@ -133,10 +136,12 @@ class OpenAIModelServer(AbsModelServer):
         Returns:
             List[str]: Postprocessed data.
         """
-        return [c.message.content for c in data.choices]
+        return [c.message.content for d in data for c in d.choices]
 
-    def __call__(self, data: str) -> str:
+    def __call__(self, data: List[str]) -> List[str]:
         """Run model.
+
+        OpenAI completions API does not support batch inference.
 
         Args:
             data (str): Data to run.
@@ -145,16 +150,20 @@ class OpenAIModelServer(AbsModelServer):
             str: Output data.
         """
         data = self._preprocess(data)
-        data = self._client.chat.completions.create(
-            model=self._model_config.model_name,
-            messages=[
-                {"role": "user", "content": data},
-            ],
-            n=self._model_config.num_call,
-            temperature=self._model_config.temperature,
-            response_format=self._model_config.response_format,
-        )
-        data = self._postprocess(data)
+        inference_data = []
+        for d in data:
+            inference_data.append(
+                self._client.chat.completions.create(
+                    model=self._model_config.model_name,
+                    messages=[
+                        {"role": "user", "content": d},
+                    ],
+                    n=self._model_config.num_call,
+                    temperature=self._model_config.temperature,
+                    response_format=self._model_config.response_format,
+                )
+            )
+        data = self._postprocess(inference_data)
         return data
 
 
@@ -163,15 +172,15 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from transformers import \
-            pipeline  # pylint: disable=import-outside-toplevel
+        from transformers import pipeline  # pylint: disable=import-outside-toplevel
         from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM, AutoTokenizer)
+            AutoModelForCausalLM,
+            AutoTokenizer,
+        )
 
         super().__init__(model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
 
-        # TODO: update config to use model_config
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
         )
@@ -196,36 +205,36 @@ class HuggingfaceModelServer(AbsModelServer):
             pad_token_id=tokenizer.pad_token_id,
         )
 
-    def _preprocess(self, data: str) -> str:
+    def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
 
         Args:
-            data (str): Data to preprocess.
+            data (List[str]): Data to preprocess.
 
         Returns:
-            str: Preprocessed data.
+            List[str]: Preprocessed data.
         """
         return data
 
-    def _postprocess(self, data: str) -> List[str]:
+    def _postprocess(self, data: List[str]) -> List[str]:
         """Postprocess data.
 
         Args:
-            data (str): Data to postprocess.
+            data (List[str]): Data to postprocess.
 
         Returns:
             List[str]: Postprocessed data.
         """
-        return [d["generated_text"] for d in data]
+        return [d["generated_text"] for output_list in data for d in output_list]
 
-    def __call__(self, data: str) -> str:
+    def __call__(self, data: List[str]) -> List[str]:
         """Run model.
 
         Args:
-            data (str): Data to run.
+            data (List[str]): Data to run.
 
         Returns:
-            str: Output data.
+            List[str]: Output data.
         """
         data = self._preprocess(data)
         data = self._pipeline(data)
@@ -238,8 +247,7 @@ class LMQGModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from lmqg import \
-            TransformersQG  # pylint: disable=import-outside-toplevel
+        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
 
         super().__init__(model_config)
         self._model_config = LMQGModelConfig(**self._model_config)
@@ -248,36 +256,36 @@ class LMQGModelServer(AbsModelServer):
             model=self._model_config.model_name, max_length=1024
         )
 
-    def _preprocess(self, data: str) -> str:
+    def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
 
         Args:
-            data (str): Data to preprocess.
+            data (List[str]): Data to preprocess.
 
         Returns:
-            str: Preprocessed data.
+            List[str]: Preprocessed data.
         """
         return data
 
-    def _postprocess(self, data: str) -> List[str]:
+    def _postprocess(self, data: List[str]) -> List[str]:
         """Postprocess data.
 
         Args:
-            data (str): Data to postprocess.
+            data (List[str]): Data to postprocess.
 
         Returns:
             List[str]: Postprocessed data.
         """
         return data
 
-    def __call__(self, data: str) -> str:
+    def __call__(self, data: List[str]) -> List[str]:
         """Run model.
 
         Args:
-            data (str): Data to run.
+            data (List[str]): Data to run.
 
         Returns:
-            str: Output data.
+            List[str]: Output data.
         """
         data = self._preprocess(data)
         data = self._model.generate_qa(data)
