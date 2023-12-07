@@ -1,14 +1,19 @@
 """Model Module."""
 import copy
 import json
+import logging
 import re
 from typing import Any, Dict, List
 
 from uniflow.model.config import ModelConfig
 from uniflow.model.server import ModelServerFactory
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
 RESPONSE = "response"
 ERROR = "error"
+MAX_ATTEMPTS = 3
 
 
 class Model:
@@ -71,9 +76,15 @@ class Model:
         Returns:
             Dict[str, Any]: Output data.
         """
-        data = self._serialize(data)
-        data = self._model_server(data)
-        data = self._deserialize(data)
+        serialized_data = self._serialize(data)
+
+        for i in range(MAX_ATTEMPTS):
+            data = self._model_server(serialized_data)
+            data = self._deserialize(data)
+            if data[RESPONSE]:
+                break
+            logger.info("Attempt %s failed, retrying...", i + 1)
+
         return data
 
 
