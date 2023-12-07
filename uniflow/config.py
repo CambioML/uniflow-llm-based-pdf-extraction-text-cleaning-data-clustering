@@ -3,9 +3,13 @@
 from dataclasses import dataclass, field
 from typing import Dict
 
-from uniflow.model.config import (HuggingfaceModelConfig, LMQGModelConfig,
-                                  ModelConfig, OpenAIJsonModelConfig,
-                                  OpenAIModelConfig)
+from uniflow.model.config import (
+    HuggingfaceModelConfig,
+    LMQGModelConfig,
+    ModelConfig,
+    OpenAIJsonModelConfig,
+    OpenAIModelConfig,
+)
 
 
 @dataclass
@@ -13,7 +17,6 @@ class Config:
     """Flow Config Class."""
 
     flow_name: str = "ModelFlow"
-    model_server: str = "OpenAIModelServer"
     few_shot_template: Dict[str, str] = field(default_factory=lambda: {})
     num_thread: int = 1
     model_config: ModelConfig = ModelConfig()
@@ -24,7 +27,6 @@ class OpenAIConfig:
     """Flow Config Class."""
 
     flow_name: str = "ModelFlow"
-    model_server: str = "OpenAIModelServer"
     few_shot_template: Dict[str, str] = field(default_factory=lambda: {})
     num_thread: int = 1
     model_config: ModelConfig = OpenAIModelConfig()
@@ -35,7 +37,6 @@ class OpenAIJsonConfig:
     """Flow Config Class."""
 
     flow_name: str = "OpenAIJsonModelFlow"
-    model_server: str = "OpenAIModelServer"
     few_shot_template: Dict[str, str] = field(default_factory=lambda: {})
     num_thread: int = 1
     model_config: ModelConfig = OpenAIJsonModelConfig()
@@ -46,7 +47,6 @@ class OpenAIFewShotConfig:
     """Flow Config Class."""
 
     flow_name: str = "FewShotModelFlow"
-    model_server: str = "OpenAIModelServer"
     few_shot_template: Dict[str, str] = field(
         default_factory=lambda: {
             "instruction": """Generate one question and its corresponding answer based on the context.
@@ -74,7 +74,6 @@ class HuggingfaceConfig:
     """Huggingface Config Class."""
 
     flow_name: str = "HuggingFaceModelFlow"
-    model_server: str = "HuggingfaceModelServer"
     few_shot_template: Dict[str, str] = field(default_factory=lambda: {})
     num_thread: int = 1
     model_config: ModelConfig = HuggingfaceModelConfig()
@@ -85,7 +84,6 @@ class LMQGConfig:
     """LMQG Config Class."""
 
     flow_name: str = "LMQGModelFlow"
-    model_server: str = "LMQGModelServer"
     few_shot_template: Dict[str, str] = field(default_factory=lambda: {})
     num_thread: int = 1
     model_config: ModelConfig = LMQGModelConfig()
