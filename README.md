@@ -6,9 +6,7 @@
   <a href="https://join.slack.com/t/cambiomlworkspace/shared_invite/zt-1zes33rmt-20Rag043uvExUaUdvt5_xQ"><img src="https://badgen.net/badge/Join/Community/cyan?icon=slack" alt="Slack" /></a>
 </p>
 
-`uniflow` is a unified interface to solve two problems both before and after LLM training:
-1. __Data Preparation__: Generate synthetic data from `json` input.
-1. __AutoRater (In Development)__: Automatically rate the quality of the generated data by different LLM models.
+`uniflow` is a unified interface to solve data augmentation problem for LLM training.
 
 Built by [CambioML](https://www.cambioml.com/).
 
