@@ -193,6 +193,8 @@ class HuggingfaceModelServer(AbsModelServer):
             load_in_4bit=True,
         )
 
+        # explicitly set batch_size for pipeline
+        # for batch inference.
         self._pipeline = pipeline(
             "text-generation",
             model=model,
@@ -203,6 +205,7 @@ class HuggingfaceModelServer(AbsModelServer):
             repetition_penalty=1.2,
             eos_token_id=tokenizer.eos_token_id,
             pad_token_id=tokenizer.pad_token_id,
+            batch_size=self._model_config.batch_size,
         )
 
     def _preprocess(self, data: List[str]) -> List[str]:
