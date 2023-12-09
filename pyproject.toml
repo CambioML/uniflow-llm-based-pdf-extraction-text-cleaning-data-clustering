@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "uniflow"
 version = "0.0.7"
-description = "Unified flow interface for synthetic data generation and many more"
+description = "Unified flow interface for data augmentation for LLM training."
 authors = ["CambioML <wanwanaiai45@gmail.com>"]
 maintainers = ["Rachel Hu <goldpiggy@berkeley.edu>"]
 license = "Apache License"
