@@ -283,7 +283,7 @@ conda create -n uniflow python=3.10 -y
 conda activate uniflow  # some OS requires `source activate uniflow`
 ```
 
-Next, install the compatible [pytorch based on your OS](https://pytorch.org/get-started/locally/). 
+Next, install the compatible pytorch based on your OS. 
 - If you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
     ```
     pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
