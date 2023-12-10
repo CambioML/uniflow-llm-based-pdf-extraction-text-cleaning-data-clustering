@@ -1,4 +1,3 @@
-"""flow __init__ Module."""
-
-from uniflow.flow.extract import *  # noqa: F401, F403
-from uniflow.flow.transform import *  # noqa: F401, F403
+"""Flow __init__ module."""
+# this register all possible flow into FlowFactory through
+# FlowFactory.register(cls.__name__, cls) in Flow __init_subclass__

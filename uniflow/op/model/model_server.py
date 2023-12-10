@@ -1,16 +1,12 @@
-"""
-All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
-"""
+"""Model Server Factory"""
 
 from typing import Any, Dict, List
 
-from uniflow.op.model.model_config import (HuggingfaceModelConfig,
-                                           LMQGModelConfig, NougatModelConfig,
-                                           OpenAIModelConfig)
-
-###############################################################################
-#                             All Model Servers                               #
-###############################################################################
+from uniflow.model.config import (
+    HuggingfaceModelConfig,
+    LMQGModelConfig,
+    OpenAIModelConfig,
+)
 
 
 class ModelServerFactory:
@@ -176,10 +172,11 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from transformers import \
-            pipeline  # pylint: disable=import-outside-toplevel
+        from transformers import pipeline  # pylint: disable=import-outside-toplevel
         from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM, AutoTokenizer)
+            AutoModelForCausalLM,
+            AutoTokenizer,
+        )
 
         super().__init__(model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
@@ -253,8 +250,7 @@ class LMQGModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from lmqg import \
-            TransformersQG  # pylint: disable=import-outside-toplevel
+        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
 
         super().__init__(model_config)
         self._model_config = LMQGModelConfig(**self._model_config)
@@ -298,102 +294,3 @@ class LMQGModelServer(AbsModelServer):
         data = self._model.generate_qa(data)
         data = self._postprocess(data)
         return data
-
-
-class NougatModelServer(AbsModelServer):
-    """Nougat Model Server Class."""
-
-    def __init__(self, model_config: Dict[str, Any]) -> None:
-        # import in class level to avoid installing nougat package
-        try:
-            from nougat import \
-                NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import \
-                get_checkpoint  # pylint: disable=import-outside-toplevel
-            from nougat.utils.device import \
-                move_to_device  # pylint: disable=import-outside-toplevel
-        except ModuleNotFoundError as exc:
-            raise ModuleNotFoundError(
-                "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
-            ) from exc
-
-        super().__init__(model_config)
-        self._model_config = NougatModelConfig(**self._model_config)
-        checkpoint = get_checkpoint(None, model_tag=self._model_config.model_name)
-        self.model = NougatModel.from_pretrained(checkpoint)
-        self.model = move_to_device(
-            self.model, bf16=False, cuda=self._model_config.batch_size > 0
-        )
-        self.model.eval()
-
-    def _preprocess(self, data: str) -> List[str]:
-        """Preprocess data.
-
-        Args:
-            data (List[str]): Data to preprocess.
-
-        Returns:
-            List[str]: Preprocessed data.
-        """
-        return data
-
-    def _postprocess(self, data: List[str]) -> List[str]:
-        """Postprocess data.
-
-        Args:
-            data (List[str]): Data to postprocess.
-
-        Returns:
-            List[str]: Postprocessed data.
-        """
-        return [d["generated_text"] for output_list in data for d in output_list]
-
-    def __call__(self, data: List[str]) -> List[str]:
-        """Run model.
-
-        Args:
-            data (List[str]): Data to run.
-
-        Returns:
-            List[str]: Output data.
-        """
-        from nougat.postprocessing import \
-            markdown_compatible  # pylint: disable=import-outside-toplevel
-        from nougat.utils.dataset import \
-            LazyDataset  # pylint: disable=import-outside-toplevel
-        from torch.utils.data import (  # pylint: disable=import-outside-toplevel
-            ConcatDataset, DataLoader)
-
-        outs = []
-        for pdf in data:
-            dataset = LazyDataset(
-                pdf,
-                partial(self.model.encoder.prepare_input, random_padding=False),
-                None,
-            )
-            dataloader = DataLoader(
-                ConcatDataset([dataset]),
-                batch_size=1,
-                shuffle=False,
-                collate_fn=LazyDataset.ignore_none_collate,
-            )
-            predictions = []
-            page_num = 0
-            for i, (sample, is_last_page) in enumerate(dataloader):
-                model_output = self.model.inference(
-                    image_tensors=sample, early_stopping=False
-                )
-                # check if model output is faulty
-                for j, output in enumerate(model_output["predictions"]):
-                    page_num += 1
-                    if output.strip() == "[MISSING_PAGE_POST]":
-                        # uncaught repetitions -- most likely empty page
-                        predictions.append(f"\n\n[MISSING_PAGE_EMPTY:{page_num}]\n\n")
-                    else:
-                        output = markdown_compatible(output)
-                        predictions.append(output)
-                    if is_last_page[j]:
-                        out = "".join(predictions).strip()
-                        out = re.sub(r"\n{3,}", "\n\n", out).strip()
-            outs.append(out)
-        return outs
