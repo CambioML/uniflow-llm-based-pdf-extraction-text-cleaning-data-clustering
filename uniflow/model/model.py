@@ -184,7 +184,6 @@ class FewShotModel(Model):
 
         return {
             RESPONSE: output_list,
-            # ERROR: f"Failed to deserialize {error_count} examples",
             ERROR: f"No Error" if error_count==0 else f"Failed to deserialize {error_count} examples",
         }
 
@@ -228,7 +227,6 @@ class JsonModel(Model):
                 continue
         return {
             RESPONSE: output_list,
-            # ERROR: f"Failed to deserialize {error_count} examples",
             ERROR: f"No Error" if error_count==0 else f"Failed to deserialize {error_count} examples",
 
         }
