@@ -8,3 +8,4 @@ from uniflow.flow.model_flow import (  # noqa: F401;
     OpenAIJsonModelFlow,
     OpenAIModelFlow,
 )
+from uniflow.flow.preprocess_flow import NougatPreprocessFlow
