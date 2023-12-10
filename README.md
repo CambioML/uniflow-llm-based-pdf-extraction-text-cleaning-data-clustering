@@ -295,7 +295,7 @@ Next, install the compatible pytorch based on your OS.
 
 Then, install `uniflow`:
 ```
-pip3 install torch
+pip3 install uniflow
 ```
 
 Finally, if you are running the `HuggingfaceModelFlow`, you will also need to install the `transformers`, `accelerate`, `bitsandbytes`, `scipy` libraries:
