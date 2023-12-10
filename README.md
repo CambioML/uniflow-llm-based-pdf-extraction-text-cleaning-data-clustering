@@ -283,18 +283,22 @@ conda create -n uniflow python=3.10 -y
 conda activate uniflow  # some OS requires `source activate uniflow`
 ```
 
-Then install `uniflow` and the compatible [pytorch based on your OS](https://pytorch.org/get-started/locally/):
+Next, install the compatible [pytorch based on your OS](https://pytorch.org/get-started/locally/). 
+- If you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
+    ```
+    pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
+    ```
+- If you are on a CPU instance,
+    ```
+    pip3 install torch
+    ```
+
+Then, install `uniflow`:
 ```
-pip3 install uniflow
 pip3 install torch
 ```
 
-Finally, if you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
-```
-pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
-```
-
-If you are running the `HuggingfaceModelFlow`, you will also need to install the `transformers`, `accelerate`, `bitsandbytes`, `scipy` libraries:
+Finally, if you are running the `HuggingfaceModelFlow`, you will also need to install the `transformers`, `accelerate`, `bitsandbytes`, `scipy` libraries:
 ```
 pip3 install transformers accelerate bitsandbytes scipy
 ```
@@ -317,7 +321,8 @@ OPENAI_API_KEY=YOUR_API_KEY
 conda create -n uniflow python=3.10
 conda activate uniflow
 cd uniflow
-pip3 install poetry --no-root
+pip3 install poetry
+poetry install --no-root
 ```
 
 ### EC2 Dev Setup
