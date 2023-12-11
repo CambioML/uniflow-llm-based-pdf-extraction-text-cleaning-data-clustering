@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Dict
 
+from uniflow.extract.config import Config as ExtractConfig
 from uniflow.model.config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
@@ -87,3 +88,11 @@ class LMQGConfig:
     few_shot_template: Dict[str, str] = field(default_factory=lambda: {})
     num_thread: int = 1
     model_config: ModelConfig = LMQGModelConfig()
+
+
+@dataclass
+class PipelineConfig:
+    """Pipeline Config Class."""
+
+    extract_config: ExtractConfig = ExtractConfig()
+    transform_config: Config = OpenAIFewShotConfig()
