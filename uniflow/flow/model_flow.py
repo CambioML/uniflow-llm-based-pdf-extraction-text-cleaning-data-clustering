@@ -5,6 +5,7 @@ from uniflow.flow.flow import Flow
 from uniflow.model.model import JsonModel, Model
 from uniflow.node.node import Node
 from uniflow.op.model.model_op import ModelOp
+from uniflow.schema import GuidedPrompt
 
 
 class ModelFlow(Flow):
@@ -13,14 +14,14 @@ class ModelFlow(Flow):
     def __init__(
         self,
         model_server: str,
-        guided_prompt_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Model Flow Constructor.
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
@@ -51,14 +52,14 @@ class JsonModelFlow(Flow):
     def __init__(
         self,
         model_server: str,
-        guided_prompt_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Model Flow Constructor.
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
@@ -89,14 +90,14 @@ class OpenAIModelFlow(Flow):
     def __init__(
         self,
         model_server: str,
-        guided_prompt_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """OpenAI Model Flow Constructor.
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
@@ -127,14 +128,14 @@ class OpenAIJsonModelFlow(Flow):
     def __init__(
         self,
         model_server: str,
-        guided_prompt_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """OpenAI Json Model Flow Constructor.
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
@@ -165,14 +166,14 @@ class HuggingFaceModelFlow(Flow):
     def __init__(
         self,
         model_server: str,
-        guided_prompt_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
@@ -203,14 +204,14 @@ class LMQGModelFlow(Flow):
     def __init__(
         self,
         model_server: str,
-        guided_prompt_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
