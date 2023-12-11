@@ -24,18 +24,6 @@ class OpenAIModelConfig(ModelConfig):
 
 
 @dataclass
-class OpenAIJsonModelConfig(ModelConfig):
-    """OpenAI Json Model Config Class."""
-
-    model_server: str = "OpenAIModelServer"
-    num_call: int = 1
-    temperature: float = 1.5
-    response_format: Dict[str, str] = field(
-        default_factory=lambda: {"type": "json_object"}
-    )
-
-
-@dataclass
 class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
