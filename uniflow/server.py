@@ -33,7 +33,7 @@ class Server:
                 self._flow_queue.put(
                     self._flow_cls(
                         self._config.model_config["model_server"],
-                        self._config.few_shot_template,
+                        self._config.guided_prompt_template,
                         self._config.model_config,
                     )
                 )
