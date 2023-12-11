@@ -4,15 +4,17 @@ import json
 import logging
 from typing import Any, Dict, List
 
-from uniflow.model.config import ModelConfig
 from uniflow.model.server import ModelServerFactory
-from uniflow.schema import ContextQA
+from uniflow.schema import Context, GuidedPrompt
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 RESPONSE = "response"
 ERROR = "error"
+ERROR_LIST = "error_list"
+ERROR_CONTEXT = "error_context"
+MAX_ATTEMPTS = 3
 
 
 class Model:
@@ -21,21 +23,25 @@ class Model:
     def __init__(
         self,
         model_server: str,
-        few_shot_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Model class.
 
         Args:
             model_server (str): Model server name.
-            few_shot_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (Dict[str, Any]): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         model_server_cls = ModelServerFactory.get(model_server)
         self._model_server = model_server_cls(model_config)
-        self._few_shot_template = few_shot_template
+        if isinstance(guided_prompt_template, GuidedPrompt):
+            self._guided_prompt_template = guided_prompt_template.get_prompt()
+        else:
+            self._guided_prompt_template = guided_prompt_template
+        self._prompt_keys = []
 
-    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
+    def _serialize(self, data: List[Context]) -> List[str]:
         """Serialize data.
 
         Args:
@@ -46,9 +52,15 @@ class Model:
         """
         output = []
         for d in data:
+            guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
+            if "examples" in guided_prompt_template:
+                guided_prompt_template["examples"].append(d.dict())
+            else:
+                guided_prompt_template = d.dict()
+
             output_strings = []
             # Iterate over each key-value pair in the dictionary
-            for key, value in d.items():
+            for key, value in guided_prompt_template.items():
                 if isinstance(value, list):
                     # Special handling for the "examples" list
                     for example in value:
@@ -73,7 +85,7 @@ class Model:
         """
         return {
             RESPONSE: data,
-            ERROR: "Failed to deserialize 0 examples",
+            ERROR: "No errors.",
         }
 
     def run(self, data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -90,20 +102,20 @@ class Model:
         for i in range(MAX_ATTEMPTS):
             data = self._model_server(serialized_data)
             data = self._deserialize(data)
-            if data[RESPONSE]:
+            if ERROR_LIST not in data:
                 break
             logger.info("Attempt %s failed, retrying...", i + 1)
 
         return data
 
 
-class FewShotModel(Model):
-    """Few Shot Model Class."""
+class JsonModel(Model):
+    """Json Model Class."""
 
     def __init__(
         self,
         model_server: str,
-        few_shot_template: Dict[str, Any],
+        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Few Shot Model class.
@@ -113,126 +125,15 @@ class FewShotModel(Model):
             few_shot_template (Dict[str, Any]): Few shot template.
             model_config (Dict[str, Any]): Model config.
         """
-        super().__init__(model_server, few_shot_template, model_config)
-        assert len(few_shot_template) == 2, "Few shot template must have 2 keys"
-        # get keys from few shot template examples
-        self._template_keys = list(few_shot_template.keys())
-        self._example_keys = list(few_shot_template[self._template_keys[1]][0].keys())
-        self._data = dict()
-
-    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
-        """Serialize data.
-
-        Args:
-            data (List[Dict[str, Any]]): Data to serialize.
-
-        Returns:
-            List[str]: Serialized data.
-        """
-        self._data = data
-
-        output = []
-        for d in data:
-            few_shot_template = copy.deepcopy(self._few_shot_template)
-            few_shot_template[self._template_keys[1]].append(d)
-            output_strings = []
-            # Iterate over each key-value pair in the dictionary
-            for key, value in few_shot_template.items():
-                if isinstance(value, list):
-                    # Special handling for the "examples" list
-                    for example in value:
-                        for ex_key, ex_value in example.items():
-                            output_strings.append(f"{ex_key}: {ex_value}")
-                else:
-                    output_strings.append(f"{key}: {value}")
-
-        # Join all the strings into one large string, separated by new lines
-        output_string = "\n".join(output_strings)
-        return output_string
-
-    # def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
-    # def filter_data(d: str) -> Dict[str, str]:
-    #     """Filter data."""
-    #     pattern = "|".join(map(re.escape, self._example_keys))
-
-    #     segments = [
-    #         segment.strip(" :\n") for segment in re.split(pattern, d.lower())
-    #     ]
-
-    #     result = dict()
-    #     result.update(self._data)
-    #     result.update(
-    #         {
-    #             self._example_keys[-2]: segments[-2],
-    #             self._example_keys[-1]: segments[-1],
-    #         }
-    #     )
-    #     return result
-
-    # error_count = 0
-    # output_list = []
-
-    # for d in data:
-    #     try:
-    #         output_list.append(filter_data(d))
-    #     except Exception:
-    #         error_count += 1
-    #         continue
-
-    # return {
-    #     RESPONSE: output_list,
-    #     ERROR: f"Failed to deserialize {error_count} examples",
-    # }
-    def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
-        def filter_data(d: str) -> Dict[str, str]:
-            """Filter data."""
-            pattern = "|".join(map(re.escape, self._example_keys))
-
-            segments = [
-                segment.strip(" :\n") for segment in re.split(pattern, d.lower())
-            ]
-
-            result = dict()
-            result.update(self._data)
-            result.update(
-                {
-                    self._example_keys[-2]: segments[-2],
-                    self._example_keys[-1]: segments[-1],
-                }
+        super().__init__(model_server, guided_prompt_template, model_config)
+        examples = guided_prompt_template.examples
+        if not examples:
+            raise ValueError(
+                "No examples found in guided_prompt_template. Examples are required to use the JSON mode."
             )
-            return result
+        self._json_schema = examples[0].get_custom_schema()
 
-        error_count = 0
-        output_list = []
-        error_count = 0
-        error_list = []
-        error_context = []
-
-        for d in data:
-            try:
-                model_dict = ContextQA.parse_raw(d).dict()
-                output_list.append(model_dict)
-            except ValidationError as e:
-                error_count += 1
-                error_context.append(d)
-                error_list.append(str(e))
-                continue
-        if error_count == 0:
-            return {
-                RESPONSE: output_list,
-            }
-        return {
-            RESPONSE: output_list,
-            ERROR: f"No Error"
-            if error_count == 0
-            else f"Failed to deserialize {error_count} examples",
-        }
-
-
-class JsonModel(Model):
-    """Json Model Class."""
-
-    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
+    def _serialize(self, data: List[Context]) -> List[str]:
         """Serialize data.
 
         Args:
@@ -241,9 +142,21 @@ class JsonModel(Model):
         Returns:
             List[str]: Serialized data.
         """
-        few_shot_template = copy.deepcopy(self._few_shot_template)
-        few_shot_template.update(data.dict())
-        return json.dumps(few_shot_template)
+        guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
+        output_schema_guide = " in json"  # f"""Provide the parsed json object that matches the following json_schema (do not deviate at all):
+        #     {self._json_schema}
+        # """
+
+        guided_prompt_template[
+            "instruction"
+        ] = f"{guided_prompt_template['instruction']}\n\n{output_schema_guide}"
+
+        input_data = []
+        for d in data:
+            guided_prompt_template["examples"].append(d.dict())
+            input_data.append(guided_prompt_template)
+
+        return [json.dumps(d) for d in input_data]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
@@ -254,61 +167,28 @@ class JsonModel(Model):
         Returns:
             List[Dict[str, Any]]: Deserialized data.
         """
-        output_list = []
         error_count = 0
+        output_list = []
         error_list = []
         error_context = []
 
         for d in data:
             try:
-                model_dict = ContextQA.parse_raw(d).dict()
-                output_list.append(model_dict)
-            except ValidationError as e:
+                output_list.append(json.loads(d))
+            except Exception as e:
                 error_count += 1
-                error_context.append(d)
                 error_list.append(str(e))
+                error_context.append(d)
                 continue
+
         if error_count == 0:
             return {
                 RESPONSE: output_list,
+                ERROR: "No errors.",
             }
         return {
             RESPONSE: output_list,
-            ERROR: f"No Error"
-            if error_count == 0
-            else f"Failed to deserialize {error_count} examples",
+            ERROR: f"Failed to deserialize {error_count} examples",
+            ERROR_LIST: error_list,
+            ERROR_CONTEXT: error_context,
         }
-
-
-class OpenAIJsonModel(JsonModel):
-    """OpenAI Json Model Class.
-
-    This is a bit strange because OpenAI's JSON API doesn't return JSON.
-    """
-
-    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
-        """Serialize data.
-
-        Args:
-            data (List[Dict[str, Any]]): Data to serialize.
-
-        Returns:
-            List[str]: Serialized data.
-        """
-        output = []
-        for d in data:
-            output_strings = []
-            # Iterate over each key-value pair in the dictionary
-            for key, value in d.items():
-                if isinstance(value, list):
-                    # Special handling for the "examples" list
-                    for example in value:
-                        for ex_key, ex_value in example.items():
-                            output_strings.append(f"{ex_key}: {ex_value}")
-                else:
-                    output_strings.append(f"{key}: {value}")
-
-            # Join all the strings into one large string, separated by new lines
-            output_string = "\n".join(output_strings)
-            output.append(output_string)
-        return output
