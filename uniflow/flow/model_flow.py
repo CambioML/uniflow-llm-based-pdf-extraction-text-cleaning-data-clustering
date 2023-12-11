@@ -2,7 +2,7 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.flow.flow import Flow
-from uniflow.model.model import JsonModel, Model  # , OpenAIModel
+from uniflow.model.model import JsonModel, Model
 from uniflow.node.node import Node
 from uniflow.op.model.model_op import ModelOp
 

@@ -30,7 +30,7 @@ class Model:
 
         Args:
             model_server (str): Model server name.
-            guided_prompt_template (Dict[str, Any]): Guided prompt template.
+            guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         model_server_cls = ModelServerFactory.get(model_server)
@@ -122,7 +122,7 @@ class JsonModel(Model):
 
         Args:
             model_server (str): Model server name.
-            few_shot_template (Dict[str, Any]): Few shot template.
+            guided_prompt_template (GuidedPrompt): GuidedPrompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__(model_server, guided_prompt_template, model_config)
