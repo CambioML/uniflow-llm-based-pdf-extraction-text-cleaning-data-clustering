@@ -5,6 +5,5 @@ from uniflow.flow.flow import LinearFlow  # noqa: F401
 from uniflow.flow.model_flow import (  # noqa: F401;
     HuggingFaceModelFlow,
     JsonModelFlow,
-    OpenAIJsonModelFlow,
     OpenAIModelFlow,
 )

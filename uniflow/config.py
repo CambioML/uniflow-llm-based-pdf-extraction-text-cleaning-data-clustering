@@ -8,7 +8,6 @@ from uniflow.model.config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
     ModelConfig,
-    OpenAIJsonModelConfig,
     OpenAIModelConfig,
 )
 from uniflow.schema import GuidedPrompt
@@ -32,16 +31,6 @@ class OpenAIConfig:
     guided_prompt_template: GuidedPrompt = GuidedPrompt()
     num_thread: int = 1
     model_config: ModelConfig = OpenAIModelConfig()
-
-
-@dataclass
-class OpenAIJsonConfig:
-    """OpenAI Json Flow Config Class."""
-
-    flow_name: str = "OpenAIJsonModelFlow"
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
-    num_thread: int = 1
-    model_config: ModelConfig = OpenAIJsonModelConfig()
 
 
 @dataclass
