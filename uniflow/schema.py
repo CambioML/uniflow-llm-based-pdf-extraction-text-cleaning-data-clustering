@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 python_to_json_types = {
     "dict": "object",
     "list": "array",
-    "tuple": "array",  # JSON doesn't have a direct representation for tuples
+    "tuple": "array",
     "str": "string",
     "int": "number",
     "float": "number",
@@ -68,15 +68,20 @@ class GuidedPrompt(BaseModel):
         extra = Extra.forbid
 
     def __init__(self, **data):
+        """Initialize GuidedPrompt class.
+
+        Args:
+            data (Dict[str, Any]): Data to initialize.
+        """
         default_prompt_qa_1 = Context(
-            context="""The quick brown fox jumps over the lazy black dog.""",
-            question="""What is the color of the fox?""",
-            answer="""brown.""",
+            context="The quick brown fox jumps over the lazy black dog.",
+            question="What is the color of the fox?",
+            answer="brown.",
         )
         default_prompt_qa_2 = Context(
-            context="""The quick brown fox jumps over the lazy black dog.""",
-            question="""What is the color of the dog?""",
-            answer="""black.""",
+            context="The quick brown fox jumps over the lazy black dog.",
+            question="What is the color of the dog?",
+            answer="black.",
         )
         data.setdefault("examples", [default_prompt_qa_1, default_prompt_qa_2])
         super().__init__(**data)
