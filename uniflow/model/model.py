@@ -193,6 +193,7 @@ class JsonModel(Model):
             ERROR_CONTEXT: error_context,
         }
 
+
 class PreprocessModel(Model):
     """Preprocess Model Class."""
 
@@ -208,9 +209,10 @@ class PreprocessModel(Model):
         output = []
         for d in data:
             # Iterate over each key-value pair in the dictionary
-            for key, value in d.items():
+            for value in d.values():
                 output.append(value)
         return output
+
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
 

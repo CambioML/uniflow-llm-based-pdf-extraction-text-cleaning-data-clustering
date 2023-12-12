@@ -7,9 +7,9 @@ from uniflow.model.config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
     ModelConfig,
+    NougatModelConfig,
     OpenAIJsonModelConfig,
     OpenAIModelConfig,
-    NougatModelConfig,
 )
 from uniflow.schema import GuidedPrompt
 
@@ -62,6 +62,7 @@ class LMQGConfig:
     num_thread: int = 1
     guided_prompt_template: Dict[str, str] = field(default_factory=lambda: {})
     model_config: ModelConfig = LMQGModelConfig()
+
 
 @dataclass
 class NougatConfig:

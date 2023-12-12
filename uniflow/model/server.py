@@ -1,13 +1,14 @@
 """Model Server Factory"""
 
-from typing import Any, Dict, List
-from functools import partial
 import re
+from functools import partial
+from typing import Any, Dict, List
+
 from uniflow.model.config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
-    OpenAIModelConfig,
     NougatModelConfig,
+    OpenAIModelConfig,
 )
 
 
@@ -297,33 +298,33 @@ class LMQGModelServer(AbsModelServer):
         data = self._postprocess(data)
         return data
 
+
 class NougatModelServer(AbsModelServer):
     """Nougat Model Server Class."""
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing nougat package
-        from torch.utils.data import DataLoader, ConcatDataset
-        self.DataLoader =  DataLoader
-        self.ConcatDataset = ConcatDataset
         try:
-            from nougat import NougatModel
-            from nougat.utils.dataset import LazyDataset
-            from nougat.utils.device import move_to_device
-            from nougat.utils.checkpoint import get_checkpoint
-            from nougat.postprocessing import markdown_compatible
-        except ModuleNotFoundError:
+            from nougat import NougatModel  # pylint: disable=import-outside-toplevel
+            from nougat.utils.checkpoint import (  # pylint: disable=import-outside-toplevel
+                get_checkpoint,
+            )
+            from nougat.utils.device import (  # pylint: disable=import-outside-toplevel
+                move_to_device,
+            )
+        except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
-            )
+            ) from exc
 
         super().__init__(model_config)
         self._model_config = NougatModelConfig(**self._model_config)
         checkpoint = get_checkpoint(None, model_tag=self._model_config.model_name)
         self.model = NougatModel.from_pretrained(checkpoint)
-        self.model = move_to_device(self.model, bf16=False, cuda=self._model_config.batch_size > 0)
+        self.model = move_to_device(
+            self.model, bf16=False, cuda=self._model_config.batch_size > 0
+        )
         self.model.eval()
-        self.LazyDataset = LazyDataset
-        self.markdown_compatible = markdown_compatible
 
     def _preprocess(self, data: str) -> List[str]:
         """Preprocess data.
@@ -356,18 +357,29 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
+        from nougat.postprocessing import (  # pylint: disable=import-outside-toplevel
+            markdown_compatible,
+        )
+        from nougat.utils.dataset import (  # pylint: disable=import-outside-toplevel
+            LazyDataset,
+        )
+        from torch.utils.data import (  # pylint: disable=import-outside-toplevel
+            ConcatDataset,
+            DataLoader,
+        )
+
         outs = []
         for pdf in data:
-            dataset = self.LazyDataset(
-                    pdf,
-                    partial(self.model.encoder.prepare_input, random_padding=False),
-                    None,
-                )
-            dataloader = self.DataLoader(
-                    self.ConcatDataset([dataset]),
-                    batch_size=1,
-                    shuffle=False,
-                    collate_fn=self.LazyDataset.ignore_none_collate,
+            dataset = LazyDataset(
+                pdf,
+                partial(self.model.encoder.prepare_input, random_padding=False),
+                None,
+            )
+            dataloader = DataLoader(
+                ConcatDataset([dataset]),
+                batch_size=1,
+                shuffle=False,
+                collate_fn=LazyDataset.ignore_none_collate,
             )
             predictions = []
             page_num = 0
@@ -382,7 +394,7 @@ class NougatModelServer(AbsModelServer):
                         # uncaught repetitions -- most likely empty page
                         predictions.append(f"\n\n[MISSING_PAGE_EMPTY:{page_num}]\n\n")
                     else:
-                        output = self.markdown_compatible(output)
+                        output = markdown_compatible(output)
                         predictions.append(output)
                     if is_last_page[j]:
                         out = "".join(predictions).strip()

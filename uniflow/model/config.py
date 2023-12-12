@@ -52,6 +52,7 @@ class LMQGModelConfig(ModelConfig):
     batch_size: int = 1
     model_server: str = "LMQGModelServer"
 
+
 @dataclass
 class NougatModelConfig(ModelConfig):
     """Nougat Model Config Class."""
