@@ -1,9 +1,9 @@
 """Schema for uniflow."""
 
 import logging
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
-from pydantic import BaseModel, Extra, Field, conlist
+from pydantic import BaseModel, ConfigDict, Field, conlist
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,7 @@ class Context(BaseModel):
 
     context: str = Field(..., min_length=10)
 
-    class Config:
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
     def get_custom_schema(self) -> Dict[str, Any]:
         """Generate custom schema for the model.
@@ -37,9 +36,9 @@ class Context(BaseModel):
             Dict[str, Any]: Custom schema for the model.
         """
         # Extract the known fields
-        known_fields = self.schema()["properties"]
+        known_fields = self.model_json_schema()["properties"]
 
-        schema_dict = self.dict()
+        schema_dict = self.model_dump()
 
         # Get keys that are not part of known_fields
         extra_properties = [key for key in schema_dict if key not in known_fields]
@@ -58,14 +57,12 @@ class Context(BaseModel):
 class GuidedPrompt(BaseModel):
     """Type for guided prompt."""
 
-    system_prompt: str = ""  # "As a genius expert, your task is to follow the instruction, understand the context and pattern in the examples."
+    instruction: str = """Generate one question and its corresponding answer based on the last context in the last
+    example. Follow the format of the examples below to include context, question, and answer in the response"""
 
-    instruction: str = "Generate one question and its corresponding answer based on the last context in the last example. Follow the format of the examples below to include context, question, and answer in the response"
+    examples: conlist(Context, min_length=0)
 
-    examples: conlist(Union[Context], min_length=0)
-
-    class Config:
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
     def __init__(self, **data):
         """Initialize GuidedPrompt class.
@@ -96,6 +93,6 @@ class GuidedPrompt(BaseModel):
             Dict[str, Any]: Prompt for the model.
         """
         return {
-            "instruction": self.system_prompt + "\n" + self.instruction,
+            "instruction": self.instruction,
             "examples": [example.dict() for example in self.examples],
         }
