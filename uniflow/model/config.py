@@ -19,7 +19,7 @@ class OpenAIModelConfig(ModelConfig):
 
     model_server: str = "OpenAIModelServer"
     num_call: int = 1
-    temperature: float = 1.5
+    temperature: float = 0.9
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
 
 
