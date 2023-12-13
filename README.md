@@ -9,6 +9,16 @@
 `uniflow` is a unified interface to solve data augmentation problem for LLM training. It enables use of different LLMs, including [OpenAI](https://openai.com/product), [Huggingface](https://huggingface.co/mistralai/Mistral-7B-v0.1), and [LMQG](https://huggingface.co/lmqg) with a single interface. Using `uniflow`, you can easily run different LLMs to generate questions and answers, chunk text, summarize text, and more.
 
 Built by [CambioML](https://www.cambioml.com/).
+## Table of Contents
+1. [Quick Install](#quick-install)
+1. [Overview](#overview)
+1. [Config](#1-config)
+1. [Prompting](#2-prompting)
+1. [Running the Flow](#3-running-the-flow)
+1. [Examples](#examples)
+1. [Advanced Custom Configuration](#advanced-custom-configuration)
+1. [Installation](#installation)
+1. [Dev Setup](#dev-setup)
 
 ## Quick Install
 
@@ -97,7 +107,7 @@ You can overwrite any of the defaults as needed.
 To see an example of how to use the `GuidedPrompt` to run `uniflow` with a custom `instruction`, few-shot examples, and custom `Context` fields to generate a summary, check out the [openai_pdf_source_10k_summary notebook](./example/model/openai_pdf_source_10k_summary.ipynb)
 
 
-## Running the Flow
+## 3. Running the Flow
 Once you've decided on your `Config` and prompting strategy, you can run the flow on the input data.
 
 1. Import the `uniflow` `Client`, `Config`, and `Context` objects.
@@ -125,14 +135,14 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
     from uniflow.schema import GuidedPrompt
 
     guided_prompt = GuidedPrompt(
-    instruction="Generate a one sentence summary based on the last context below. Follow the format of the examples below to include context and summary in the response",
-    examples=[
-        Context(
-            context="When you're operating on the maker's schedule, meetings are a disaster. A single meeting can blow a whole afternoon, by breaking it into two pieces each too small to do anything hard in. Plus you have to remember to go to the meeting. That's no problem for someone on the manager's schedule. There's always something coming on the next hour; the only question is what. But when someone on the maker's schedule has a meeting, they have to think about it.",
-            summary="Meetings disrupt the productivity of those following a maker's schedule, dividing their time into impractical segments, while those on a manager's schedule are accustomed to a continuous flow of tasks.",
-        ),
-    ],
-)
+        instruction="Generate a one sentence summary based on the last context below. Follow the format of the examples below to include context and summary in the response",
+        examples=[
+            Context(
+                context="When you're operating on the maker's schedule, meetings are a disaster. A single meeting can blow a whole afternoon, by breaking it into two pieces each too small to do anything hard in. Plus you have to remember to go to the meeting. That's no problem for someone on the manager's schedule. There's always something coming on the next hour; the only question is what. But when someone on the maker's schedule has a meeting, they have to think about it.",
+                summary="Meetings disrupt the productivity of those following a maker's schedule, dividing their time into impractical segments, while those on a manager's schedule are accustomed to a continuous flow of tasks.",
+            ),
+        ],
+    )
     ```
 
 1. Create a `Config` object to pass into the `Client` object.
