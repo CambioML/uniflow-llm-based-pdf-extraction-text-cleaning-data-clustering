@@ -144,7 +144,8 @@ class JsonModel(Model):
         """
         for d in data:
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
-            output_schema_guide = " in json"  # f"""Provide the parsed json object
+            output_schema_guide = "Ensure the response is in json."
+            # f"""Provide the parsed json object
             # that matches the following json_schema (do not deviate at all):
             #     {self._json_schema}
             # """
