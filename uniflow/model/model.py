@@ -176,7 +176,7 @@ class JsonModel(Model):
         for d in data:
             try:
                 output_list.append(json.loads(d))
-            except Exception as e:
+            except json.JSONDecodeError as e:
                 error_count += 1
                 error_list.append(str(e))
                 error_context.append(d)
