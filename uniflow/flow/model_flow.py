@@ -101,13 +101,21 @@ class OpenAIModelFlow(Flow):
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
-        self._model_op = ModelOp(
-            name="openai_model_op",
-            model=Model(
+        if model_config["response_format"]["type"] == "json_object":
+            model = JsonModel(
                 model_server=model_server,
                 guided_prompt_template=guided_prompt_template,
                 model_config=model_config,
-            ),
+            )
+        else:
+            model = Model(
+                model_server=model_server,
+                guided_prompt_template=guided_prompt_template,
+                model_config=model_config,
+            )
+        self._model_op = ModelOp(
+            name="openai_model_op",
+            model=model,
         )
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
