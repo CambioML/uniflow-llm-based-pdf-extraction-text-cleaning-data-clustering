@@ -54,9 +54,9 @@ class Model:
         for d in data:
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
             if "examples" in guided_prompt_template:
-                guided_prompt_template["examples"].append(d.dict())
+                guided_prompt_template["examples"].append(d.model_dump())
             else:
-                guided_prompt_template = d.dict()
+                guided_prompt_template = d.model_dump()
 
             output_strings = []
             # Iterate over each key-value pair in the dictionary
@@ -118,7 +118,7 @@ class JsonModel(Model):
         guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
-        """Initialize Few Shot Model class.
+        """Initialize Json Model class.
 
         Args:
             model_server (str): Model server name.
@@ -142,18 +142,20 @@ class JsonModel(Model):
         Returns:
             List[str]: Serialized data.
         """
-        guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
-        output_schema_guide = " in json"  # f"""Provide the parsed json object that matches the following json_schema (do not deviate at all):
-        #     {self._json_schema}
-        # """
-
-        guided_prompt_template[
-            "instruction"
-        ] = f"{guided_prompt_template['instruction']}\n\n{output_schema_guide}"
-
-        input_data = []
         for d in data:
-            guided_prompt_template["examples"].append(d.dict())
+            guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
+            output_schema_guide = "Ensure the response is in json."
+            # f"""Provide the parsed json object
+            # that matches the following json_schema (do not deviate at all):
+            #     {self._json_schema}
+            # """
+
+            guided_prompt_template[
+                "instruction"
+            ] = f"{guided_prompt_template['instruction']}\n\n{output_schema_guide}"
+
+            input_data = []
+            guided_prompt_template["examples"].append(d.model_dump())
             input_data.append(guided_prompt_template)
 
         return [json.dumps(d) for d in input_data]
@@ -175,7 +177,7 @@ class JsonModel(Model):
         for d in data:
             try:
                 output_list.append(json.loads(d))
-            except Exception as e:
+            except json.JSONDecodeError as e:
                 error_count += 1
                 error_list.append(str(e))
                 error_context.append(d)
