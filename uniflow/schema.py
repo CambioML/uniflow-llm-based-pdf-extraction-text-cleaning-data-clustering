@@ -60,7 +60,7 @@ class GuidedPrompt(BaseModel):
 
     system_prompt: str = ""  # "As a genius expert, your task is to follow the instruction, understand the context and pattern in the examples."
 
-    instruction: str = "Generate one question and its corresponding answer based on the last context in the last example. Following the format of the examples below to include context, question, and answer in the response"
+    instruction: str = "Generate one question and its corresponding answer based on the last context in the last example. Follow the format of the examples below to include context, question, and answer in the response"
 
     examples: conlist(Union[Context], min_length=0)
 
