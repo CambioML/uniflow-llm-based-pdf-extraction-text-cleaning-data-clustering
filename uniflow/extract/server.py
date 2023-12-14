@@ -1,4 +1,4 @@
-"""Uniflow Server"""
+"""Uniflow Extract Server"""
 
 from concurrent import futures
 from queue import Queue
@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Mapping, Tuple
 from tqdm.auto import tqdm
 
 from uniflow.extract.config import Config
-from uniflow.flow.flow_factory import FlowFactory
+from uniflow.extract.flow.flow_factory import FlowFactory
 from uniflow.op.op import OpScope
 
 

@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Any, Dict, List
 
-from uniflow.model.server import ModelServerFactory
+from uniflow.model.model_server import ModelServerFactory
 from uniflow.schema import Context, GuidedPrompt
 
 logger = logging.getLogger(__name__)
@@ -53,10 +53,12 @@ class Model:
         output = []
         for d in data:
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
+            if isinstance(d, Context):
+                d = d.model_dump()
             if "examples" in guided_prompt_template:
-                guided_prompt_template["examples"].append(d.model_dump())
+                guided_prompt_template["examples"].append(d)
             else:
-                guided_prompt_template = d.model_dump()
+                guided_prompt_template = d
 
             output_strings = []
             # Iterate over each key-value pair in the dictionary

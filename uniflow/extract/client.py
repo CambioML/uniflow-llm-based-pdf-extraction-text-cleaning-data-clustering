@@ -1,4 +1,4 @@
-"""Uniflow Client"""
+"""Uniflow Extract Client"""
 
 from dataclasses import asdict
 from typing import Any, List, Mapping
@@ -8,7 +8,7 @@ from uniflow.extract.server import Server
 
 
 class Client:
-    """Uniflow Client"""
+    """Uniflow Extract Client"""
 
     def __init__(self, config: Config) -> None:
         """Client constructor

@@ -17,7 +17,7 @@ from uniflow.schema import GuidedPrompt
 class Config:
     """Flow Config Class."""
 
-    flow_name: str = "ModelFlow"
+    flow_name: str = "BaseModelFlow"
     guided_prompt_template: GuidedPrompt = GuidedPrompt()
     num_thread: int = 1
     model_config: ModelConfig = ModelConfig()
@@ -58,4 +58,4 @@ class PipelineConfig:
     """Pipeline Config Class."""
 
     extract_config: ExtractConfig = ExtractConfig()
-    transform_config: Config = OpenAIFewShotConfig()
+    transform_config: Config = OpenAIConfig()

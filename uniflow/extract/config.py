@@ -1,11 +1,11 @@
-"""Flow config module."""
+"""Extract config module."""
 
 from dataclasses import dataclass
 
 
 @dataclass
 class Config:
-    """Flow Config Class."""
+    """Extract Config Class."""
 
     flow_name: str = "ExtractTxtFlow"
     num_thread: int = 1
