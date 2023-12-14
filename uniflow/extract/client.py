@@ -3,14 +3,14 @@
 from dataclasses import asdict
 from typing import Any, List, Mapping
 
-from uniflow.extract.config import Config
+from uniflow.extract.config import ExtractConfig
 from uniflow.extract.server import Server
 
 
 class Client:
     """Uniflow Extract Client"""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: ExtractConfig) -> None:
         """Client constructor
 
         Args:
@@ -20,20 +20,21 @@ class Client:
         self._config = config
         self._server = Server(asdict(self._config))
 
-    def run(self, input: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+    def run(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
         Run the flow
 
         Args:
-            input (List[Mapping[str, Any]]): List of inputs to the flow
+            input_list (List[Mapping[str, Any]]): List of inputs to the flow
 
         Returns:
             List[Mapping[str, Any]]: List of outputs from the flow
         """
         # convert config to dict for future remote calls
-        output = self._server.run(input)
+        output = self._server.run(input_list)
         return output
 
     def async_run(self) -> None:
+        """Run the flow asynchronously"""
         # TODO: Implement async client
         print("Client running async")

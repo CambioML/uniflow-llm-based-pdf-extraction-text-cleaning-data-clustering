@@ -6,7 +6,7 @@ from typing import Any, List, Mapping
 
 from uniflow.config import PipelineConfig
 from uniflow.extract.client import Client as ExtractClient
-from uniflow.model.client import Client as TransformClient
+from uniflow.transform.client import Client as TransformClient
 
 
 class Pipeline:

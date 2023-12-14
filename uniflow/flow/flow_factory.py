@@ -1,10 +1,18 @@
 """Flow Factory Module."""
+from typing import Dict, List
+
+from uniflow.constants import BASIC, EXTRACT, MODEL, TRANSFORM
 
 
 class FlowFactory:
     """Flow Factory Class."""
 
-    _flows = {}
+    _flows = {
+        BASIC: {},
+        EXTRACT: {},
+        MODEL: {},
+        TRANSFORM: {},
+    }
 
     @classmethod
     def register(cls, name: str, flow_cls: "Flow") -> None:  # noqa: F821
@@ -14,10 +22,10 @@ class FlowFactory:
             name (str): Flow name.
             flow_cls (Flow): Flow class.
         """
-        cls._flows[name] = flow_cls
+        cls._flows[flow_cls.tag][name] = flow_cls
 
     @classmethod
-    def get(cls, name: str) -> "Flow":
+    def get(cls, name: str, flow_type: str) -> "Flow":
         """Get flow.
 
         Args:
@@ -29,16 +37,19 @@ class FlowFactory:
         Raises:
             ValueError: If no flow registered under the name.
         """
-        flow_cls = cls._flows.get(name)
+        flow_cls = cls._flows.get(flow_type).get(name)
         if not flow_cls:
             raise ValueError(f"No flow registered under '{name}'")
         return flow_cls
 
     @classmethod
-    def list(cls):
+    def list(cls) -> Dict[str, List[str]]:
         """List all registered flows.
 
         Returns:
             List[str]: List of registered flow names.
         """
-        return list(cls._flows.keys())
+        return {
+            subclass: list(subclass_dict.keys())
+            for subclass, subclass_dict in cls._flows.items()
+        }

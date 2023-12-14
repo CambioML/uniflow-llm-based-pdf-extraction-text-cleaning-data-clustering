@@ -1,6 +1,6 @@
 import unittest
 
-from uniflow.flow.constants import OUTPUT_NAME, ROOT_NAME
+from uniflow.constants import OUTPUT_NAME, ROOT_NAME
 from uniflow.flow.flow import Flow
 
 

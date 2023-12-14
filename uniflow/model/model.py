@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Any, Dict, List
 
-from uniflow.model.model_server import ModelServerFactory
+from uniflow.model.server import ModelServerFactory
 from uniflow.schema import Context, GuidedPrompt
 
 logger = logging.getLogger(__name__)
@@ -22,18 +22,16 @@ class Model:
 
     def __init__(
         self,
-        model_server: str,
         guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Model class.
 
         Args:
-            model_server (str): Model server name.
             guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
-        model_server_cls = ModelServerFactory.get(model_server)
+        model_server_cls = ModelServerFactory.get(model_config["model_server"])
         self._model_server = model_server_cls(model_config)
         if isinstance(guided_prompt_template, GuidedPrompt):
             self._guided_prompt_template = guided_prompt_template.get_prompt()
@@ -116,18 +114,16 @@ class JsonModel(Model):
 
     def __init__(
         self,
-        model_server: str,
         guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Json Model class.
 
         Args:
-            model_server (str): Model server name.
             guided_prompt_template (GuidedPrompt): GuidedPrompt template.
             model_config (Dict[str, Any]): Model config.
         """
-        super().__init__(model_server, guided_prompt_template, model_config)
+        super().__init__(guided_prompt_template, model_config)
         examples = guided_prompt_template.examples
         if not examples:
             raise ValueError(

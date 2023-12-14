@@ -4,6 +4,7 @@ import logging
 from typing import Any, Mapping, Sequence
 
 from uniflow import constants
+from uniflow.flow.flow_factory import FlowFactory
 from uniflow.node.node import Node
 from uniflow.op.basic.linear_op import LinearOp
 
@@ -12,6 +13,13 @@ logger = logging.getLogger(__name__)
 
 class Flow:
     """Flow class."""
+
+    tag = constants.BASIC
+
+    def __init_subclass__(cls) -> None:
+        """Initialize subclass."""
+        super().__init_subclass__()
+        FlowFactory.register(name=cls.__name__, flow_cls=cls)
 
     def __init__(self) -> None:
         """Initialize Flow class."""
@@ -81,6 +89,8 @@ class Flow:
 
 class LinearFlow(Flow):
     """Linear flow class."""
+
+    tag = constants.BASIC
 
     def __init__(self) -> None:  # pylint: disable=useless-parent-delegation
         """Initialize LinearFlow class."""

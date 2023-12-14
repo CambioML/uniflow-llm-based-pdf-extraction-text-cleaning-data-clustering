@@ -2,13 +2,16 @@
 
 from typing import Sequence
 
-from uniflow.extract.flow.extract_flow import ExtractFlow
+from uniflow.constants import EXTRACT
+from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
 from uniflow.op.extract.txt_op import ExtractTxtOp, ProcessTxtOp
 
 
-class ExtractTxtFlow(ExtractFlow):
+class ExtractTxtFlow(Flow):
     """Extract txt Flow Class."""
+
+    tag = EXTRACT
 
     def __init__(self) -> None:
         """Extract txt Flow Constructor."""
