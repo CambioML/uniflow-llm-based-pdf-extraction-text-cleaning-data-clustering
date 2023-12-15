@@ -102,7 +102,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
 
 1. Import the `uniflow` `Client`, `Config`, and `Context` objects.
     ```
-    from uniflow.client import Client
+    from uniflow.transform.client import Client
     from uniflow.config import OpenAIConfig
     from uniflow.model.config import OpenAIModelConfig
     from uniflow.schema import Context
@@ -212,7 +212,7 @@ The `LMQGModelConfig` inherits from the `ModelConfig`, but overrides the `model_
 ### Custom Configuration Example
 Here is an example of how to pass in a custom configuration to the `Client` object:
 ```
-from uniflow.client import Client
+from uniflow.transform.client import Client
 from uniflow.config import OpenAIConfig
 from uniflow.model.config import OpenAIModelConfig
 

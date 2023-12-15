@@ -1,16 +1,16 @@
-"""Uniflow Client"""
+"""Uniflow Extract Client"""
 
 from dataclasses import asdict
 from typing import Any, List, Mapping
 
-from uniflow.config import Config
-from uniflow.server import Server
+from uniflow.extract.config import ExtractConfig
+from uniflow.extract.server import Server
 
 
 class Client:
-    """Uniflow Client"""
+    """Uniflow Extract Client"""
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: ExtractConfig) -> None:
         """Client constructor
 
         Args:
@@ -35,5 +35,6 @@ class Client:
         return output
 
     def async_run(self) -> None:
+        """Run the flow asynchronously"""
         # TODO: Implement async client
         print("Client running async")

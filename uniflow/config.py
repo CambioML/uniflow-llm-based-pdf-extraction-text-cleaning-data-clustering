@@ -1,52 +1,14 @@
 """Flow config module."""
 
-from dataclasses import dataclass, field
-from typing import Dict
+from dataclasses import dataclass
 
-from uniflow.model.config import (
-    HuggingfaceModelConfig,
-    LMQGModelConfig,
-    ModelConfig,
-    OpenAIModelConfig,
-)
-from uniflow.schema import GuidedPrompt
+from uniflow.extract.config import ExtractConfig
+from uniflow.transform.config import TransformConfig
 
 
 @dataclass
-class Config:
-    """Flow Config Class."""
+class PipelineConfig:
+    """Pipeline Config Class."""
 
-    flow_name: str = "ModelFlow"
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
-    num_thread: int = 1
-    model_config: ModelConfig = ModelConfig()
-
-
-@dataclass
-class OpenAIConfig:
-    """OpenAI Flow Config Class."""
-
-    flow_name: str = "OpenAIModelFlow"
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
-    num_thread: int = 1
-    model_config: ModelConfig = OpenAIModelConfig()
-
-
-@dataclass
-class HuggingfaceConfig:
-    """Huggingface Config Class."""
-
-    flow_name: str = "HuggingFaceModelFlow"
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
-    num_thread: int = 1
-    model_config: ModelConfig = HuggingfaceModelConfig()
-
-
-@dataclass
-class LMQGConfig:
-    """LMQG Config Class."""
-
-    flow_name: str = "LMQGModelFlow"
-    num_thread: int = 1
-    guided_prompt_template: Dict[str, str] = field(default_factory=lambda: {})
-    model_config: ModelConfig = LMQGModelConfig()
+    extract_config: ExtractConfig
+    transform_config: TransformConfig

@@ -22,52 +22,49 @@ class Model:
 
     def __init__(
         self,
-        model_server: str,
         guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Model class.
 
         Args:
-            model_server (str): Model server name.
             guided_prompt_template (GuidedPrompt): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
-        model_server_cls = ModelServerFactory.get(model_server)
+        model_server_cls = ModelServerFactory.get(model_config["model_server"])
         self._model_server = model_server_cls(model_config)
-        if isinstance(guided_prompt_template, GuidedPrompt):
-            self._guided_prompt_template = guided_prompt_template.get_prompt()
-        else:
-            self._guided_prompt_template = guided_prompt_template
+        self._guided_prompt_template = guided_prompt_template
         self._prompt_keys = []
 
     def _serialize(self, data: List[Context]) -> List[str]:
         """Serialize data.
 
         Args:
-            data (List[Dict[str, Any]]): Data to serialize.
+            data (List[Context]): Data to serialize.
 
         Returns:
             List[str]: Serialized data.
         """
         output = []
         for d in data:
-            guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
-            if "examples" in guided_prompt_template:
-                guided_prompt_template["examples"].append(d.model_dump())
-            else:
-                guided_prompt_template = d.model_dump()
-
+            if not isinstance(d, Context):
+                raise ValueError("Input data must be a Context object.")
             output_strings = []
-            # Iterate over each key-value pair in the dictionary
-            for key, value in guided_prompt_template.items():
-                if isinstance(value, list):
-                    # Special handling for the "examples" list
-                    for example in value:
-                        for ex_key, ex_value in example.items():
-                            output_strings.append(f"{ex_key}: {ex_value}")
-                else:
+            guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
+            if (
+                not guided_prompt_template.instruction
+                and not guided_prompt_template.examples
+            ):
+                for key, value in d.model_dump().items():
                     output_strings.append(f"{key}: {value}")
+            else:
+                guided_prompt_template.examples.append(d)
+                output_strings.append(
+                    f"instruction: {guided_prompt_template.instruction}"
+                )
+                for example in guided_prompt_template.examples:
+                    for ex_key, ex_value in example.model_dump().items():
+                        output_strings.append(f"{ex_key}: {ex_value}")
 
             # Join all the strings into one large string, separated by new lines
             output_string = "\n".join(output_strings)
@@ -114,18 +111,16 @@ class JsonModel(Model):
 
     def __init__(
         self,
-        model_server: str,
         guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Json Model class.
 
         Args:
-            model_server (str): Model server name.
             guided_prompt_template (GuidedPrompt): GuidedPrompt template.
             model_config (Dict[str, Any]): Model config.
         """
-        super().__init__(model_server, guided_prompt_template, model_config)
+        super().__init__(guided_prompt_template, model_config)
         examples = guided_prompt_template.examples
         if not examples:
             raise ValueError(
@@ -137,12 +132,14 @@ class JsonModel(Model):
         """Serialize data.
 
         Args:
-            data (List[Dict[str, Any]]): Data to serialize.
+            data (List[Context]): Data to serialize.
 
         Returns:
             List[str]: Serialized data.
         """
         for d in data:
+            if not isinstance(d, Context):
+                raise ValueError("Input data must be a Context object.")
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
             output_schema_guide = "Ensure the response is in json."
             # f"""Provide the parsed json object
@@ -150,14 +147,13 @@ class JsonModel(Model):
             #     {self._json_schema}
             # """
 
-            guided_prompt_template[
-                "instruction"
-            ] = f"{guided_prompt_template['instruction']}\n\n{output_schema_guide}"
+            guided_prompt_template.instruction = (
+                f"{guided_prompt_template.instruction}\n\n{output_schema_guide}"
+            )
 
             input_data = []
-            guided_prompt_template["examples"].append(d.model_dump())
-            input_data.append(guided_prompt_template)
-
+            guided_prompt_template.examples.append(d)
+            input_data.append(guided_prompt_template.model_dump())
         return [json.dumps(d) for d in input_data]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
