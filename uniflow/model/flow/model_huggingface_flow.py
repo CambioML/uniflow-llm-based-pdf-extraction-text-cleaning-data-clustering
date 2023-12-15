@@ -1,7 +1,6 @@
 """Model Flow Module."""
 from typing import Any, Dict, Sequence
 
-from uniflow.constants import MODEL
 from uniflow.flow import Flow
 from uniflow.model.model import Model
 from uniflow.node.node import Node
@@ -11,8 +10,6 @@ from uniflow.schema import GuidedPrompt
 
 class HuggingFaceModelFlow(Flow):
     """HuggingFace Model Flow Class."""
-
-    TAG = MODEL
 
     def __init__(
         self,

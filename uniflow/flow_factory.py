@@ -20,7 +20,7 @@ class FlowFactory:
             name (str): Flow name.
             flow_cls (Flow): Flow class.
         """
-        if flow_cls.TAG in cls._flows:
+        if hasattr(flow_cls, "TAG") and flow_cls.TAG in cls._flows:
             cls._flows[flow_cls.TAG][name] = flow_cls
 
     @classmethod

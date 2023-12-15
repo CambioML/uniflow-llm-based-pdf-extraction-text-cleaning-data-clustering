@@ -48,15 +48,16 @@ class Model:
         output = []
         for d in data:
             if not isinstance(d, Context):
-                if "context" in d:
-                    d = Context(context=d["context"])
-                else:
-                    raise ValueError(
-                        "Input data must be a Context object or have a 'context' field."
-                    )
+                raise ValueError("Input data must be a Context object.")
             output_strings = []
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
-            if isinstance(guided_prompt_template, GuidedPrompt):
+            if (
+                not guided_prompt_template.instruction
+                and not guided_prompt_template.examples
+            ):
+                for key, value in d.model_dump().items():
+                    output_strings.append(f"{key}: {value}")
+            else:
                 guided_prompt_template.examples.append(d)
                 output_strings.append(
                     f"instruction: {guided_prompt_template.instruction}"
@@ -64,9 +65,6 @@ class Model:
                 for example in guided_prompt_template.examples:
                     for ex_key, ex_value in example.model_dump().items():
                         output_strings.append(f"{ex_key}: {ex_value}")
-            else:
-                for key, value in d.model_dump().items():
-                    output_strings.append(f"{key}: {value}")
 
             # Join all the strings into one large string, separated by new lines
             output_string = "\n".join(output_strings)
@@ -141,12 +139,7 @@ class JsonModel(Model):
         """
         for d in data:
             if not isinstance(d, Context):
-                if hasattr(d, "context"):
-                    d = Context(context=d["context"])
-                else:
-                    raise ValueError(
-                        "Input data must be a Context object or have a 'context' field."
-                    )
+                raise ValueError("Input data must be a Context object.")
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
             output_schema_guide = "Ensure the response is in json."
             # f"""Provide the parsed json object

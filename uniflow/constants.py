@@ -5,5 +5,4 @@ OUTPUT_NAME = "output"
 
 # Flow Types
 EXTRACT = "extract"
-MODEL = "model"
 TRANSFORM = "transform"

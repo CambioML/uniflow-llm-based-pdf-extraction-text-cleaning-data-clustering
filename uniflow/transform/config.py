@@ -1,7 +1,6 @@
 """Transform config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict
 
 from uniflow.model.config import HuggingfaceModelConfig, ModelConfig, OpenAIModelConfig
 from uniflow.schema import GuidedPrompt
@@ -38,7 +37,7 @@ class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 
     flow_name: str = "TransformLMQGFlow"
-    guided_prompt_template: Dict[str, str] = field(default_factory=lambda: {})
+    guided_prompt_template: GuidedPrompt = GuidedPrompt(instruction="", examples=[])
     model_config: ModelConfig = OpenAIModelConfig()
 
 
@@ -47,5 +46,5 @@ class TransformLinearConfig(TransformConfig):
     """Transform Linear Config Class."""
 
     flow_name: str = "TransformLinearFlow"
-    guided_prompt_template: GuidedPrompt = field(default_factory=lambda: {})
+    guided_prompt_template: GuidedPrompt = GuidedPrompt(instruction="", examples=[])
     model_config: ModelConfig = field(default_factory=lambda: {})

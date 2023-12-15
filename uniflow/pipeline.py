@@ -6,6 +6,7 @@ from typing import Any, List, Mapping
 
 from uniflow.config import PipelineConfig
 from uniflow.extract.client import Client as ExtractClient
+from uniflow.schema import Context
 from uniflow.transform.client import Client as TransformClient
 
 
@@ -40,7 +41,7 @@ class Pipeline:
                 reformat_data = []
                 for d in data:
                     # rekey data and reformat to list format
-                    rd = [{"context": t} for t in d["output"][0]["text"]]
+                    rd = [Context(context=t) for t in d["output"][0]["text"]]
                     reformat_data.extend(rd)
                 transformed_data = self._transform_client.run(reformat_data)
                 output_list.append(transformed_data)
