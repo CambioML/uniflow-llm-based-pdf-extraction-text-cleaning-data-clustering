@@ -4,17 +4,14 @@ import logging
 from typing import Any, Mapping, Sequence
 
 from uniflow import constants
-from uniflow.flow.flow_factory import FlowFactory
+from uniflow.flow_factory import FlowFactory
 from uniflow.node.node import Node
-from uniflow.op.basic.linear_op import LinearOp
 
 logger = logging.getLogger(__name__)
 
 
 class Flow:
     """Flow class."""
-
-    tag = constants.BASIC
 
     def __init_subclass__(cls) -> None:
         """Initialize subclass."""
@@ -58,7 +55,7 @@ class Flow:
             Sequence[Node]: Nodes.
         """
         value_dict = copy.deepcopy(value_dict)
-        self._root = Node(name="root", value_dict=value_dict)
+        self._root = Node(name=constants.ROOT_NAME, value_dict=value_dict)
         return [self._root]
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
@@ -85,25 +82,3 @@ class Flow:
             constants.OUTPUT_NAME: [copy.deepcopy(node.value_dict) for node in nodes],
             constants.ROOT_NAME: self._root,
         }
-
-
-class LinearFlow(Flow):
-    """Linear flow class."""
-
-    tag = constants.BASIC
-
-    def __init__(self) -> None:  # pylint: disable=useless-parent-delegation
-        """Initialize LinearFlow class."""
-        self._linear_op = LinearOp(name="linear_op")
-        super().__init__()
-
-    def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
-        """Run LinearFlow.
-
-        Args:
-            nodes (Sequence[Node]): Nodes to run.
-
-        Returns:
-            Sequence[Node]: Nodes after running.
-        """
-        return self._linear_op(nodes)

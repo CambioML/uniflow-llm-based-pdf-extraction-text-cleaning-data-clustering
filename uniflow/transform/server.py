@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Mapping, Tuple
 from tqdm.auto import tqdm
 
 from uniflow.constants import TRANSFORM
-from uniflow.flow.flow_factory import FlowFactory
+from uniflow.flow_factory import FlowFactory
 from uniflow.op.op import OpScope
 from uniflow.transform.config import TransformConfig
 

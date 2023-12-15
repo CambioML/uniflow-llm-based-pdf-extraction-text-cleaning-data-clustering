@@ -7,7 +7,7 @@ from dataclasses import dataclass
 class ExtractConfig:
     """Extract Config Class."""
 
-    flow_name: str = "ExtractTxtFlow"
+    flow_name: str
     num_thread: int = 1
 
 
@@ -16,4 +16,3 @@ class ExtractTxtConfig(ExtractConfig):
     """Extract Txt Config Class."""
 
     flow_name: str = "ExtractTxtFlow"
-    num_thread: int = 1

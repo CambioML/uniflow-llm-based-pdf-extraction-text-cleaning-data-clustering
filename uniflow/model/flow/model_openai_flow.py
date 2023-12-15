@@ -2,7 +2,7 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import MODEL
-from uniflow.flow.flow import Flow
+from uniflow.flow import Flow
 from uniflow.model.model import JsonModel, Model
 from uniflow.node.node import Node
 from uniflow.op.model.model_op import ModelOp
@@ -12,7 +12,7 @@ from uniflow.schema import GuidedPrompt
 class OpenAIModelFlow(Flow):
     """OpenAI Model Flow Class."""
 
-    tag = MODEL
+    TAG = MODEL
 
     def __init__(
         self,

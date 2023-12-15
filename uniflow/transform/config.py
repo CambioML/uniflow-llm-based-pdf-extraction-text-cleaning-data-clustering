@@ -11,10 +11,10 @@ from uniflow.schema import GuidedPrompt
 class TransformConfig:
     """Transform Base Config Class."""
 
-    flow_name: str = "TransformOpenAIFlow"
+    flow_name: str
+    model_config: ModelConfig
     num_thread: int = 1
     guided_prompt_template: GuidedPrompt = GuidedPrompt()
-    model_config: ModelConfig = OpenAIModelConfig()
 
 
 @dataclass
@@ -22,8 +22,6 @@ class TransformOpenAIConfig(TransformConfig):
     """Transform OpenAI Config Class."""
 
     flow_name: str = "TransformOpenAIFlow"
-    num_thread: int = 1
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
     model_config: ModelConfig = OpenAIModelConfig()
 
 
@@ -32,8 +30,6 @@ class TransformHuggingFaceConfig(TransformConfig):
     """Transform Hugging Face Config Class."""
 
     flow_name: str = "TransformHuggingFaceFlow"
-    num_thread: int = 1
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
     model_config: ModelConfig = HuggingfaceModelConfig()
 
 
@@ -42,6 +38,14 @@ class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 
     flow_name: str = "TransformLMQGFlow"
-    num_thread: int = 1
     guided_prompt_template: Dict[str, str] = field(default_factory=lambda: {})
     model_config: ModelConfig = OpenAIModelConfig()
+
+
+@dataclass
+class TransformLinearConfig(TransformConfig):
+    """Transform Linear Config Class."""
+
+    flow_name: str = "TransformLinearFlow"
+    guided_prompt_template: GuidedPrompt = field(default_factory=lambda: {})
+    model_config: ModelConfig = field(default_factory=lambda: {})

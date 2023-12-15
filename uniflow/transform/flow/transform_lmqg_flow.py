@@ -1,7 +1,7 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
-from uniflow.flow.flow import Flow
+from uniflow.flow import Flow
 from uniflow.model.model import Model
 from uniflow.node.node import Node
 from uniflow.op.model.model_op import ModelOp
@@ -11,7 +11,7 @@ from uniflow.schema import GuidedPrompt
 class TransformLMQGFlow(Flow):
     """LMQG Transform Flow Class."""
 
-    tag = TRANSFORM
+    TAG = TRANSFORM
 
     def __init__(
         self,

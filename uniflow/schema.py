@@ -82,17 +82,3 @@ class GuidedPrompt(BaseModel):
         )
         data.setdefault("examples", [default_prompt_qa_1, default_prompt_qa_2])
         super().__init__(**data)
-
-    def get_prompt(self):
-        """Create prompt for the model.
-
-        Args:
-            None
-
-        Returns:
-            Dict[str, Any]: Prompt for the model.
-        """
-        return {
-            "instruction": self.instruction,
-            "examples": [example.dict() for example in self.examples],
-        }

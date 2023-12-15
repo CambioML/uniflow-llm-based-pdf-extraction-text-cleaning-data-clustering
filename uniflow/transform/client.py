@@ -3,7 +3,7 @@
 from dataclasses import asdict
 from typing import Any, List, Mapping
 
-from uniflow.config import TransformConfig
+from uniflow.transform.config import TransformConfig
 from uniflow.transform.server import Server
 
 

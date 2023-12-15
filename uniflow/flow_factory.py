@@ -1,16 +1,14 @@
 """Flow Factory Module."""
 from typing import Dict, List
 
-from uniflow.constants import BASIC, EXTRACT, MODEL, TRANSFORM
+from uniflow.constants import EXTRACT, TRANSFORM
 
 
 class FlowFactory:
     """Flow Factory Class."""
 
     _flows = {
-        BASIC: {},
         EXTRACT: {},
-        MODEL: {},
         TRANSFORM: {},
     }
 
@@ -22,7 +20,8 @@ class FlowFactory:
             name (str): Flow name.
             flow_cls (Flow): Flow class.
         """
-        cls._flows[flow_cls.tag][name] = flow_cls
+        if flow_cls.TAG in cls._flows:
+            cls._flows[flow_cls.TAG][name] = flow_cls
 
     @classmethod
     def get(cls, name: str, flow_type: str) -> "Flow":
