@@ -24,7 +24,7 @@ class FlowFactory:
             cls._flows[flow_cls.TAG][name] = flow_cls
 
     @classmethod
-    def get(cls, name: str, flow_type: str) -> "Flow":
+    def get(cls, name: str, flow_type: str) -> "Flow":  # noqa: F821
         """Get flow.
 
         Args:

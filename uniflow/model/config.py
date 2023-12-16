@@ -39,3 +39,12 @@ class LMQGModelConfig(ModelConfig):
     model_name: str = "lmqg/t5-base-squad-qg-ae"
     batch_size: int = 1
     model_server: str = "LMQGModelServer"
+
+
+@dataclass
+class NougatModelConfig(ModelConfig):
+    """Nougat Model Config Class."""
+
+    model_name: str = "0.1.0-small"
+    batch_size: int = 1
+    model_server: str = "NougatModelServer"

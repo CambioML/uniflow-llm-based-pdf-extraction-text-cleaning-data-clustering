@@ -28,9 +28,14 @@ class Server:
         self._flow_cls = FlowFactory.get(self._config.flow_name, flow_type=EXTRACT)
         self._num_thread = self._config.num_thread
         self._flow_queue = Queue(self._num_thread)
+        args = []
+        if self._config.guided_prompt_template:
+            args.append(self._config.guided_prompt_template)
+        if self._config.model_config:
+            args.append(self._config.model_config)
         for i in range(self._num_thread):
             with OpScope(name="thread_" + str(i)):
-                self._flow_queue.put(self._flow_cls())
+                self._flow_queue.put(self._flow_cls(*args))
 
     def _run_flow(
         self, input_list: Mapping[str, Any], index: int
