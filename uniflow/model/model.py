@@ -95,7 +95,6 @@ class Model:
             List[Dict[str, Any]]: Output data.
         """
         serialized_data = self._serialize(data)
-
         for i in range(MAX_ATTEMPTS):
             data = self._model_server(serialized_data)
             data = self._deserialize(data)
@@ -189,4 +188,47 @@ class JsonModel(Model):
             ERROR: f"Failed to deserialize {error_count} examples",
             ERROR_LIST: error_list,
             ERROR_CONTEXT: error_context,
+        }
+
+
+class PreprocessModel(Model):
+    """Preprocess Model Class."""
+
+    def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
+        """Serialize data.
+
+        Args:
+            data (List[Dict[str, Any]]): Data to serialize.
+
+        Returns:
+            List[str]: Serialized data.
+        """
+        output = []
+        # for d in data:
+        # Iterate over each key-value pair in the dictionary
+        for value in data.values():
+            output.append(value)
+        return output
+
+    def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
+        """Deserialize data.
+
+        Args:
+            data (List[str]): Data to deserialize.
+
+        Returns:
+            List[Dict[str, Any]]: Deserialized data.
+        """
+        output_list = []
+        error_count = 0
+
+        for d in data:
+            try:
+                output_list.append(d)
+            except Exception:
+                error_count += 1
+                continue
+        return {
+            RESPONSE: output_list,
+            ERROR: f"Failed to deserialize {error_count} examples",
         }
