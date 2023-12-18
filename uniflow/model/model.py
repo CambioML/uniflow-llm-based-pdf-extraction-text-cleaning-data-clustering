@@ -194,6 +194,17 @@ class JsonModel(Model):
 class PreprocessModel(Model):
     """Preprocess Model Class."""
 
+    def __init__(
+        self,
+        model_config: Dict[str, Any],
+    ) -> None:
+        """Initialize Preprocess Model class.
+
+        Args:
+            model_config (Dict[str, Any]): Model config.
+        """
+        super().__init__(guided_prompt_template={}, model_config=model_config)
+
     def _serialize(self, data: List[Dict[str, Any]]) -> List[str]:
         """Serialize data.
 
@@ -204,8 +215,6 @@ class PreprocessModel(Model):
             List[str]: Serialized data.
         """
         output = []
-        # for d in data:
-        # Iterate over each key-value pair in the dictionary
         for value in data.values():
             output.append(value)
         return output
