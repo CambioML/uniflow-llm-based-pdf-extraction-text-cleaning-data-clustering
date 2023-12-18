@@ -30,4 +30,10 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = NougatModelConfig()
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
+
+
+@dataclass
+class ExtractIpynbConfig(ExtractConfig):
+    """Extract Ipynb Config Class."""
+
+    flow_name: str = "ExtractIpynbFlow"
