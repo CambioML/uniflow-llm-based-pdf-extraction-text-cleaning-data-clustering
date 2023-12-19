@@ -6,7 +6,6 @@ from uniflow.flow import Flow
 from uniflow.model.model import PreprocessModel
 from uniflow.node.node import Node
 from uniflow.op.extract.pdf_op import ProcessPDFOp
-from uniflow.schema import GuidedPrompt
 
 
 class ExtractPDFFlow(Flow):
@@ -16,7 +15,6 @@ class ExtractPDFFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
@@ -30,7 +28,6 @@ class ExtractPDFFlow(Flow):
         self._process_pdf_op = ProcessPDFOp(
             name="process_pdf_op",
             model=PreprocessModel(
-                guided_prompt_template=guided_prompt_template,
                 model_config=model_config,
             ),
         )
