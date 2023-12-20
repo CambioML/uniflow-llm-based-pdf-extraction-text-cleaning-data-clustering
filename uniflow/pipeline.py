@@ -5,7 +5,7 @@ from threading import Thread
 from typing import Any, List, Mapping
 
 from uniflow.flow.config import PipelineConfig
-from uniflow.flow.extract.client import Client as ExtractClient
+from uniflow.op.extract.client import Client as ExtractClient
 from uniflow.op.prompt_schema import Context
 from uniflow.op.transform.client import Client as TransformClient
 
