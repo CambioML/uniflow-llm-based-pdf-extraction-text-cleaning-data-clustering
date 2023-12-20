@@ -1,9 +1,7 @@
 """Flow config module."""
 
 from dataclasses import dataclass
-
-from uniflow.extract.config import ExtractConfig
-from uniflow.transform.config import TransformConfig
+from uniflow.op.config import ExtractConfig, TransformConfig
 
 
 @dataclass

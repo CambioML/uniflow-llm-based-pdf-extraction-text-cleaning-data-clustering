@@ -2,10 +2,10 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
-from uniflow.flow import Flow
+from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
 from uniflow.op.basic.linear_op import LinearOp
-from uniflow.schema import GuidedPrompt
+from uniflow.op.prompt_schema import GuidedPrompt
 
 
 class TransformLinearFlow(Flow):

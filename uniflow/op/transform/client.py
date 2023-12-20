@@ -1,16 +1,16 @@
-"""Uniflow Extract Client"""
+"""Uniflow Client"""
 
 from dataclasses import asdict
 from typing import Any, List, Mapping
 
-from uniflow.extract.config import ExtractConfig
-from uniflow.extract.server import Server
+from uniflow.op.config import TransformConfig
+from uniflow.op.transform.server import Server
 
 
 class Client:
-    """Uniflow Extract Client"""
+    """Uniflow Client"""
 
-    def __init__(self, config: ExtractConfig) -> None:
+    def __init__(self, config: TransformConfig) -> None:
         """Client constructor
 
         Args:

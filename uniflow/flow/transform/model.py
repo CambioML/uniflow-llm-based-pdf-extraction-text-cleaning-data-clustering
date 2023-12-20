@@ -4,8 +4,8 @@ import json
 import logging
 from typing import Any, Dict, List
 
-from uniflow.model.server import ModelServerFactory
-from uniflow.schema import Context, GuidedPrompt
+from uniflow.flow.transform.utils.server import ModelServerFactory
+from uniflow.op.prompt_schema import Context, GuidedPrompt
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,7 +18,11 @@ MAX_ATTEMPTS = 3
 
 
 class Model:
-    """Model Class."""
+    """
+    Model Class provides general functions for various LLMs, including
+    serialize the input data, apply a given LLM on the serialized data,
+    and deserialize the model outputs.
+    """
 
     def __init__(
         self,
@@ -106,7 +110,9 @@ class Model:
 
 
 class JsonModel(Model):
-    """Json Model Class."""
+    """
+    JsonModel Class extends to Model Class to ensure the response is in json.
+    """
 
     def __init__(
         self,
