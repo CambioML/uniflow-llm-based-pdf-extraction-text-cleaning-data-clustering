@@ -14,7 +14,7 @@ from uniflow.op.config import TransformConfig
 
 
 class Server:
-    """Uniflow Server"""
+    """Uniflow Transform Server"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         """Server constructor

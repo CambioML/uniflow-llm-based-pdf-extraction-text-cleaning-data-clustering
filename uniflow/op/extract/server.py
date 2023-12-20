@@ -13,7 +13,7 @@ from uniflow.op.op import OpScope
 
 
 class Server:
-    """Uniflow Server"""
+    """Uniflow Extract Server"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         """Server constructor
