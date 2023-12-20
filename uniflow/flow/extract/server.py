@@ -7,8 +7,8 @@ from typing import Any, Dict, List, Mapping, Tuple
 from tqdm.auto import tqdm
 
 from uniflow.constants import EXTRACT
-from uniflow.extract.config import ExtractConfig
-from uniflow.flow_factory import FlowFactory
+from uniflow.op.config import ExtractConfig
+from uniflow.flow.flow_factory import FlowFactory
 from uniflow.op.op import OpScope
 
 

@@ -3,7 +3,7 @@ import copy
 import re
 from typing import Sequence
 
-from uniflow.model.model import Model
+from uniflow.flow.transform.model import Model
 from uniflow.node.node import Node
 from uniflow.op.op import Op
 

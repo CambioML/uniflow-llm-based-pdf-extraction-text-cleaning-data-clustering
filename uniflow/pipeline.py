@@ -4,10 +4,10 @@ from queue import Empty, Queue
 from threading import Thread
 from typing import Any, List, Mapping
 
-from uniflow.config import PipelineConfig
-from uniflow.extract.client import Client as ExtractClient
-from uniflow.schema import Context
-from uniflow.transform.client import Client as TransformClient
+from uniflow.flow.config import PipelineConfig
+from uniflow.flow.extract.client import Client as ExtractClient
+from uniflow.op.prompt_schema import Context
+from uniflow.op.transform.client import Client as TransformClient
 
 
 class Pipeline:

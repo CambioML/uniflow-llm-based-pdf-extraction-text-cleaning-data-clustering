@@ -2,8 +2,8 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import EXTRACT
-from uniflow.flow import Flow
-from uniflow.model.model import PreprocessModel
+from uniflow.flow.flow import Flow
+from uniflow.flow.transform.model import PreprocessModel
 from uniflow.node.node import Node
 from uniflow.op.extract.pdf_op import ProcessPDFOp
 

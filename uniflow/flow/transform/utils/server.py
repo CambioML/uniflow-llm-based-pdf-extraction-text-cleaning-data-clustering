@@ -4,7 +4,7 @@ import re
 from functools import partial
 from typing import Any, Dict, List
 
-from uniflow.model.config import (
+from uniflow.op.config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
     NougatModelConfig,
