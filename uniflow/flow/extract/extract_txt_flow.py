@@ -5,7 +5,7 @@ from typing import Sequence
 from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
-from uniflow.op.extract.txt_op import ExtractTxtOp, ProcessTxtOp
+from uniflow.op.extract.load.txt_op import ExtractTxtOp, ProcessTxtOp
 
 
 class ExtractTxtFlow(Flow):

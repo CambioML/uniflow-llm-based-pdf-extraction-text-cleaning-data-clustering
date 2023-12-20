@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Any, Dict, List
 
-from uniflow.flow.transform.utils.model_server import ModelServerFactory
+from uniflow.flow.server import ModelServerFactory
 from uniflow.op.prompt_schema import Context, GuidedPrompt
 
 logger = logging.getLogger(__name__)
