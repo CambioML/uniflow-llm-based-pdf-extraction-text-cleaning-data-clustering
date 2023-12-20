@@ -4,7 +4,7 @@ from dataclasses import asdict
 from typing import Any, List, Mapping
 
 from uniflow.op.config import ExtractConfig
-from uniflow.flow.extract.server import Server
+from uniflow.op.extract.server import Server
 
 
 class Client:
