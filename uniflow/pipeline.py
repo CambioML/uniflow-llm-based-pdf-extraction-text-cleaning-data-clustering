@@ -5,16 +5,28 @@ from threading import Thread
 from typing import Any, List, Mapping
 
 from uniflow.flow.config import PipelineConfig
-from uniflow.op.extract.client import Client as ExtractClient
+from uniflow.flow.client import ExtractClient, TransformClient
 from uniflow.op.prompt_schema import Context
-from uniflow.op.transform.client import Client as TransformClient
 
 
-class Pipeline:
-    """Queue-Based Pipeline for Uniflow"""
+class MultiProcessPipeline:
+    """
+    A queue-based pipeline to handle multiple processes for Uniflow,
+    including a consumer thread and a producer thread. The Producer/Consumer
+    pattern decouples processes that produce and consume data at different
+    rates. 
+    
+    The Producer thread is responsible for putting items into the queue if 
+    it is not full, while the Consumer thread consumes items if there are any. 
+    
+    Both threads run indefinitely while checking the status of the queue. 
+    The Producer thread will stop once it has finished putting all the items 
+    into the queue. The Consumer thread will stop once it has consumed all 
+    the items from the queue.
+    """
 
     def __init__(self, config: PipelineConfig) -> None:
-        """Pipeline constructor
+        """MultiProcessPipeline constructor
 
         Args:
             config (Dict[str, Any]): Config for the pipeline

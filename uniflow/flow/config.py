@@ -135,7 +135,7 @@ class TransformLinearConfig(TransformConfig):
 ###########################################################
 @dataclass
 class PipelineConfig:
-    """Pipeline Config Class."""
+    """MultiProcessPipeline Config Class."""
 
     extract_config: ExtractConfig
     transform_config: TransformConfig
