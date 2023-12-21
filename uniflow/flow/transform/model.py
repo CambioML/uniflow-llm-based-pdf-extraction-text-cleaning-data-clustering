@@ -6,6 +6,11 @@ from typing import Any, Dict, List
 from uniflow.op.prompt_schema import Context, GuidedPrompt
 from uniflow.op.transform.model_op import LLMDataProcessor
 
+RESPONSE = "response"
+ERROR = "error"
+ERROR_LIST = "error_list"
+ERROR_CONTEXT = "error_context"
+MAX_ATTEMPTS = 3
 
 class JsonFormattedDataProcessor(LLMDataProcessor):
     """
