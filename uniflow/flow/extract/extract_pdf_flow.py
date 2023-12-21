@@ -1,4 +1,5 @@
-"""Model Flow Module."""
+"""Extract PDF Flow."""
+
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import EXTRACT
