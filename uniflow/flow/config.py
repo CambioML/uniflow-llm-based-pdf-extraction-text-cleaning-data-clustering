@@ -2,12 +2,13 @@
 
 from dataclasses import dataclass, field
 from typing import Dict, Optional
-from uniflow.op.prompt_schema import GuidedPrompt
 
+from uniflow.op.prompt_schema import GuidedPrompt
 
 ###########################################################
 #                  All Model Configs                      #
 ###########################################################
+
 
 @dataclass
 class ModelConfig:
@@ -55,8 +56,9 @@ class NougatModelConfig(ModelConfig):
 
 
 ###########################################################
-#                   All Extract Configs                   # 
+#                   All Extract Configs                   #
 ###########################################################
+
 
 @dataclass
 class ExtractConfig:
@@ -80,11 +82,12 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = NougatModelConfig()
-    
+
 
 ###########################################################
-#                   All Transform Configs                 #    
+#                   All Transform Configs                 #
 ###########################################################
+
 
 @dataclass
 class TransformConfig:
@@ -128,8 +131,8 @@ class TransformLinearConfig(TransformConfig):
     flow_name: str = "TransformLinearFlow"
     guided_prompt_template: GuidedPrompt = GuidedPrompt(instruction="", examples=[])
     model_config: ModelConfig = field(default_factory=lambda: {})
-    
-    
+
+
 ###########################################################
 #                    Pipeline Config                      #
 ###########################################################

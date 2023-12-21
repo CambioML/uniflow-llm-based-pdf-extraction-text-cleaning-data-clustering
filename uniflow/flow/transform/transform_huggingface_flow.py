@@ -5,8 +5,8 @@ from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.flow.transform.model import Model
 from uniflow.node.node import Node
-from uniflow.op.transform.model_op import ModelOp
 from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.transform.model_op import ModelOp
 
 
 class HuggingFaceModelFlow(Flow):
@@ -46,4 +46,3 @@ class HuggingFaceModelFlow(Flow):
 
 class TransformHuggingFaceFlow(HuggingFaceModelFlow):
     TAG = TRANSFORM
-
