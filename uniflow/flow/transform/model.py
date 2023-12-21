@@ -17,7 +17,7 @@ ERROR_CONTEXT = "error_context"
 MAX_ATTEMPTS = 3
 
 
-class LLMDataProcessorJson(LLMDataProcessor):
+class JsonFormattedDataProcessor(LLMDataProcessor):
     """
     Extends the LLMDataProcessor Class to ensure the response is in json.
     """
