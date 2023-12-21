@@ -3,9 +3,9 @@ import copy
 import re
 from typing import Sequence
 
-from uniflow.flow.transform.model import LLMDataProcessor
 from uniflow.node.node import Node
 from uniflow.op.op import Op
+from uniflow.op.transform.model_op import LLMDataProcessor
 
 
 class ProcessPDFOp(Op):
