@@ -3,7 +3,7 @@ from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
-from uniflow.flow.transform.model import LLMDataProcessorJson
+from uniflow.flow.transform.model import JsonFormattedDataProcessor
 from uniflow.node.node import Node
 from uniflow.op.prompt_schema import GuidedPrompt
 from uniflow.op.transform.model_op import LLMDataProcessor, ModelOp
@@ -25,7 +25,7 @@ class OpenAIModelFlow(Flow):
         """
         super().__init__()
         if model_config["response_format"]["type"] == "json_object":
-            model = LLMDataProcessorJson(
+            model = JsonFormattedDataProcessor(
                 guided_prompt_template=guided_prompt_template,
                 model_config=model_config,
             )
