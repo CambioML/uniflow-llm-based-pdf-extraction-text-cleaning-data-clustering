@@ -3,10 +3,6 @@
 from dataclasses import dataclass, field
 from typing import Dict
 
-###########################################################
-#                  All Model Configs                      #
-###########################################################
-
 
 @dataclass
 class ModelConfig:
