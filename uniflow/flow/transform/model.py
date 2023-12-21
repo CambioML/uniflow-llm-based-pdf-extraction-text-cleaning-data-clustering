@@ -17,11 +17,12 @@ ERROR_CONTEXT = "error_context"
 MAX_ATTEMPTS = 3
 
 
-class Model:
+class LLMDataProcessor:
     """
-    Model Class provides general functions for various LLMs, including
-    serialize the input data, apply a given LLM on the serialized data,
-    and deserialize the model outputs.
+    Data processor for processing data with a LLM model server.
+    It handles serialization and deserialization of data,
+    manages interactions with the LLM model server, and applies
+    a guided prompt template to the data.
     """
 
     def __init__(
@@ -109,9 +110,9 @@ class Model:
         return data
 
 
-class JsonModel(Model):
+class LLMDataProcessorJson(LLMDataProcessor):
     """
-    JsonModel Class extends to Model Class to ensure the response is in json.
+    Extends the LLMDataProcessor Class to ensure the response is in json.
     """
 
     def __init__(
@@ -197,7 +198,7 @@ class JsonModel(Model):
         }
 
 
-class PreprocessModel(Model):
+class LLMDataPreprocessor(LLMDataProcessor):
     """Preprocess Model Class."""
 
     def __init__(
