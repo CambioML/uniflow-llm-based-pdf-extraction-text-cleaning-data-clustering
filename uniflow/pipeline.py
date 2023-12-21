@@ -9,7 +9,7 @@ from uniflow.flow.config import PipelineConfig
 from uniflow.op.prompt_schema import Context
 
 
-class MultiThreadPool:
+class MultiFlowsPipeline:
     """
     A queue-based pipeline to handle multiple processes for Uniflow,
     including a consumer thread and a producer thread. The Producer/Consumer
@@ -26,7 +26,7 @@ class MultiThreadPool:
     """
 
     def __init__(self, config: PipelineConfig) -> None:
-        """MultiThreadPool constructor
+        """MultiFlowsPipeline constructor
 
         Args:
             config (Dict[str, Any]): Config for the pipeline
