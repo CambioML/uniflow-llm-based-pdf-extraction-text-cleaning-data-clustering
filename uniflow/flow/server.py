@@ -1,4 +1,4 @@
-"""All Servers including Model Server, Extract Server and Transform Server."""
+"""All Servers including Extract Server, Transform Server and Pipeline Server."""
 
 import traceback
 from concurrent import futures

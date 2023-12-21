@@ -1,11 +1,21 @@
 """Model Op Module."""
 import copy
+import logging
 from typing import Any, Dict, List, Sequence
 
 from uniflow.node.node import Node
 from uniflow.op.op import Op
 from uniflow.op.prompt_schema import Context, GuidedPrompt
 from uniflow.op.transform.model_server import ModelServerFactory
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+RESPONSE = "response"
+ERROR = "error"
+ERROR_LIST = "error_list"
+ERROR_CONTEXT = "error_context"
+MAX_ATTEMPTS = 3
 
 
 class LLMDataProcessor:
