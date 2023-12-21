@@ -94,7 +94,7 @@ class TransformLinearConfig(TransformConfig):
 ###########################################################
 @dataclass
 class PipelineConfig:
-    """MultiThreadPool Config Class."""
+    """MultiFlowsPipeline Config Class."""
 
     extract_config: ExtractConfig
     transform_config: TransformConfig
