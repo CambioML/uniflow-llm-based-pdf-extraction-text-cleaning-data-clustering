@@ -102,7 +102,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
 
 1. Import the `uniflow` `Client`, `Config`, and `Context` objects.
     ```
-    from uniflow.flow.client import TransformClient as Client
+    from uniflow.flow.client import TransformClient
     from uniflow.flow.config import TransformOpenAIConfig, OpenAIModelConfig
     from uniflow.op.prompt_schema import Context
     ```
@@ -142,7 +142,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
             response_format={"type": "json_object"}
         ),
     )
-    client = Client(config)
+    client = TransformClient(config)
     ```
 
 1. Use the `client` object to run the flow on the input data.
@@ -211,7 +211,7 @@ The `LMQGModelConfig` inherits from the `ModelConfig`, but overrides the `model_
 ### Custom Configuration Example
 Here is an example of how to pass in a custom configuration to the `Client` object:
 ```
-from uniflow.flow.client import TransformClient as Client
+from uniflow.flow.client import TransformClient
 from uniflow.flow.config import TransformOpenAIConfig, OpenAIModelConfig
 from uniflow.op.prompt_schema import Context
 
@@ -233,7 +233,7 @@ config = OpenAIConfig(
     temperature=0.5,
   ),
 )
-client = Client(config)
+client = TransformClient(config)
 output = client.run(data)
 ```
 
