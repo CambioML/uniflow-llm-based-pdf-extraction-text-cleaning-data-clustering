@@ -1,6 +1,4 @@
-"""Model __init__ Module."""
+"""flow __init__ Module."""
 
-# this register all possible model server into ModelServerFactory through
-# ModelServerFactory.register(cls.__name__, cls) in AbsModelServer
-# __init_subclass__
-from uniflow.flow.server import *  # noqa: F401, F403
+from uniflow.flow.extract import *  # noqa: F401, F403
+from uniflow.flow.transform import *  # noqa: F401, F403

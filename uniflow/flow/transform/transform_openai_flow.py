@@ -3,10 +3,10 @@ from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
-from uniflow.flow.transform.model import JsonFormattedDataProcessor
 from uniflow.node.node import Node
+from uniflow.op.model.model_op import (JsonFormattedDataProcessor,
+                                       LLMDataProcessor, ModelOp)
 from uniflow.op.prompt_schema import GuidedPrompt
-from uniflow.op.transform.model_op import LLMDataProcessor, ModelOp
 
 
 class OpenAIModelFlow(Flow):
@@ -52,4 +52,6 @@ class OpenAIModelFlow(Flow):
 
 
 class TransformOpenAIFlow(OpenAIModelFlow):
+    """Transform OpenAI Flow Class."""
+
     TAG = TRANSFORM
