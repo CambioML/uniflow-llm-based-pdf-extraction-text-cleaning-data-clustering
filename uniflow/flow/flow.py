@@ -4,7 +4,7 @@ import logging
 from typing import Any, Mapping, Sequence
 
 from uniflow import constants
-from uniflow.flow_factory import FlowFactory
+from uniflow.flow.flow_factory import FlowFactory
 from uniflow.node.node import Node
 
 logger = logging.getLogger(__name__)

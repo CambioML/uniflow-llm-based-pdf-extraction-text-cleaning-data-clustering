@@ -3,15 +3,15 @@ import copy
 import re
 from typing import Sequence
 
-from uniflow.model.model import Model
 from uniflow.node.node import Node
+from uniflow.op.model.model_op import LLMDataProcessor
 from uniflow.op.op import Op
 
 
 class ProcessPDFOp(Op):
     """Process PDF Op Class."""
 
-    def __init__(self, name: str, model: Model) -> None:
+    def __init__(self, name: str, model: LLMDataProcessor) -> None:
         """Process PDF Op Constructor.
 
         Args:

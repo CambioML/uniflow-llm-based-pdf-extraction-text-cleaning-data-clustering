@@ -1,34 +1,34 @@
+"""Extract PDF Flow."""
+
 from typing import Any, Dict, Sequence
 
-from uniflow.constants import TRANSFORM
-from uniflow.flow import Flow
-from uniflow.model.model import Model
+from uniflow.constants import EXTRACT
+from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
-from uniflow.op.model.model_op import ModelOp
-from uniflow.schema import GuidedPrompt
+from uniflow.op.extract.load.pdf_op import ProcessPDFOp
+from uniflow.op.model.model_op import LLMDataPreprocessor
 
 
-class TransformLMQGFlow(Flow):
-    """LMQG Transform Flow Class."""
+class ExtractPDFFlow(Flow):
+    """Extract PDF Flow Class."""
 
-    TAG = TRANSFORM
+    TAG = EXTRACT
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            model_server (str): Model server name.
+            few_shot_template (Dict[str, Any]): Few shot template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
-        self._model_op = ModelOp(
-            name="lmqg_model_op",
-            model=Model(
-                guided_prompt_template=guided_prompt_template,
+        self._process_pdf_op = ProcessPDFOp(
+            name="process_pdf_op",
+            model=LLMDataPreprocessor(
                 model_config=model_config,
             ),
         )
@@ -42,4 +42,4 @@ class TransformLMQGFlow(Flow):
         Returns:
             Sequence[Node]: Nodes after running.
         """
-        return self._model_op(nodes)
+        return self._process_pdf_op(nodes)

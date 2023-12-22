@@ -1,5 +1,4 @@
-"""Model Config Module."""
-
+"""Model config module."""
 
 from dataclasses import dataclass, field
 from typing import Dict
