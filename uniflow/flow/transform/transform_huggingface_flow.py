@@ -4,8 +4,8 @@ from typing import Any, Dict, Sequence
 from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
+from uniflow.op.model.model_op import LLMDataProcessor, ModelOp
 from uniflow.op.prompt_schema import GuidedPrompt
-from uniflow.op.transform.model_op import LLMDataProcessor, ModelOp
 
 
 class HuggingFaceModelFlow(Flow):
@@ -44,4 +44,6 @@ class HuggingFaceModelFlow(Flow):
 
 
 class TransformHuggingFaceFlow(HuggingFaceModelFlow):
+    """Transform HuggingFace Flow Class."""
+
     TAG = TRANSFORM

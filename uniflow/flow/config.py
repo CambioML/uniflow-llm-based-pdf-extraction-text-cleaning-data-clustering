@@ -3,13 +3,10 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from uniflow.op.model.model_config import (HuggingfaceModelConfig, ModelConfig,
+                                           NougatModelConfig,
+                                           OpenAIModelConfig)
 from uniflow.op.prompt_schema import GuidedPrompt
-from uniflow.op.transform.model_config import (
-    HuggingfaceModelConfig,
-    ModelConfig,
-    NougatModelConfig,
-    OpenAIModelConfig,
-)
 
 ###########################################################
 #                   All Extract Configs                   #
