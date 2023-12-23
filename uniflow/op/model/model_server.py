@@ -2,15 +2,16 @@
 All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
 """
 
+import re
+from functools import partial
 from typing import Any, Dict, List
 
-from functools import partial
-
-import re
-
-from uniflow.op.model.model_config import (HuggingfaceModelConfig,
-                                           LMQGModelConfig, NougatModelConfig,
-                                           OpenAIModelConfig)
+from uniflow.op.model.model_config import (
+    HuggingfaceModelConfig,
+    LMQGModelConfig,
+    NougatModelConfig,
+    OpenAIModelConfig,
+)
 
 ###############################################################################
 #                             All Model Servers                               #
@@ -180,10 +181,11 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from transformers import \
-            pipeline  # pylint: disable=import-outside-toplevel
+        from transformers import pipeline  # pylint: disable=import-outside-toplevel
         from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM, AutoTokenizer)
+            AutoModelForCausalLM,
+            AutoTokenizer,
+        )
 
         super().__init__(model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
@@ -257,8 +259,7 @@ class LMQGModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from lmqg import \
-            TransformersQG  # pylint: disable=import-outside-toplevel
+        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
 
         super().__init__(model_config)
         self._model_config = LMQGModelConfig(**self._model_config)
@@ -310,12 +311,13 @@ class NougatModelServer(AbsModelServer):
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing nougat package
         try:
-            from nougat import \
-                NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import \
-                get_checkpoint  # pylint: disable=import-outside-toplevel
-            from nougat.utils.device import \
-                move_to_device  # pylint: disable=import-outside-toplevel
+            from nougat import NougatModel  # pylint: disable=import-outside-toplevel
+            from nougat.utils.checkpoint import (
+                get_checkpoint,  # pylint: disable=import-outside-toplevel
+            )
+            from nougat.utils.device import (
+                move_to_device,  # pylint: disable=import-outside-toplevel
+            )
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
@@ -361,12 +363,16 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        from nougat.postprocessing import \
-            markdown_compatible  # pylint: disable=import-outside-toplevel
-        from nougat.utils.dataset import \
-            LazyDataset  # pylint: disable=import-outside-toplevel
+        from nougat.postprocessing import (
+            markdown_compatible,  # pylint: disable=import-outside-toplevel
+        )
+        from nougat.utils.dataset import (
+            LazyDataset,  # pylint: disable=import-outside-toplevel
+        )
         from torch.utils.data import (  # pylint: disable=import-outside-toplevel
-            ConcatDataset, DataLoader)
+            ConcatDataset,
+            DataLoader,
+        )
 
         outs = []
         for pdf in data:
