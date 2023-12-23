@@ -1,11 +1,12 @@
 """Model Flow Module."""
 from typing import Any, Dict, Sequence
 
-from uniflow.flow import Flow
-from uniflow.model.model import JsonModel, Model
+from uniflow.constants import TRANSFORM
+from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
-from uniflow.op.model.model_op import ModelOp
-from uniflow.schema import GuidedPrompt
+from uniflow.op.model.model_op import (JsonFormattedDataProcessor,
+                                       LLMDataProcessor, ModelOp)
+from uniflow.op.prompt_schema import GuidedPrompt
 
 
 class OpenAIModelFlow(Flow):
@@ -24,12 +25,12 @@ class OpenAIModelFlow(Flow):
         """
         super().__init__()
         if model_config["response_format"]["type"] == "json_object":
-            model = JsonModel(
+            model = JsonFormattedDataProcessor(
                 guided_prompt_template=guided_prompt_template,
                 model_config=model_config,
             )
         else:
-            model = Model(
+            model = LLMDataProcessor(
                 guided_prompt_template=guided_prompt_template,
                 model_config=model_config,
             )
@@ -48,3 +49,9 @@ class OpenAIModelFlow(Flow):
             Sequence[Node]: Nodes after running.
         """
         return self._model_op(nodes)
+
+
+class TransformOpenAIFlow(OpenAIModelFlow):
+    """Transform OpenAI Flow Class."""
+
+    TAG = TRANSFORM

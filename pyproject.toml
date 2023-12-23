@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uniflow"
-version = "0.0.8"
+version = "0.0.9"
 description = "Unified flow interface for data augmentation for LLM training."
 authors = ["CambioML <wanwanaiai45@gmail.com>"]
 maintainers = ["Rachel Hu <goldpiggy@berkeley.edu>"]
@@ -12,9 +12,10 @@ python = ">=3.9,<3.13"
 python-dotenv = "^1.0.0"
 openai = "^1.2.4"
 graphviz = "^0.20.1"
+pydantic = "^2.5.2"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "3.5.0"
+pre-commit = "^3.5.0"
 
 
 [build-system]

@@ -1,11 +1,10 @@
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
-from uniflow.flow import Flow
-from uniflow.model.model import Model
+from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
-from uniflow.op.model.model_op import ModelOp
-from uniflow.schema import GuidedPrompt
+from uniflow.op.model.model_op import LLMDataProcessor, ModelOp
+from uniflow.op.prompt_schema import GuidedPrompt
 
 
 class TransformLMQGFlow(Flow):
@@ -27,7 +26,7 @@ class TransformLMQGFlow(Flow):
         super().__init__()
         self._model_op = ModelOp(
             name="lmqg_model_op",
-            model=Model(
+            model=LLMDataProcessor(
                 guided_prompt_template=guided_prompt_template,
                 model_config=model_config,
             ),
