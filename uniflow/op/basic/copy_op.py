@@ -2,11 +2,11 @@
 import copy
 from typing import Any, Mapping, Sequence
 
-from uniflow.node.node import Node
+from uniflow.node import Node
 from uniflow.op.op import Op
 
 
-class LinearOp(Op):
+class CopyOp(Op):
     """Linear operation class."""
 
     def _transform(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:

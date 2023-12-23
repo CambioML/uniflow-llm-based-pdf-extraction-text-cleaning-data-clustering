@@ -1,14 +1,14 @@
 import unittest
 
-from uniflow.node.node import Node
-from uniflow.op.basic.linear_op import LinearOp
+from uniflow.node import Node
+from uniflow.op.basic.copy_op import CopyOp
 
 
-class TestLinearOp(unittest.TestCase):
+class TestCopyOp(unittest.TestCase):
     def test_call(self):
         # Test with one input node
         input_node = Node(name="input_node", value_dict={"x": 1})
-        op = LinearOp("linear_op")
+        op = CopyOp("linear_op")
         op([input_node])
         op([input_node])
         self.assertEqual(

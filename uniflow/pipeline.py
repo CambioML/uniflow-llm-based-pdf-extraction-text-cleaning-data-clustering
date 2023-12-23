@@ -1,4 +1,4 @@
-"""Queue-Based Pipeline for Uniflow"""
+"""Queue-Based Pipeline for flow streaming with multiple threads."""
 
 from queue import Empty, Queue
 from threading import Thread
