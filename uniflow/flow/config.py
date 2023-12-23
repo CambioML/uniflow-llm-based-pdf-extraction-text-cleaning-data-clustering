@@ -3,9 +3,12 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from uniflow.op.model.model_config import (HuggingfaceModelConfig, ModelConfig,
-                                           NougatModelConfig,
-                                           OpenAIModelConfig)
+from uniflow.op.model.model_config import (
+    HuggingfaceModelConfig,
+    ModelConfig,
+    NougatModelConfig,
+    OpenAIModelConfig,
+)
 from uniflow.op.prompt_schema import GuidedPrompt
 
 ###########################################################
@@ -35,6 +38,13 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = NougatModelConfig()
+
+
+@dataclass
+class ExtractMarkdownConfig(ExtractConfig):
+    """Extract Markdown Config Class."""
+
+    flow_name: str = "ExtractMarkdownFlow"
 
 
 ###########################################################

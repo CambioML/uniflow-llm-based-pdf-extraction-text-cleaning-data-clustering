@@ -1,6 +1,10 @@
 """Transform markdown op."""
 
-from typing import Dict, List, TypedDict
+import copy
+from typing import Dict, List, Sequence, TypedDict
+
+from uniflow.node.node import Node
+from uniflow.op.op import Op
 
 
 class HeaderType(TypedDict):
@@ -18,7 +22,7 @@ class LineType(TypedDict):
     content: str
 
 
-class SplitMarkdownOp:
+class MarkdownHeaderSplitter(Op):
     """Transform markdown class."""
 
     headers_to_split_on_default = [
@@ -27,6 +31,34 @@ class SplitMarkdownOp:
         ("###", "Header 3"),
         ("####", "Header 4"),
     ]
+
+    def __call__(
+        self,
+        nodes: Sequence[Node],
+        headers_to_split_on_list: List[tuple] = None,
+    ) -> Sequence[Node]:
+        """Run Model Op.
+
+        Args:
+            nodes (Sequence[Node]): Nodes to run.
+            headers_to_split_on_list(List[tuple]): Header list for split.
+
+        Returns:
+            Sequence[Node]: Nodes after running.
+        """
+        output_nodes = []
+        for node in nodes:
+            value_dict = copy.deepcopy(node.value_dict)
+            text = value_dict["text"]
+            text = self.header_splitter(text.strip(), headers_to_split_on_list)
+            output_nodes.append(
+                Node(
+                    name=self.unique_name(),
+                    value_dict={"text": text},
+                    prev_nodes=[node],
+                )
+            )
+        return output_nodes
 
     def header_splitter(
         self,
@@ -63,16 +95,14 @@ class SplitMarkdownOp:
                 if stripped_line.startswith(sep) and (
                     # Header with no text OR header is followed by space
                     # Both are valid conditions that sep is being used a header
-                    len(stripped_line) == len(sep)
-                    or stripped_line[len(sep)] == " "
+                    (len(stripped_line) == len(sep) or stripped_line[len(sep)] == " ")
                 ):
                     # Get the current header level
                     current_header_level = sep.count("#")
 
                     # Pop out headers of lower or same level from the stack
-                    while (
-                        header_stack
-                        and header_stack[-1]["level"] >= current_header_level
+                    while header_stack and (
+                        header_stack[-1]["level"] >= current_header_level
                     ):
                         # We have encountered a new header
                         # at the same or higher level

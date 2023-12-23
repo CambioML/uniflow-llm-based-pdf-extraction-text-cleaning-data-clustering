@@ -1,12 +1,12 @@
-"""Model Flow Module."""
+"""Extract PDF Flow."""
+
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import EXTRACT
-from uniflow.flow import Flow
-from uniflow.model.model import PreprocessModel
+from uniflow.flow.flow import Flow
 from uniflow.node.node import Node
-from uniflow.op.extract.pdf_op import ProcessPDFOp
-from uniflow.schema import GuidedPrompt
+from uniflow.op.extract.load.pdf_op import ProcessPDFOp
+from uniflow.op.model.model_op import LLMDataPreprocessor
 
 
 class ExtractPDFFlow(Flow):
@@ -16,7 +16,6 @@ class ExtractPDFFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
@@ -29,8 +28,7 @@ class ExtractPDFFlow(Flow):
         super().__init__()
         self._process_pdf_op = ProcessPDFOp(
             name="process_pdf_op",
-            model=PreprocessModel(
-                guided_prompt_template=guided_prompt_template,
+            model=LLMDataPreprocessor(
                 model_config=model_config,
             ),
         )
