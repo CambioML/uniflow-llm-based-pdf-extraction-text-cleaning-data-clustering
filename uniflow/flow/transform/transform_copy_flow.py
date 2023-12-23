@@ -3,13 +3,16 @@ from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
-from uniflow.node.node import Node
-from uniflow.op.basic.linear_op import LinearOp
+from uniflow.node import Node
+from uniflow.op.basic.copy_op import CopyOp
 from uniflow.op.prompt_schema import GuidedPrompt
 
 
-class TransformLinearFlow(Flow):
-    """Linear flow class."""
+class TransformCopyFlow(Flow):
+    """Copy flow class.
+
+    This is a demo flow does nothing but copy the input nodes.
+    """
 
     TAG = TRANSFORM
 
@@ -18,12 +21,12 @@ class TransformLinearFlow(Flow):
         guided_prompt_template: GuidedPrompt,
         model_config: Dict[str, Any],
     ) -> None:  # pylint: disable=useless-parent-delegation
-        """Initialize LinearFlow class."""
-        self._linear_op = LinearOp(name="linear_op")
+        """Initialize CopyFlow class."""
+        self._copy_op = CopyOp(name="copy_op")
         super().__init__()
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
-        """Run LinearFlow.
+        """Run CopyFlow.
 
         Args:
             nodes (Sequence[Node]): Nodes to run.
@@ -31,4 +34,4 @@ class TransformLinearFlow(Flow):
         Returns:
             Sequence[Node]: Nodes after running.
         """
-        return self._linear_op(nodes)
+        return self._copy_op(nodes)

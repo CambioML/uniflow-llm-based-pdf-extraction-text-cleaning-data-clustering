@@ -3,7 +3,7 @@ from typing import Sequence
 from unittest.mock import MagicMock, patch
 
 import uniflow.op.utils as utils
-from uniflow.node.node import Node
+from uniflow.node import Node
 from uniflow.op.op import Op
 
 

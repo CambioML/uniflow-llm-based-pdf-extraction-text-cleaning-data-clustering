@@ -3,9 +3,12 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
-from uniflow.op.model.model_config import (HuggingfaceModelConfig, ModelConfig,
-                                           NougatModelConfig,
-                                           OpenAIModelConfig)
+from uniflow.op.model.model_config import (
+    HuggingfaceModelConfig,
+    ModelConfig,
+    NougatModelConfig,
+    OpenAIModelConfig,
+)
 from uniflow.op.prompt_schema import GuidedPrompt
 
 ###########################################################
@@ -78,10 +81,10 @@ class TransformLMQGConfig(TransformConfig):
 
 
 @dataclass
-class TransformLinearConfig(TransformConfig):
+class TransformCopyConfig(TransformConfig):
     """Transform Linear Config Class."""
 
-    flow_name: str = "TransformLinearFlow"
+    flow_name: str = "TransformCopyFlow"
     guided_prompt_template: GuidedPrompt = GuidedPrompt(instruction="", examples=[])
     model_config: ModelConfig = field(default_factory=lambda: {})
 

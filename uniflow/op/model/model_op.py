@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Any, Dict, List, Sequence
 
-from uniflow.node.node import Node
+from uniflow.node import Node
 from uniflow.op.model.model_server import ModelServerFactory
 from uniflow.op.op import Op
 from uniflow.op.prompt_schema import Context, GuidedPrompt

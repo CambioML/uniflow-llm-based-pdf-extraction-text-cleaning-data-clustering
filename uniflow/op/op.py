@@ -3,7 +3,7 @@ import abc
 from typing import Sequence
 
 import uniflow.op.utils as utils
-from uniflow.node.node import Node
+from uniflow.node import Node
 
 
 class OpScope:
