@@ -4,6 +4,10 @@ All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServe
 
 from typing import Any, Dict, List
 
+from functools import partial
+
+import re
+
 from uniflow.op.model.model_config import (HuggingfaceModelConfig,
                                            LMQGModelConfig, NougatModelConfig,
                                            OpenAIModelConfig)
