@@ -1,15 +1,17 @@
 """Model Server Factory"""
 
-import re
-from functools import partial
 from typing import Any, Dict, List
 
-from uniflow.model.config import (
+from uniflow.op.model.model_config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
 )
+
+###############################################################################
+#                             All Model Servers                               #
+###############################################################################
 
 
 class ModelServerFactory:
@@ -309,12 +311,14 @@ class NougatModelServer(AbsModelServer):
         self.DataLoader = DataLoader
         self.ConcatDataset = ConcatDataset
         try:
-            from nougat import NougatModel
-            from nougat.postprocessing import markdown_compatible
-            from nougat.utils.checkpoint import get_checkpoint
-            from nougat.utils.dataset import LazyDataset
-            from nougat.utils.device import move_to_device
-        except ModuleNotFoundError:
+            from nougat import NougatModel  # pylint: disable=import-outside-toplevel
+            from nougat.utils.checkpoint import (
+                get_checkpoint,  # pylint: disable=import-outside-toplevel
+            )
+            from nougat.utils.device import (
+                move_to_device,  # pylint: disable=import-outside-toplevel
+            )
+        except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
             )
@@ -361,6 +365,17 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
+        from nougat.postprocessing import (
+            markdown_compatible,  # pylint: disable=import-outside-toplevel
+        )
+        from nougat.utils.dataset import (
+            LazyDataset,  # pylint: disable=import-outside-toplevel
+        )
+        from torch.utils.data import (  # pylint: disable=import-outside-toplevel
+            ConcatDataset,
+            DataLoader,
+        )
+
         outs = []
         for pdf in data:
             dataset = self.LazyDataset(
