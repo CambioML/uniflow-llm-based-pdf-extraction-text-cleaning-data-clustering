@@ -88,10 +88,10 @@ class TransformLMQGConfig(TransformConfig):
 
 
 @dataclass
-class TransformLinearConfig(TransformConfig):
+class TransformCopyConfig(TransformConfig):
     """Transform Linear Config Class."""
 
-    flow_name: str = "TransformLinearFlow"
+    flow_name: str = "TransformCopyFlow"
     guided_prompt_template: GuidedPrompt = GuidedPrompt(instruction="", examples=[])
     model_config: ModelConfig = field(default_factory=lambda: {})
 
