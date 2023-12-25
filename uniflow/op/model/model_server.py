@@ -1,4 +1,6 @@
-"""Model Server Factory"""
+"""
+All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
+"""
 
 import re
 from functools import partial
@@ -308,10 +310,6 @@ class NougatModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing nougat package
-        from torch.utils.data import ConcatDataset, DataLoader
-
-        self.DataLoader = DataLoader
-        self.ConcatDataset = ConcatDataset
         try:
             from nougat import NougatModel  # pylint: disable=import-outside-toplevel
             from nougat.utils.checkpoint import (
@@ -323,7 +321,7 @@ class NougatModelServer(AbsModelServer):
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
-            )
+            ) from exc
 
         super().__init__(model_config)
         self._model_config = NougatModelConfig(**self._model_config)
@@ -333,8 +331,6 @@ class NougatModelServer(AbsModelServer):
             self.model, bf16=False, cuda=self._model_config.batch_size > 0
         )
         self.model.eval()
-        self.LazyDataset = LazyDataset
-        self.markdown_compatible = markdown_compatible
 
     def _preprocess(self, data: str) -> List[str]:
         """Preprocess data.
@@ -380,16 +376,16 @@ class NougatModelServer(AbsModelServer):
 
         outs = []
         for pdf in data:
-            dataset = self.LazyDataset(
+            dataset = LazyDataset(
                 pdf,
                 partial(self.model.encoder.prepare_input, random_padding=False),
                 None,
             )
-            dataloader = self.DataLoader(
-                self.ConcatDataset([dataset]),
+            dataloader = DataLoader(
+                ConcatDataset([dataset]),
                 batch_size=1,
                 shuffle=False,
-                collate_fn=self.LazyDataset.ignore_none_collate,
+                collate_fn=LazyDataset.ignore_none_collate,
             )
             predictions = []
             page_num = 0
@@ -404,7 +400,7 @@ class NougatModelServer(AbsModelServer):
                         # uncaught repetitions -- most likely empty page
                         predictions.append(f"\n\n[MISSING_PAGE_EMPTY:{page_num}]\n\n")
                     else:
-                        output = self.markdown_compatible(output)
+                        output = markdown_compatible(output)
                         predictions.append(output)
                     if is_last_page[j]:
                         out = "".join(predictions).strip()

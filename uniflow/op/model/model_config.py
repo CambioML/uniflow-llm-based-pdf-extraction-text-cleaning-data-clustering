@@ -1,5 +1,4 @@
-"""Model Config Module."""
-
+"""Model config module."""
 
 from dataclasses import dataclass, field
 from typing import Dict
@@ -19,20 +18,8 @@ class OpenAIModelConfig(ModelConfig):
 
     model_server: str = "OpenAIModelServer"
     num_call: int = 1
-    temperature: float = 1.5
+    temperature: float = 0.9
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
-
-
-@dataclass
-class OpenAIJsonModelConfig(ModelConfig):
-    """OpenAI Json Model Config Class."""
-
-    model_server: str = "OpenAIModelServer"
-    num_call: int = 1
-    temperature: float = 1.5
-    response_format: Dict[str, str] = field(
-        default_factory=lambda: {"type": "json_object"}
-    )
 
 
 @dataclass
@@ -51,3 +38,12 @@ class LMQGModelConfig(ModelConfig):
     model_name: str = "lmqg/t5-base-squad-qg-ae"
     batch_size: int = 1
     model_server: str = "LMQGModelServer"
+
+
+@dataclass
+class NougatModelConfig(ModelConfig):
+    """Nougat Model Config Class."""
+
+    model_name: str = "0.1.0-small"
+    batch_size: int = 1
+    model_server: str = "NougatModelServer"
