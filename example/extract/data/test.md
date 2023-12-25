@@ -1,36 +1,21 @@
-# README文件
+# Getting Started
 
-关于 README.md 文件。
+## What is Markdown?
+Markdown is a lightweight markup language that you can use to add formatting elements to plaintext text documents. Created by John Gruber in 2004, Markdown is now one of the world’s most popular markup languages.
 
-## 概述
+### Example
+For example, to denote a heading, you add a number sign before it (e.g., # Heading One). Or to make a phrase bold, you add two asterisks before and after it (e.g., **this text is bold**). It may take a while to get used to seeing Markdown syntax in your text, especially if you’re accustomed to WYSIWYG applications. The screenshot below shows a Markdown file displayed in the Visual Studio Code text editor.
 
-`README.md` 文件是描述一个目录的 Markdown 文件。当你在 GitHub 和 Gitiles 中浏览这个目录时，就会展现这个文件。
 
-例如，当你查看这个目录的内容时，就会展现它里面的 /README.md 文件：
+## Why Use Markdown?
+You might be wondering why people use Markdown instead of a WYSIWYG editor. Why write with Markdown when you can press buttons in an interface to format your text? As it turns out, there are several reasons why people use Markdown instead of WYSIWYG editors.
 
-https://github.com/google/styleguide/tree/gh-pages
+## Kicking the Tires
+The best way to get started with Markdown is to use it. That’s easier than ever before thanks to a variety of free tools.
 
-在 Gitiles 中，当显示仓库库索引时，在 `HEAD` 引用中的 `README.md` 也会展现出来：
+You don’t even need to download anything. There are several online Markdown editors that you can use to try writing in Markdown. Dillinger is one of the best online Markdown editors. Just open the site and start typing in the left pane. A preview of the rendered document appears in the right pane.
 
-https://gerrit.googlesource.com/gitiles/
+## How Does it Work?
+Dillinger makes writing in Markdown easy because it hides the stuff happening behind the scenes, but it’s worth exploring how the process works in general.
 
-## 准则
-
-**`README.md` 文件旨在为浏览您的代码的工程师（尤其是初次使用的用户）提供方向**。 `README.md` 文件可能是读者在浏览包含您的代码的目录时遇到的第一个文件。这种情况下，它也充当了目录的说明页面。
-
-我们建议您的代码的顶级目录包含最新的`README.md`文件。这对于为其他团队提供接口的软件包目录尤其重要。
-
-### 文件名
-
-统一用 `README.md`。在 Gitiles 的目录视图中，不会显示名字叫 `README` 的文件。
-
-### 内容
-
-至少每个包级别的 `README.md` 都应当包含或指向以下信息：
-
-1.  **此包/库中有什么**，它的用途是什么。
-2.  **联系谁**。
-3.  **状态**：此包/库是否已弃用，是否不用于一般发布等。
-4.  **更多信息**：哪里能找到更详细的文档，例如：
-     * overview.md 文件，提供更详细的概念信息。
-     * 使用此软件包/库的任何 API 文档。
+When you write in Markdown, the text is stored in a plaintext file that has an .md or .markdown extension. But then what? How is your Markdown-formatted file converted into HTML or a print-ready document?
