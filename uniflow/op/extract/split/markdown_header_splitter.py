@@ -3,7 +3,7 @@
 import copy
 from typing import Dict, List, Sequence, TypedDict
 
-from uniflow.node.node import Node
+from uniflow.node import Node
 from uniflow.op.op import Op
 
 
@@ -113,10 +113,11 @@ class MarkdownHeaderSplitter(Op):
                             initial_metadata.pop(popped_header["name"])
 
                     # Push the current header to the stack
+                    sep_length = len(sep)
                     header: HeaderType = {
                         "level": current_header_level,
                         "name": name,
-                        "data": stripped_line[len(sep) :].strip(),
+                        "data": stripped_line[sep_length:].strip(),
                     }
                     header_stack.append(header)
                     # Update initial_metadata with the current header
@@ -135,8 +136,8 @@ class MarkdownHeaderSplitter(Op):
 
                     break
 
-                if stripped_line:
-                    current_content.append(stripped_line)
-                    current_metadata = initial_metadata.copy()
+            if stripped_line:
+                current_content.append(stripped_line)
+                current_metadata = initial_metadata.copy()
 
         return lines_with_metadata
