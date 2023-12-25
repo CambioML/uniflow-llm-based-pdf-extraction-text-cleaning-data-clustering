@@ -40,6 +40,20 @@ class ExtractPDFConfig(ExtractConfig):
     model_config: ModelConfig = NougatModelConfig()
 
 
+@dataclass
+class ExtractMarkdownConfig(ExtractConfig):
+    """Extract markdown Config Class."""
+
+    flow_name: str = "ExtractMarkdownFlow"
+
+
+@dataclass
+class ExtractIpynbConfig(ExtractConfig):
+    """Extract ipynb Config Class."""
+
+    flow_name: str = "ExtractIpynbFlow"
+
+
 ###########################################################
 #                   All Transform Configs                 #
 ###########################################################
