@@ -6,7 +6,7 @@ from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.extract.load.pdf_op import ProcessPDFOp
-from uniflow.op.model.model_op import LLMDataPreprocessor
+from uniflow.op.model.llm_preprocessor import LLMDataPreprocessor
 
 
 class ExtractPDFFlow(Flow):

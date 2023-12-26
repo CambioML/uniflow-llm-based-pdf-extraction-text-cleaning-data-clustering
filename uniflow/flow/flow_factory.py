@@ -1,7 +1,7 @@
 """Flow Factory Module."""
 from typing import Dict, List
 
-from uniflow.constants import EXTRACT, TRANSFORM
+from uniflow.constants import CLASSIFICATION, EXTRACT, TRANSFORM
 
 
 class FlowFactory:
@@ -10,6 +10,7 @@ class FlowFactory:
     _flows = {
         EXTRACT: {},
         TRANSFORM: {},
+        CLASSIFICATION: {},
     }
 
     @classmethod
