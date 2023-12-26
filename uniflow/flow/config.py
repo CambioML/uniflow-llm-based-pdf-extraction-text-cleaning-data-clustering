@@ -3,13 +3,14 @@
 from dataclasses import dataclass, field
 from typing import Optional
 
+from uniflow import Context, GuidedPrompt
 from uniflow.op.model.model_config import (
     HuggingfaceModelConfig,
+    LMQGModelConfig,
     ModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
 )
-from uniflow.op.prompt_schema import GuidedPrompt
 
 ###########################################################
 #                   All Extract Configs                   #
@@ -52,7 +53,22 @@ class TransformConfig:
     flow_name: str
     model_config: ModelConfig
     num_thread: int = 1
-    guided_prompt_template: GuidedPrompt = GuidedPrompt()
+    guided_prompt_template: GuidedPrompt = GuidedPrompt(
+        instruction="""Generate one question and its corresponding answer based on the last context in the last
+    example. Follow the format of the examples below to include context, question, and answer in the response""",
+        examples=[
+            Context(
+                context="The quick brown fox jumps over the lazy black dog.",
+                question="What is the color of the fox?",
+                answer="brown.",
+            ),
+            Context(
+                context="The quick brown fox jumps over the lazy black dog.",
+                question="What is the color of the dog?",
+                answer="black.",
+            ),
+        ],
+    )
 
 
 @dataclass
@@ -77,7 +93,7 @@ class TransformLMQGConfig(TransformConfig):
 
     flow_name: str = "TransformLMQGFlow"
     guided_prompt_template: GuidedPrompt = GuidedPrompt(instruction="", examples=[])
-    model_config: ModelConfig = OpenAIModelConfig()
+    model_config: ModelConfig = LMQGModelConfig()
 
 
 @dataclass

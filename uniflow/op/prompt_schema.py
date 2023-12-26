@@ -57,28 +57,8 @@ class Context(BaseModel):
 class GuidedPrompt(BaseModel):
     """Type for guided prompt."""
 
-    instruction: str = """Generate one question and its corresponding answer based on the last context in the last
-    example. Follow the format of the examples below to include context, question, and answer in the response"""
+    instruction: str = Field(..., min_length=0)
 
     examples: conlist(Context, min_length=0)
 
     model_config = ConfigDict(extra="forbid")
-
-    def __init__(self, **data):
-        """Initialize GuidedPrompt class.
-
-        Args:
-            data (Dict[str, Any]): Data to initialize.
-        """
-        default_prompt_qa_1 = Context(
-            context="The quick brown fox jumps over the lazy black dog.",
-            question="What is the color of the fox?",
-            answer="brown.",
-        )
-        default_prompt_qa_2 = Context(
-            context="The quick brown fox jumps over the lazy black dog.",
-            question="What is the color of the dog?",
-            answer="black.",
-        )
-        data.setdefault("examples", [default_prompt_qa_1, default_prompt_qa_2])
-        super().__init__(**data)
