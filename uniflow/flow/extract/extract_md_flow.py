@@ -18,7 +18,7 @@ class ExtractMarkdownFlow(Flow):
         """Extract md Flow Constructor."""
         super().__init__()
         self._extract_md_op = ExtractTxtOp(name="extract_md_op")
-        self._process_md_op = MarkdownHeaderSplitter(name="process_md_op")
+        self._split_md_op = MarkdownHeaderSplitter(name="process_md_op")
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract md Flow.
@@ -30,5 +30,5 @@ class ExtractMarkdownFlow(Flow):
             Sequence[Node]: Nodes after running.
         """
         nodes = self._extract_md_op(nodes)
-        nodes = self._process_md_op(nodes)
+        nodes = self._split_md_op(nodes)
         return nodes

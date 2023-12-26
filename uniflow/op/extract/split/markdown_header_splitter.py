@@ -1,22 +1,25 @@
 """Transform markdown op."""
 
 import copy
-from typing import Dict, List, Sequence, TypedDict
+from dataclasses import dataclass
+from typing import Dict, List, Sequence
 
 from uniflow.node import Node
 from uniflow.op.op import Op
 
 
-class HeaderType(TypedDict):
-    """Header type as typed dict."""
+@dataclass
+class HeaderType:
+    """Header type."""
 
     level: int
     name: str
     data: str
 
 
-class LineType(TypedDict):
-    """Line type as typed dict."""
+@dataclass
+class LineType:
+    """Line type."""
 
     metadata: Dict[str, str]
     content: str
