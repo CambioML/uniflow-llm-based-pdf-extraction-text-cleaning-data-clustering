@@ -42,7 +42,7 @@ class ExtractPDFConfig(ExtractConfig):
 
 @dataclass
 class ExtractMarkdownConfig(ExtractConfig):
-    """Extract markdown Config Class."""
+    """Extract Markdown Config Class."""
 
     flow_name: str = "ExtractMarkdownFlow"
 
