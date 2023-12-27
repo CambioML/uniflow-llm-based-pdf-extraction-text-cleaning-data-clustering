@@ -5,7 +5,7 @@
 # __init_subclass__
 
 
-from uniflow.flow.rater.classification_flow import RaterFlow
+from uniflow.flow.rater.rater_flow import RaterFlow
 
 __all__ = [
     "RaterFlow",
