@@ -35,6 +35,8 @@ class MarkdownHeaderSplitter(Op):
         ("####", "Header 4"),
     ]
 
+    lines_with_metadata: List[LineType] = []
+
     def __call__(
         self,
         nodes: Sequence[Node],
@@ -53,7 +55,8 @@ class MarkdownHeaderSplitter(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             text = value_dict["text"]
-            text = self.header_splitter(text.strip(), headers_to_split_on_list)
+            self.header_splitter(text.strip(), headers_to_split_on_list)
+            text = self.format_splitter()
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
@@ -71,9 +74,6 @@ class MarkdownHeaderSplitter(Op):
         """Split markdown by header."""
         if headers_to_split_on_list is None:
             headers_to_split_on_list = self.headers_to_split_on_default
-
-        # Final output
-        lines_with_metadata: List[LineType] = []
 
         # Content and metadata of the chunk currently being processed
         current_content: List[str] = []
@@ -129,7 +129,7 @@ class MarkdownHeaderSplitter(Op):
                     # Add the previous line to the lines_with_metadata
                     # only if current_content is not empty
                     if current_content:
-                        lines_with_metadata.append(
+                        self.lines_with_metadata.append(
                             {
                                 "content": "\n".join(current_content),
                                 "metadata": current_metadata.copy(),
@@ -143,4 +143,15 @@ class MarkdownHeaderSplitter(Op):
                 current_content.append(stripped_line)
                 current_metadata = initial_metadata.copy()
 
-        return lines_with_metadata
+        return self.lines_with_metadata
+
+    def format_splitter(self):
+        """Format return."""
+        # ret = []
+        # for line in self.lines_with_metadata:
+        #     headers = sorted(line["metadata"].items(), key=lambda x: x[0])
+        #     headers = "\n".join([f"{key}:{value}" for key, value in headers])
+        #     ret.append(headers + "\n" + line["content"])
+        # return ret
+
+        return [line["content"] for line in self.lines_with_metadata]

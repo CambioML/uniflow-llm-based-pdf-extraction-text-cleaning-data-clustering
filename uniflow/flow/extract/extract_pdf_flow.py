@@ -6,6 +6,7 @@ from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.extract.load.pdf_op import ExtractPDFOp, ProcessPDFOp
+from uniflow.op.extract.split.markdown_header_splitter import MarkdownHeaderSplitter
 from uniflow.op.model.model_op import LLMDataPreprocessor
 
 
@@ -14,10 +15,7 @@ class ExtractPDFFlow(Flow):
 
     TAG = EXTRACT
 
-    def __init__(
-        self,
-        model_config: Dict[str, Any],
-    ) -> None:
+    def __init__(self, model_config: Dict[str, Any]) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
@@ -33,6 +31,7 @@ class ExtractPDFFlow(Flow):
             ),
         )
         self._process_pdf_op = ProcessPDFOp(name="process_pdf_op")
+        self._split_pdf_op = MarkdownHeaderSplitter(name="split_pdf_op")
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Flow.
@@ -45,4 +44,5 @@ class ExtractPDFFlow(Flow):
         """
         nodes = self._extract_pdf_op(nodes)
         nodes = self._process_pdf_op(nodes)
+        nodes = self._split_pdf_op(nodes)
         return nodes
