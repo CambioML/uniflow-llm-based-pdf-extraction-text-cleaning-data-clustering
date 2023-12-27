@@ -47,6 +47,13 @@ class ExtractMarkdownConfig(ExtractConfig):
     flow_name: str = "ExtractMarkdownFlow"
 
 
+@dataclass
+class ExtractIpynbConfig(ExtractConfig):
+    """Extract ipynb Config Class."""
+
+    flow_name: str = "ExtractIpynbFlow"
+
+
 ###########################################################
 #                   All Transform Configs                 #
 ###########################################################

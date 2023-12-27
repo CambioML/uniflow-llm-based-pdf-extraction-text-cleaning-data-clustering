@@ -1,25 +1,50 @@
-"""Model Op Module."""
+"""Extract txt op."""
 import copy
-import re
 from typing import Sequence
 
 from uniflow.node import Node
-from uniflow.op.model.model_op import LLMDataProcessor
 from uniflow.op.op import Op
 
 
-class ExtractPDFOp(Op):
-    """Process PDF Op Class."""
+class ExtractIpynbOp(Op):
+    """Extract ipynb Op Class."""
 
-    def __init__(self, name: str, model: LLMDataProcessor) -> None:
-        """Process PDF Op Constructor.
+    def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
+        """Run Model Op.
 
         Args:
-            name (str): Name of the op.
-            model (Model): Model to run.
+            nodes (Sequence[Node]): Nodes to run.
+
+        Returns:
+            Sequence[Node]: Nodes after running.
         """
-        super().__init__(name)
-        self._model = model
+        try:
+            import nbformat  # pylint: disable=import-outside-toplevel
+            from nbconvert import (  # pylint: disable=import-outside-toplevel
+                MarkdownExporter,
+            )
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install nbformat and nbconvert to load ipynb file. You can use `pip install nbformat nbconvert` to install them."
+            ) from exc
+        output_nodes = []
+        for node in nodes:
+            value_dict = copy.deepcopy(node.value_dict)
+            nb = nbformat.read(value_dict["filename"], as_version=4)
+            md_exporter = MarkdownExporter()
+            (text, _) = md_exporter.from_notebook_node(nb)
+            output_nodes.append(
+                Node(
+                    name=self.unique_name(),
+                    value_dict={"text": text},
+                    prev_nodes=[node],
+                )
+            )
+        return output_nodes
+
+
+class ProcessIpynbOp(Op):
+    """Process ipynb Op Class."""
 
     def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Op.
@@ -33,35 +58,8 @@ class ExtractPDFOp(Op):
         output_nodes = []
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
-            value_dict = self._model.run(value_dict)
-            text = value_dict["response"][0]
-            output_nodes.append(
-                Node(
-                    name=self.unique_name(),
-                    value_dict={"text": text},
-                    prev_nodes=[node],
-                )
-            )
-        return output_nodes
-
-
-class ProcessPDFOp(Op):
-    """Process PDF Op Class."""
-
-    def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
-        """Run markdown Op .
-
-        Args:
-            nodes (Sequence[Node]): Nodes to run.
-
-        Returns:
-            Sequence[Node]: Nodes after running.
-        """
-        output_nodes = []
-        for node in nodes:
-            value_dict = copy.deepcopy(node.value_dict)
             text = value_dict["text"]
-            text = re.sub("\n{3,}", "\n\n", text.strip())
+            text = text.strip()
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
