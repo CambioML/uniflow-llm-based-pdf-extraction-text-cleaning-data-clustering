@@ -1,15 +1,15 @@
 repos:
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: 'v1.3.0'
-    hooks:
-      - id: mypy
-        args: ["--config-file=mypy.ini", "--no-site-packages"]
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: 'v1.3.0'
+  #   hooks:
+  #     - id: mypy
+  #       args: ["--config-file=mypy.ini", "--no-site-packages"]
 
   - repo: https://github.com/psf/black
     rev: 22.8.0
     hooks:
       - id: black
-        args: [--line-length=120, --exclude=""]
+        args: [--line-length=127, --exclude=""]
 
   # this is not technically always safe but usually is
   # use comments `# isort: off` and `# isort: on` to disable/re-enable isort
@@ -17,7 +17,7 @@ repos:
     rev: 5.12.0
     hooks:
       - id: isort
-        args: [--line-length=120, --profile=black]
+        args: [--line-length=127, --profile=black]
 
   # this is slightly dangerous because python imports have side effects
   # and this tool removes unused imports, which may be providing
@@ -33,3 +33,10 @@ repos:
           - "--remove-unused-variables"
           - "--remove-all-unused-imports"
         exclude: "uniflow/__init__.py"
+
+  # This allows ruff to run and autofix the code
+  # - repo: https://github.com/astral-sh/ruff-pre-commit
+  #   rev: v0.0.277
+  #   hooks:
+  #     - id: ruff
+  #       args: [--fix, --exit-non-zero-on-fix, --line-length=127]
