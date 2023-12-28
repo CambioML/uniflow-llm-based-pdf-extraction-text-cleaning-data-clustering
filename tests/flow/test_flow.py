@@ -1,7 +1,7 @@
 import unittest
 
 from uniflow.constants import OUTPUT_NAME, ROOT_NAME
-from uniflow.flow import Flow
+from uniflow.flow.flow import Flow
 
 
 class TestFlow(unittest.TestCase):
