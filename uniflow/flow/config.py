@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional
 
 from uniflow import Context, GuidedPrompt
+from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.model.model_config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
@@ -24,6 +25,7 @@ class ExtractConfig:
     flow_name: str
     num_thread: int = 1
     model_config: Optional[ModelConfig] = None
+    splitter: Optional[str] = None
 
 
 @dataclass
@@ -39,6 +41,7 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = NougatModelConfig()
+    splitter: str = PARAGRAPH_SPLITTER
 
 
 @dataclass
@@ -139,9 +142,7 @@ class RaterClassificationConfig(RaterConfig):
 
     flow_name: str = "RaterClassificationFlow"
     model_config: ModelConfig = OpenAIModelConfig()
-    label2score: Dict[str, float] = field(
-        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
-    )
+    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
         instruction="""Rate the answer based on the question and the context.
         Follow the format of the examples below to include context, question, answer, and label in the response.
