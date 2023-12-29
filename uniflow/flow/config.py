@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional
 
 from uniflow import Context, GuidedPrompt
+from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.model.model_config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
@@ -40,6 +41,7 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = NougatModelConfig()
+    splitter: str = PARAGRAPH_SPLITTER
 
 
 @dataclass
