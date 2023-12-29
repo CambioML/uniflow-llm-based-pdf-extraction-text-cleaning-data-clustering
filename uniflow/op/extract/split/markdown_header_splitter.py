@@ -33,6 +33,8 @@ class MarkdownHeaderSplitter(Op):
         ("##", "Header 2"),
         ("###", "Header 3"),
         ("####", "Header 4"),
+        ("#####", "Header 5"),
+        ("######", "Header 6"),
     ]
 
     lines_with_metadata: List[LineType] = []
@@ -151,7 +153,7 @@ class MarkdownHeaderSplitter(Op):
         # for line in self.lines_with_metadata:
         #     headers = sorted(line["metadata"].items(), key=lambda x: x[0])
         #     headers = "\n".join([f"{key}:{value}" for key, value in headers])
-        #     ret.append(headers + "\n" + line["content"])
+        #     ret.append(headers + "\n\n" + line["content"])
         # return ret
 
         return [line["content"] for line in self.lines_with_metadata]
