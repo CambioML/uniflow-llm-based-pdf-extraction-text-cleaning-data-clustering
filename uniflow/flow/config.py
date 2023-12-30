@@ -209,19 +209,41 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
     model_config: ModelConfig = OpenAIModelConfig()
     label2score: Dict[str, float] = field(
         default_factory=lambda: {
-            "Strong accept": 2.0,
-            "Accept": 1.0,
-            "Equivalent": 0.0,
-            "Reject": -1.0,
-            "Strong reject": -2.0,
+            "strong accept": 2.0,
+            "accept": 1.0,
+            "equivalent": 0.0,
+            "reject": -1.0,
+            "strong reject": -2.0,
         }
     )
     # NOTE: This flow seems very sensitive to the choice of prompt.
     # For a more stable performance, prompt should be improved.
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
-        instruction="""Rate the generated answer compared to the grounding answer to the question. Accept means the generated answer is better than the grounding answer and reject means worse.
-        Follow the format of the examples below to include context, question, grounding answer, generated answer and label in the response.
-        The response should not include examples in the prompt.""",
+        # instruction="""Rate the generated answer compared to the grounding answer to the question. Accept means the generated answer is better than the grounding answer and reject means worse.
+        # Follow the format of the examples below to include context, question, grounding answer, generated answer and label in the response.
+        # The response should not include examples in the prompt.""",
+        instruction="""
+        Task: Answer Evaluation and Comparison
+        Objective:
+        You are required to evaluate and compare two answers: a "Generated Answer" and a "Grounding Answer." Your task is to judge which answer is better in the context of the provided information.
+        Input:
+        1. context: A brief text, usually a couple of sentences or a paragraph, providing the relevant background or scenario.
+        2. question: A question designed to probe knowledge that can be directly inferred from the context.
+        3. grounding Answer: An answer that has been pre-formulated based on the context, usually human.
+        4. generated Answer: An answer provided by some language model or chat system to the question and context.
+        Evaluation Criteria:
+        You must compare the "Generated Answer" with the "Grounding Answer" and determine which one is more appropriate, accurate, and relevant to the given context and question. Use the following labels to categorize your judgment:
+        1. strong accept: The Generated Answer is significantly better than the Grounding Answer.
+        2. accept: The Generated Answer is somewhat better than the Grounding Answer.
+        3. equivalent: Both answers are equally good.
+        4. reject: The Generated Answer is somewhat worse than the Grounding Answer.
+        5. strong reject: The Generated Answer is significantly worse than the Grounding Answer.
+        Response Format:
+        Your response should include:
+        1. label: Your judgment (one of the five labels mentioned above).
+        2. explanatoin: A clear and concise thought for your judgment, detailing why you think the Generated Answer is better, worse, or equivalent to the Grounding Answer.
+        Note: Only use the example below as a few shot demonstrate but not including them in the final response.
+        # """,
         examples=[
             Context(
                 context="Basic operating system features were developed in the 1950s, and more complex functions were introduced in the 1960s.",
@@ -229,7 +251,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
                 grounding_answer="In the 1960s, people developed some basic operating system functions.",
                 generated_answer="Basic operating system features were developed in the 1950s.",
                 explanation="The generated answer is much better because it correctly identifies the 1950s as the time when basic operating system features were developed",
-                label="Strong accept",
+                label="strong accept",
             ),
             Context(
                 context="Early computers were built to perform a series of single tasks, like a calculator. Basic operating system could automatically run different programs in succession to speed up processing.",
@@ -237,7 +259,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
                 grounding_answer="No. Early computers were used primarily for complex calculating.",
                 generated_answer="Yes. Early computers were built to perform a series of single tasks, similar to a calculator.",
                 explanation="The generated answer is better as it correctly captures the essence of the early computers' functionality, which was to perform single tasks akin to calculators.",
-                label="Accept",
+                label="accept",
             ),
             Context(
                 context="Operating systems did not exist in their modern and more complex forms until the early 1960s. Hardware features were added, that enabled use of runtime libraries, interrupts, and parallel processing.",
@@ -245,7 +267,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
                 grounding_answer="Operating systems started to resemble their modern forms in the early 1960s.",
                 generated_answer="Modern and more complex forms of operating systems began to emerge in the early 1960s.",
                 explanation="Both answers are equally good as they accurately pinpoint the early 1960s as the period when modern operating systems began to develop.",
-                label="Equivalent",
+                label="equivalent",
             ),
             Context(
                 context="Operating systems did not exist in their modern and more complex forms until the early 1960s. Hardware features were added, that enabled use of runtime libraries, interrupts, and parallel processing.",
@@ -253,7 +275,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
                 grounding_answer="Hardware in the 1960s saw the addition of features like runtime libraries and parallel processing.",
                 generated_answer="The 1960s saw the addition of input output control and compatible timesharing capabilities in hardware.",
                 explanation="The generated answer is worse because it inaccurately suggests the addition of capabilities of hardware in 1960s which is not supported by the context.",
-                label="Reject",
+                label="reject",
             ),
             Context(
                 context="Operating systems did not exist in their modern and more complex forms until the early 1960s. When personal computers became popular in the 1980s, operating systems were made for them similar in concept to those used on larger computers.",
@@ -261,7 +283,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
                 grounding_answer="In 1980s, as personal computers became popular.",
                 generated_answer="In the early 1960s, as operating system became more complex.",
                 explanation="The generated answer is much worse as it incorrectly states the early 1960s as the period of popularity for personal computers, contradicting the context which indicates the 1980s.",
-                label="Strong reject",
+                label="strong reject",
             ),
         ],
     )
