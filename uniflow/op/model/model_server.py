@@ -177,6 +177,71 @@ class OpenAIModelServer(AbsModelServer):
         data = self._postprocess(inference_data)
         return data
 
+class AzureOpenAIModelServer(AbsModelServer):
+    """Azure OpenAI Model Server Class."""
+
+    def __init__(self, model_config: Dict[str, Any]) -> None:
+        # import in class level to avoid installing openai package
+        from openai import AzureOpenAI  # pylint: disable=import-outside-toplevel
+
+        super().__init__(model_config)
+        self._model_config = AzureOpenAIModelConfig(**self._model_config)
+        self._client = AzureOpenAI(
+            api_key=self._model_config.api_key,
+            api_version=self._model_config.api_version,
+            azure_endpoint=self._model_config.azure_endpoint,
+        )
+
+    def _preprocess(self, data: List[str]) -> List[str]:
+        """Preprocess data.
+
+        Args:
+            data (List[str]): Data to preprocess.
+
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: List[str]) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (str): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        return [c.message.content for d in data for c in d.choices]
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model.
+
+        Azure OpenAI completions API does not support batch inference.
+
+        Args:
+            data (str): Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        data = self._preprocess(data)
+        inference_data = []
+        for d in data:
+            inference_data.append(
+                self._client.chat.completions.create(
+                    model=self._model_config.model_name,
+                    messages=[
+                        {"role": "user", "content": d},
+                    ],
+                    n=self._model_config.num_call,
+                    temperature=self._model_config.temperature,
+                    response_format=self._model_config.response_format,
+                )
+            )
+        data = self._postprocess(inference_data)
+        return data
+
 
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
