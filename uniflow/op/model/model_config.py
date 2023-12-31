@@ -1,7 +1,7 @@
 """Model config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict
+from typing import Dict, Any
 
 
 @dataclass
@@ -47,3 +47,15 @@ class NougatModelConfig(ModelConfig):
     model_name: str = "0.1.0-small"
     batch_size: int = 1
     model_server: str = "NougatModelServer"
+
+@dataclass
+class BedrockModelConfig(ModelConfig):
+    """Bedrock Model Config Class."""
+
+    model_name: str = "anthropic.claude-v2"
+    batch_size: int = 1
+    model_server: str = "BedrockModelServer"
+    aws_profile: str = "default"
+    aws_region: str = ""
+    # TODO: Need to consider the best approach for handling model arguments
+    model_kwargs: Dict[str, Any] = field(default_factory=lambda: {})
