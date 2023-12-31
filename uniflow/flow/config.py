@@ -135,6 +135,27 @@ class RaterConfig:
     guided_prompt_template: GuidedPrompt
     num_thread: int = 1
 
+    def __post_init__(self):
+        """Post-initialization to perform label check."""
+        for example in self.guided_prompt_template.examples:
+            if example.label.lower() not in [k.lower() for k in self.label2score]:
+                raise ValueError(
+                    "Inconsistent labels found in guided_prompt_template examples, "
+                    f"example label {example.label} not in label2score has keys {list(self.label2score.keys())}",
+                )
+
+    def check_labels_in_label2score(self) -> bool:
+        """
+        Check if every label in the guided_prompt_template's examples is a key in label2score.
+
+        Returns:
+            bool: True if all labels are in label2score, False otherwise.
+        """
+        for example in self.guided_prompt_template.examples:
+            if example.label not in self.label2score:
+                return False
+        return True
+
 
 @dataclass
 class RaterClassificationConfig(RaterConfig):
@@ -142,7 +163,9 @@ class RaterClassificationConfig(RaterConfig):
 
     flow_name: str = "RaterClassificationFlow"
     model_config: ModelConfig = OpenAIModelConfig()
-    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
         instruction="""Rate the answer based on the question and the context.
         Follow the format of the examples below to include context, question, answer, and label in the response.
@@ -164,27 +187,6 @@ class RaterClassificationConfig(RaterConfig):
             ),
         ],
     )
-
-    def __post_init__(self):
-        """Post-initialization to perform label check."""
-        for example in self.guided_prompt_template.examples:
-            if example.label.lower() not in [k.lower() for k in self.label2score]:
-                raise ValueError(
-                    "Inconsistent labels found in guided_prompt_template examples, "
-                    f"example label {example.label} not in label2score has keys {list(self.label2score.keys())}",
-                )
-
-    def check_labels_in_label2score(self) -> bool:
-        """
-        Check if every label in the guided_prompt_template's examples is a key in label2score.
-
-        Returns:
-            bool: True if all labels are in label2score, False otherwise.
-        """
-        for example in self.guided_prompt_template.examples:
-            if example.label not in self.label2score:
-                return False
-        return True
 
 
 ###########################################################
