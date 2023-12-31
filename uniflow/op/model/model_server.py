@@ -8,6 +8,7 @@ from functools import partial
 from typing import Any, Dict, List, Optional
 
 from uniflow.op.model.model_config import (
+    AzureOpenAIModelConfig,
     HuggingfaceModelConfig,
     LMQGModelConfig,
     NougatModelConfig,
@@ -176,6 +177,7 @@ class OpenAIModelServer(AbsModelServer):
             )
         data = self._postprocess(inference_data)
         return data
+
 
 class AzureOpenAIModelServer(AbsModelServer):
     """Azure OpenAI Model Server Class."""
