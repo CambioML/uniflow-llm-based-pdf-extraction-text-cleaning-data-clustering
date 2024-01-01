@@ -138,12 +138,12 @@ class RaterConfig:
     def __post_init__(self):
         """Post-initialization to perform label check."""
         incompatible_labels = self.check_labels()
-        unexprected_labels = incompatible_labels["unexpected_labels"]
+        unexpected_labels = incompatible_labels["unexpected_labels"]
         missing_labels = incompatible_labels["missing_labels"]
-        if unexprected_labels:
+        if unexpected_labels:
             raise ValueError(
                 "Inconsistent labels found in guided_prompt_template examples, "
-                f"example label {unexprected_labels} not in label2score has keys {list(self.label2score.keys())}",
+                f"example label {unexpected_labels} not in label2score has keys {list(self.label2score.keys())}",
             )
         if missing_labels:
             print(f"The label2score label {missing_labels} not in example label.")
