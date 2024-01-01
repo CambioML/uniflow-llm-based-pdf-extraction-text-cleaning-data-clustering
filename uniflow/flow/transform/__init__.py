@@ -5,6 +5,9 @@
 # __init_subclass__
 
 
+from uniflow.flow.transform.transform_azure_openai_flow import (  # noqa: F401, F403
+    TransformAzureOpenAIFlow,
+)
 from uniflow.flow.transform.transform_copy_flow import (  # noqa: F401, F403
     TransformCopyFlow,
 )
@@ -23,4 +26,5 @@ __all__ = [
     "TransformHuggingFaceFlow",
     "TransformLMQGFlow",
     "TransformCopyFlow",
+    "TransformAzureOpenAIFlow",
 ]

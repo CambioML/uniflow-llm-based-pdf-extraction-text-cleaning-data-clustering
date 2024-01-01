@@ -177,7 +177,9 @@ class RaterClassificationConfig(RaterConfig):
 
     flow_name: str = "RaterClassificationFlow"
     model_config: ModelConfig = OpenAIModelConfig()
-    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
         instruction="""Rate the answer based on the question and the context.
         Follow the format of the examples below to include context, question, answer, and label in the response.
@@ -287,6 +289,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
             ),
         ],
     )
+
 
 
 ###########################################################
