@@ -22,8 +22,6 @@ python_to_json_types = {
 class Context(BaseModel):
     """Type for prompt context."""
 
-    context: str = Field(..., min_length=1)
-
     model_config = ConfigDict(extra="allow")
 
     def get_custom_schema(self) -> Dict[str, Any]:
