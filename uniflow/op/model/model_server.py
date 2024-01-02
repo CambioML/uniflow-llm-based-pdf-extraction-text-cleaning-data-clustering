@@ -4,6 +4,7 @@ All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServe
 
 import re
 import json
+import warnings
 from functools import partial
 from typing import Any, Dict, List, Optional
 
@@ -499,9 +500,32 @@ class BedrockModelServer(AbsModelServer):
             super().__init__(model_config)
             self._model_config = BedrockModelConfig(**self._model_config)
 
-            aws_profile = self._model_config.aws_profile
+            # If user specifies profile in model config, use that profile
+            if "aws_profile" in model_config:
+                aws_profile = self._model_config.aws_profile
+                session = boto3.Session(profile_name=aws_profile)
+            # Otherwise if the user specifies credentials directly in the model config, use those credentials
+            elif (
+                self._model_config.aws_access_key_id
+                and self._model_config.aws_secret_access_key
+            ):
+                session = boto3.Session(
+                    aws_access_key_id=self._model_config.aws_access_key_id,
+                    aws_secret_access_key=self._model_config.aws_secret_access_key,
+                    aws_session_token=self._model_config.aws_session_token,
+                )
+                warnings.warn(
+                    "Using AWS credentials directly in the model config is not recommended. "
+                    "Please use a profile instead."
+                )
+            else:
+                session = boto3.Session(profile_name="default")
+                warnings.warn(
+                    "Using default profile to create the session. "
+                    "Please pass the profile name in the model config."
+                )
+
             aws_region = self._model_config.aws_region if self._model_config.aws_region else None
-            session = boto3.Session(profile_name=aws_profile)
 
             self._client = session.client("bedrock-runtime", region_name=aws_region)
 
@@ -548,6 +572,17 @@ class BedrockModelServer(AbsModelServer):
     def prepare_input(
         self, provider: str, prompt: str, model_kwargs: Dict[str, Any]
         ) -> Dict[str, Any]:
+        """
+        Prepare the input for the model based on the provider.
+
+        Args:
+            provider (str): The provider of the model.
+            prompt (str): The input prompt.
+            model_kwargs (Dict[str, Any]): Additional model arguments.
+
+        Returns:
+            Dict[str, Any]: The prepared input for the model.
+        """
         def prepare_anthropic_input(prompt: str, model_kwargs: Dict[str, Any]) -> Dict[str, Any]:
             input_body = {**model_kwargs, "prompt": f"\n\nHuman: {prompt}\n\nAssistant: "}
             if "max_tokens_to_sample" not in input_body:
@@ -575,6 +610,19 @@ class BedrockModelServer(AbsModelServer):
         return prepare_input_for_provider(prompt, model_kwargs)
     
     def prepare_output(self, provider: str, response: Any) -> str:
+        """
+        Prepares the output based on the provider and response.
+
+        Args:
+            provider (str): The provider of the response.
+            response (Any): The response object.
+
+        Returns:
+            str: The prepared output.
+
+        Raises:
+            None
+        """
         def prepare_anthropic_output(response: Any) -> str:
             response_body = json.loads(response.get("body").read().decode())
             return response_body.get("completion")
@@ -669,7 +717,7 @@ class BedrockModelServer(AbsModelServer):
         inference_data = []
         for d in data:
             inference_data.append(
-                self.invoke_bedrock_model(prompt = d, max_tokens_to_sample = 300)
+                self.invoke_bedrock_model(prompt = d)
             )
         data = self._postprocess(inference_data)
         return data
