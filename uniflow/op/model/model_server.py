@@ -248,41 +248,55 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from transformers import pipeline  # pylint: disable=import-outside-toplevel
+        super().__init__(model_config)
+        self._model_config = HuggingfaceModelConfig(**self._model_config)
+        if self._model_config.neuron is False:
+            from transformers import pipeline  # pylint: disable=import-outside-toplevel
+
+            model, tokenizer = self.get_model(self._model_config)
+            # explicitly set batch_size for pipeline
+            # for batch inference.
+            self._pipeline = pipeline(
+                "text-generation",
+                model=model,
+                tokenizer=tokenizer,
+                device_map="auto",
+                max_new_tokens=768,
+                num_return_sequences=1,
+                repetition_penalty=1.2,
+                eos_token_id=tokenizer.eos_token_id,
+                pad_token_id=tokenizer.pad_token_id,
+                batch_size=self._model_config.batch_size,
+            )
+        else:
+            from .neuron_utils import (  # pylint: disable=import-outside-toplevel
+                get_neuron_model,
+                neuron_infer,
+            )
+
+            model, tokenizer = get_neuron_model(
+                self._model_config.model_name, self._model_config.batch_size
+            )
+            self._pipeline = partial(neuron_infer, model=model, tokenizer=tokenizer)
+
+    def get_model(self, model_config):
+        """Get model."""
         from transformers import (  # pylint: disable=import-outside-toplevel
             AutoModelForCausalLM,
             AutoTokenizer,
         )
 
-        super().__init__(model_config)
-        self._model_config = HuggingfaceModelConfig(**self._model_config)
-
         tokenizer = AutoTokenizer.from_pretrained(
-            self._model_config.model_name,
+            model_config.model_name,
         )
         tokenizer.pad_token = tokenizer.eos_token
-
         model = AutoModelForCausalLM.from_pretrained(
-            self._model_config.model_name,
+            model_config.model_name,
             device_map="auto",
             offload_folder="./offload",
             load_in_4bit=True,
         )
-
-        # explicitly set batch_size for pipeline
-        # for batch inference.
-        self._pipeline = pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=tokenizer,
-            device_map="auto",
-            max_new_tokens=768,
-            num_return_sequences=1,
-            repetition_penalty=1.2,
-            eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=tokenizer.pad_token_id,
-            batch_size=self._model_config.batch_size,
-        )
+        return model, tokenizer
 
     def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
