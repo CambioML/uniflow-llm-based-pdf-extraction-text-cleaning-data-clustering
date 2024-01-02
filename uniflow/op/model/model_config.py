@@ -23,6 +23,20 @@ class OpenAIModelConfig(ModelConfig):
 
 
 @dataclass
+class AzureOpenAIModelConfig:
+    """Azure OpenAI Model Config Class."""
+
+    api_key: str
+    api_version: str
+    azure_endpoint: str
+    model_name: str = "gpt-3.5-turbo-1106"
+    model_server: str = "AzureOpenAIModelServer"
+    num_call: int = 1
+    temperature: float = 0.9
+    response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
+
+
+@dataclass
 class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
