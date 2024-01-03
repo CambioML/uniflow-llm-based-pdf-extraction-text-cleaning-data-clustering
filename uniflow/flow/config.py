@@ -182,22 +182,16 @@ class RaterClassificationConfig(RaterConfig):
     )
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
         instruction="""
-        Task: Answer Evaluation
-        Objective:
-        You are required to evaluate whether a given answer is appropriate in relation to a specific context and question. 
-        Input:
-        1. Context: This is a brief text, usually a couple of sentences or a paragraph, providing key information or facts.
-        2. Question: This is a query related to the information given in the context. It is designed to test knowledge that can be inferred or directly obtained from the context.
-        3. Answer: This is a response to the question provided.
-        Evaluation Criteria:
-        Based on these, you need to judge if the answer is correct or incorrect in relation to the context and the question. Use the following labels to categorize your judgment:
-        1. Yes: The answer is good.
-        2. No: The answer is not bad.
-        Response Format:
-        Your response should include:
-        1. label: Your judgment (one of the two labels mentioned above).
-        2. explanatoin: A clear and concise thought for your judgment, detailing why you think the answer is good or bad.
-        Note: Only use the example below as a few shot demonstrate but not including them in the final response.
+        # Task: Evaluate the appropriateness of a given answer based on a provided context and question.
+        ## Input:
+        1. context: A brief text containing key information.
+        2. question: A query related to the context, testing knowledge that can be inferred or directly obtained from it.
+        3. answer: A response to the question.
+        ## Evaluation Criteria: Decide if the answer correctly addresses the context and question. Use these labels: "Yes" or "No".
+        ## Response Format:
+        1. label: Your judgment (Yes or No).
+        2. explanation: Reasoning behind your judgment, explaining why the answer is appropriate or not.
+        ## Note: Use the below example only for demonstration, do not include in the final response. And your response should only include two fields: "explanation" and "label".
         """,
         examples=[
             Context(
@@ -235,26 +229,23 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
     )
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
         instruction="""
-        Task: Answer Evaluation and Comparison
-        Objective:
-        You are required to evaluate and compare two answers: a "Generated Answer" and a "Grounding Answer." Your task is to judge which answer is better in the context of the provided information.
-        Input:
-        1. context: A brief text, usually a couple of sentences or a paragraph, providing the relevant background or scenario.
-        2. question: A question designed to probe knowledge that can be directly inferred from the context.
-        3. grounding Answer: An answer that has been pre-formulated based on the context, usually human.
-        4. generated Answer: An answer provided by some language model or chat system to the question and context.
-        Evaluation Criteria:
-        You must compare the "Generated Answer" with the "Grounding Answer" and determine which one is more appropriate, accurate, and relevant to the given context and question. Use the following labels to categorize your judgment:
-        1. strong accept: The Generated Answer is significantly better than the Grounding Answer.
-        2. accept: The Generated Answer is somewhat better than the Grounding Answer.
-        3. equivalent: Both answers are equally good.
-        4. reject: The Generated Answer is somewhat worse than the Grounding Answer.
-        5. strong reject: The Generated Answer is significantly worse than the Grounding Answer.
-        Response Format:
-        Your response should include:
+        # Task: Evaluate and compare two answers: a "Generated Answer" and a "Grounding Answer" based on a provided context and question.
+        ## Input: A sample to be labeled:
+        1. context: A brief text containing key information.
+        2. question: A query related to the context, testing knowledge that can be inferred or directly obtained from it.
+        3. grounding Answer: Pre-formulated, usually from human.
+        4. generated Answer: From a language model.
+        ## Evaluation Criteria: Decide which answer is better. Use labels:
+        1. strong accept: Generated better than Grounding
+        2. accept: Generated somewhat better than Grounding
+        3. equivalent: Equal quality
+        4. reject: Generated somewhat worse than Grounding
+        5. strong reject: Generated worse than Grounding
+        ## Response Format: Your response should only include two fields below:
         1. label: Your judgment (one of the five labels mentioned above).
-        2. explanatoin: A clear and concise thought for your judgment, detailing why you think the Generated Answer is better, worse, or equivalent to the Grounding Answer.
-        Note: Only use the example below as a few shot demonstrate but not including them in the final response.
+        2. explanatoin: Reasoning behind your judgment, detailing why the generated answer is better, equivalent or worse.
+        ## Note:
+        Only use the example below as a few shot demonstrate but not include them in the final response. Do not repeat examples.
         # """,
         examples=[
             Context(
