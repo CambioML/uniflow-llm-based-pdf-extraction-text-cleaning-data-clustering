@@ -181,9 +181,24 @@ class RaterClassificationConfig(RaterConfig):
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
-        instruction="""Rate the answer based on the question and the context.
-        Follow the format of the examples below to include context, question, answer, and label in the response.
-        The response should not include examples in the prompt.""",
+        instruction="""
+        Task: Answer Evaluation
+        Objective:
+        You are required to evaluate whether a given answer is appropriate in relation to a specific context and question. 
+        Input:
+        1. Context: This is a brief text, usually a couple of sentences or a paragraph, providing key information or facts.
+        2. Question: This is a query related to the information given in the context. It is designed to test knowledge that can be inferred or directly obtained from the context.
+        3. Answer: This is a response to the question provided.
+        Evaluation Criteria:
+        Based on these, you need to judge if the answer is correct or incorrect in relation to the context and the question. Use the following labels to categorize your judgment:
+        1. Yes: The answer is good.
+        2. No: The answer is not bad.
+        Response Format:
+        Your response should include:
+        1. label: Your judgment (one of the two labels mentioned above).
+        2. explanatoin: A clear and concise thought for your judgment, detailing why you think the answer is good or bad.
+        Note: Only use the example below as a few shot demonstrate but not including them in the final response.
+        """,
         examples=[
             Context(
                 context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
@@ -218,12 +233,7 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
             "strong reject": -2.0,
         }
     )
-    # NOTE: This flow seems very sensitive to the choice of prompt.
-    # For a more stable performance, prompt should be improved.
     guided_prompt_template: GuidedPrompt = GuidedPrompt(
-        # instruction="""Rate the generated answer compared to the grounding answer to the question. Accept means the generated answer is better than the grounding answer and reject means worse.
-        # Follow the format of the examples below to include context, question, grounding answer, generated answer and label in the response.
-        # The response should not include examples in the prompt.""",
         instruction="""
         Task: Answer Evaluation and Comparison
         Objective:
@@ -289,7 +299,6 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
             ),
         ],
     )
-
 
 
 ###########################################################
