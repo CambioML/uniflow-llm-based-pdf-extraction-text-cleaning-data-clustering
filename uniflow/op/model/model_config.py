@@ -1,7 +1,7 @@
 """Model config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 @dataclass
@@ -61,6 +61,7 @@ class NougatModelConfig(ModelConfig):
     model_name: str = "0.1.0-small"
     batch_size: int = 1
     model_server: str = "NougatModelServer"
+
 
 @dataclass
 class BedrockModelConfig():
