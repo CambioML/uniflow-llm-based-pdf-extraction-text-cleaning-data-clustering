@@ -130,13 +130,21 @@ class RaterConfig:
     """Rater Config Class."""
 
     flow_name: str
-    model_config: ModelConfig
-    label2score: Dict[str, float]
-    guided_prompt_template: GuidedPrompt
+    model_config: ModelConfig = field(default_factory=ModelConfig)
+    label2score: Dict[str, float] = field(default_factory=dict)
+    guided_prompt_template: GuidedPrompt = field(default_factory=GuidedPrompt)
     num_thread: int = 1
 
     def __post_init__(self):
         """Post-initialization to perform label check."""
+        # Add label to the end of instruction to help produce
+        # more consistent response label.
+        label_enforce_instruction_postfix = f" The response label should be one of the following: {str(list(self.label2score.keys()))}."
+        if label_enforce_instruction_postfix not in str(
+            self.guided_prompt_template.instruction
+        ):
+            self.guided_prompt_template.instruction += label_enforce_instruction_postfix
+
         incompatible_labels = self.check_labels()
         unexpected_labels = incompatible_labels["unexpected_labels"]
         missing_labels = incompatible_labels["missing_labels"]
@@ -172,34 +180,44 @@ class RaterConfig:
 
 
 @dataclass
-class RaterClassificationConfig(RaterConfig):
+class RaterOpenAIGPT4ClassificationConfig(RaterConfig):
     """Rater classification Config Class."""
 
-    flow_name: str = "RaterClassificationFlow"
-    model_config: ModelConfig = OpenAIModelConfig()
+    flow_name: str = "RaterFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0.2,
+            response_format={"type": "text"},
+        )
+    )
     label2score: Dict[str, float] = field(
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
-    guided_prompt_template: GuidedPrompt = GuidedPrompt(
-        instruction="""Rate the answer based on the question and the context.
+    guided_prompt_template: GuidedPrompt = field(
+        default_factory=lambda: GuidedPrompt(
+            instruction="""Rate the answer based on the question and the context.
         Follow the format of the examples below to include context, question, answer, and label in the response.
         The response should not include examples in the prompt.""",
-        examples=[
-            Context(
-                context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
-                question="When was the Eiffel Tower constructed?",
-                answer="The Eiffel Tower was constructed in 1889.",
-                explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
-                label="Yes",
-            ),
-            Context(
-                context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
-                question="Where does photosynthesis primarily occur in plant cells?",
-                answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
-                explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
-                label="No",
-            ),
-        ],
+            examples=[
+                Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    question="When was the Eiffel Tower constructed?",
+                    answer="The Eiffel Tower was constructed in 1889.",
+                    explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
+                    label="Yes",
+                ),
+                Context(
+                    context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                    question="Where does photosynthesis primarily occur in plant cells?",
+                    answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                    explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                    label="No",
+                ),
+            ],
+        )
     )
 
 
@@ -207,7 +225,7 @@ class RaterClassificationConfig(RaterConfig):
 class RaterForGeneratedAnswerConfig(RaterConfig):
     """Rater classification Config Class."""
 
-    flow_name: str = "RaterForGeneratedAnswerFlow"
+    flow_name: str = "RaterFlow"
     model_config: ModelConfig = OpenAIModelConfig()
     label2score: Dict[str, float] = field(
         default_factory=lambda: {
@@ -289,7 +307,6 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
             ),
         ],
     )
-
 
 
 ###########################################################
