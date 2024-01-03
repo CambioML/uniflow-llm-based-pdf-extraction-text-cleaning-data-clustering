@@ -186,8 +186,21 @@ class RaterConfig:
 
 
 @dataclass
-class RaterOpenAIGPT4ClassificationConfig(RaterConfig):
-    """Rater classification Config Class."""
+class RaterClassificationOpenAIGPT4Config(RaterConfig):
+    """
+    The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to evaluate the 
+    correctness of answers in relation to given questions and contexts.
+    
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the GPT-4 model. Includes model name ("gpt-4"),
+                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0.2),
+                                    and the response format (plain text).
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
 
     flow_name: str = "RaterFlow"
     model_config: ModelConfig = field(
