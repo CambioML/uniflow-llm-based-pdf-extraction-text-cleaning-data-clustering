@@ -251,9 +251,15 @@ class HuggingfaceModelServer(AbsModelServer):
         super().__init__(model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
         if self._model_config.neuron is False:
-            from transformers import pipeline  # pylint: disable=import-outside-toplevel
-
-            model, tokenizer = self.get_model(self._model_config)
+            try:
+                from transformers import (  # pylint: disable=import-outside-toplevel
+                    pipeline,
+                )
+            except ModuleNotFoundError as exc:
+                raise ModuleNotFoundError(
+                    "Please install transformers to use HuggingfaceModelServer. You can use `pip install transformers` to install it."
+                ) from exc
+            model, tokenizer = self._get_model()
             # explicitly set batch_size for pipeline
             # for batch inference.
             self._pipeline = pipeline(
@@ -269,17 +275,18 @@ class HuggingfaceModelServer(AbsModelServer):
                 batch_size=self._model_config.batch_size,
             )
         else:
-            from .neuron_utils import (  # pylint: disable=import-outside-toplevel
-                get_neuron_model,
-                neuron_infer,
+            from uniflow.op.model.neuron_utils import (  # pylint: disable=import-outside-toplevel
+                Neuron,
             )
 
-            model, tokenizer = get_neuron_model(
+            model, tokenizer = Neuron.get_neuron_model(
                 self._model_config.model_name, self._model_config.batch_size
             )
-            self._pipeline = partial(neuron_infer, model=model, tokenizer=tokenizer)
+            self._pipeline = partial(
+                Neuron.neuron_infer, model=model, tokenizer=tokenizer
+            )
 
-    def get_model(self, model_config):
+    def _get_model(self):
         """Get model."""
         from transformers import (  # pylint: disable=import-outside-toplevel
             AutoModelForCausalLM,
@@ -287,11 +294,11 @@ class HuggingfaceModelServer(AbsModelServer):
         )
 
         tokenizer = AutoTokenizer.from_pretrained(
-            model_config.model_name,
+            self._model_config.model_name,
         )
         tokenizer.pad_token = tokenizer.eos_token
         model = AutoModelForCausalLM.from_pretrained(
-            model_config.model_name,
+            self._model_config.model_name,
             device_map="auto",
             offload_folder="./offload",
             load_in_4bit=True,
@@ -393,11 +400,11 @@ class NougatModelServer(AbsModelServer):
         # import in class level to avoid installing nougat package
         try:
             from nougat import NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import (
-                get_checkpoint,  # pylint: disable=import-outside-toplevel
+            from nougat.utils.checkpoint import (  # pylint: disable=import-outside-toplevel
+                get_checkpoint,
             )
-            from nougat.utils.device import (
-                move_to_device,  # pylint: disable=import-outside-toplevel
+            from nougat.utils.device import (  # pylint: disable=import-outside-toplevel
+                move_to_device,
             )
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
@@ -444,11 +451,11 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        from nougat.postprocessing import (
-            markdown_compatible,  # pylint: disable=import-outside-toplevel
+        from nougat.postprocessing import (  # pylint: disable=import-outside-toplevel
+            markdown_compatible,
         )
-        from nougat.utils.dataset import (
-            LazyDataset,  # pylint: disable=import-outside-toplevel
+        from nougat.utils.dataset import (  # pylint: disable=import-outside-toplevel
+            LazyDataset,
         )
         from torch.utils.data import (  # pylint: disable=import-outside-toplevel
             ConcatDataset,
@@ -470,7 +477,7 @@ class NougatModelServer(AbsModelServer):
             )
             predictions = []
             page_num = 0
-            for i, (sample, is_last_page) in enumerate(dataloader):
+            for sample, is_last_page in dataloader:
                 model_output = self.model.inference(
                     image_tensors=sample, early_stopping=False
                 )
