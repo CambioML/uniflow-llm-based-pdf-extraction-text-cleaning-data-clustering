@@ -194,6 +194,7 @@ class Neuron:
         tokenizer.pad_token = tokenizer.eos_token
         return model, tokenizer
 
+    @staticmethod
     def batch_list(lst, batch_size):
         """
         Split a list into batches of a specified size.
@@ -206,6 +207,7 @@ class Neuron:
             batches.append(batch)
         return batches
 
+    @staticmethod
     def neuron_infer(text_list, model, tokenizer):
         """
         Run neuron inference on a list of texts.
