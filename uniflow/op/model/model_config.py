@@ -1,7 +1,7 @@
 """Model config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 @dataclass
@@ -62,11 +62,12 @@ class NougatModelConfig(ModelConfig):
     batch_size: int = 1
     model_server: str = "NougatModelServer"
 
+
 @dataclass
-class BedrockModelConfig():
+class BedrockModelConfig:
     """Bedrock Model Config Class."""
 
-    aws_region: str 
+    aws_region: str = "us-west-2"
     aws_profile: str = "default"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""

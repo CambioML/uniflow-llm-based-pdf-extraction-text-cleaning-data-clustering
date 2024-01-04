@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from uniflow import Context, GuidedPrompt
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.model.model_config import (
+    BedrockModelConfig,
     HuggingfaceModelConfig,
     LMQGModelConfig,
     ModelConfig,
@@ -111,9 +112,7 @@ class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 
     flow_name: str = "TransformLMQGFlow"
-    guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(instruction="", examples=[])
-    )
+    guided_prompt_template: GuidedPrompt = field(default_factory=lambda: GuidedPrompt(instruction="", examples=[]))
     model_config: ModelConfig = field(default_factory=LMQGModelConfig())
 
 
@@ -122,9 +121,7 @@ class TransformCopyConfig(TransformConfig):
     """Transform Linear Config Class."""
 
     flow_name: str = "TransformCopyFlow"
-    guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(instruction="", examples=[])
-    )
+    guided_prompt_template: GuidedPrompt = field(default_factory=lambda: GuidedPrompt(instruction="", examples=[]))
     model_config: ModelConfig = field(default_factory=lambda: {})
 
 
@@ -145,10 +142,10 @@ class RaterConfig:
         """Post-initialization to perform label check."""
         # Add label to the end of instruction to help produce
         # more consistent response label.
-        label_enforce_instruction_postfix = f" The response label should be one of the following: {str(list(self.label2score.keys()))}."
-        if label_enforce_instruction_postfix not in str(
-            self.guided_prompt_template.instruction
-        ):
+        label_enforce_instruction_postfix = (
+            f" The response label should be one of the following: {str(list(self.label2score.keys()))}."
+        )
+        if label_enforce_instruction_postfix not in str(self.guided_prompt_template.instruction):
             self.guided_prompt_template.instruction += label_enforce_instruction_postfix
 
         incompatible_labels = self.check_labels()
@@ -188,9 +185,9 @@ class RaterConfig:
 @dataclass
 class RaterClassificationOpenAIGPT4Config(RaterConfig):
     """
-    The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to evaluate the 
+    The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to evaluate the
     correctness of answers in relation to given questions and contexts.
-    
+
     Attributes:
         flow_name (str): Name of the rating flow, default is "RaterFlow".
         model_config (ModelConfig): Configuration for the GPT-4 model. Includes model name ("gpt-4"),
@@ -212,9 +209,7 @@ class RaterClassificationOpenAIGPT4Config(RaterConfig):
             response_format={"type": "text"},
         )
     )
-    label2score: Dict[str, float] = field(
-        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
-    )
+    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
     guided_prompt_template: GuidedPrompt = field(
         default_factory=lambda: GuidedPrompt(
             instruction="""Rate the answer based on the question and the context.
@@ -237,6 +232,49 @@ class RaterClassificationOpenAIGPT4Config(RaterConfig):
                 ),
             ],
         )
+    )
+
+
+@dataclass
+class RaterClassificationBedrockClaudeConfig(RaterConfig):
+    """Rater classification Bedrock Claude Config Class.
+    The configuration primarily focuses on setting up the parameters for utilizing Bedrock to evaluate the
+    correctness of answers in relation to given questions and contexts.
+
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the Bedrock model. Includes aws_region ("us-west-2"), aws_profile ("default"),
+        aws_access_key_id, aws_secret_key_id, aws_secret_access_key, aws_session_token, batch_size(1),
+        model name ("anthropic.claude-v2"), batch_size (1), the server ("BedrockModelServer"), and the model_kwargs.
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
+
+    flow_name: str = "RaterFlow"
+    model_config: ModelConfig = field(default_factory=BedrockModelConfig)
+    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    guided_prompt_template: GuidedPrompt = GuidedPrompt(
+        instruction="""Rate the answer based on the question and the context.
+        Follow the format of the examples below to include context, question, answer, and label in the response.
+        The response should not include examples in the prompt.""",
+        examples=[
+            Context(
+                context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                question="When was the Eiffel Tower constructed?",
+                answer="The Eiffel Tower was constructed in 1889.",
+                explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
+                label="Yes",
+            ),
+            Context(
+                context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                question="Where does photosynthesis primarily occur in plant cells?",
+                answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                label="No",
+            ),
+        ],
     )
 
 
