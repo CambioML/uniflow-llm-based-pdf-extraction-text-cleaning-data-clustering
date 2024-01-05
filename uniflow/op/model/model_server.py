@@ -269,7 +269,8 @@ class HuggingfaceModelServer(AbsModelServer):
             self._model_config.model_name,
             device_map="auto",
             offload_folder="./offload",
-            load_in_4bit=True,
+            load_in_4bit=self._model_config.load_in_4bit,
+            load_in_8bit=self._model_config.load_in_8bit,
         )
 
         # explicitly set batch_size for pipeline
