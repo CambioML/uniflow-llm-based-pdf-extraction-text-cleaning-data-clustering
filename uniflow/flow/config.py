@@ -188,9 +188,9 @@ class RaterConfig:
 @dataclass
 class RaterClassificationOpenAIGPT4Config(RaterConfig):
     """
-    The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to evaluate the 
+    The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to evaluate the
     correctness of answers in relation to given questions and contexts.
-    
+
     Attributes:
         flow_name (str): Name of the rating flow, default is "RaterFlow".
         model_config (ModelConfig): Configuration for the GPT-4 model. Includes model name ("gpt-4"),

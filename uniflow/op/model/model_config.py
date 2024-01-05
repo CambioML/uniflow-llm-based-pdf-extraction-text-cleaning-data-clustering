@@ -1,7 +1,7 @@
 """Model config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 @dataclass
@@ -43,6 +43,8 @@ class HuggingfaceModelConfig(ModelConfig):
     model_name: str = "mistralai/Mistral-7B-Instruct-v0.1"
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
+    load_in_4bit: bool = False
+    load_in_8bit: bool = True
 
 
 @dataclass
@@ -62,11 +64,12 @@ class NougatModelConfig(ModelConfig):
     batch_size: int = 1
     model_server: str = "NougatModelServer"
 
+
 @dataclass
-class BedrockModelConfig():
+class BedrockModelConfig:
     """Bedrock Model Config Class."""
 
-    aws_region: str 
+    aws_region: str
     aws_profile: str = "default"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
