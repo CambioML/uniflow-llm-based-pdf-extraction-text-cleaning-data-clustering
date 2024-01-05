@@ -2,19 +2,19 @@
 All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
 """
 
-import re
 import json
+import re
 import warnings
 from functools import partial
 from typing import Any, Dict, List, Optional
 
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
+    BedrockModelConfig,
     HuggingfaceModelConfig,
     LMQGModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
-    BedrockModelConfig,
 )
 
 ###############################################################################
@@ -269,7 +269,8 @@ class HuggingfaceModelServer(AbsModelServer):
             self._model_config.model_name,
             device_map="auto",
             offload_folder="./offload",
-            load_in_4bit=True,
+            load_in_4bit=self._model_config.load_in_4bit,
+            load_in_8bit=self._model_config.load_in_8bit,
         )
 
         # explicitly set batch_size for pipeline
@@ -478,9 +479,10 @@ class NougatModelServer(AbsModelServer):
             outs.append(out)
         return outs
 
+
 class BedrockModelServer(AbsModelServer):
     """Bedrock Model Server Class.
-    
+
     The AWS client authenticates by automatically loading credentials as per the methods outlined here:
     https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
 
@@ -492,7 +494,6 @@ class BedrockModelServer(AbsModelServer):
     """
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
-
         try:
             # import in class level to avoid installing boto3
             import boto3
@@ -525,7 +526,9 @@ class BedrockModelServer(AbsModelServer):
                     "Please pass the profile name in the model config."
                 )
 
-            aws_region = self._model_config.aws_region if self._model_config.aws_region else None
+            aws_region = (
+                self._model_config.aws_region if self._model_config.aws_region else None
+            )
 
             self._client = session.client("bedrock-runtime", region_name=aws_region)
 
@@ -561,17 +564,17 @@ class BedrockModelServer(AbsModelServer):
             List[str]: Postprocessed data.
         """
         return data
-    
+
     def _get_provider(self) -> str:
         return self._model_config.model_name.split(".")[0]
-    
-    def enforce_stop_tokens(text: str, stop: List[str]) -> str:
+
+    def enforce_stop_tokens(self, text: str, stop: List[str]) -> str:
         """Cut off the text as soon as any stop words occur."""
         return re.split("|".join(stop), text, maxsplit=1)[0]
-    
+
     def prepare_input(
         self, provider: str, prompt: str, model_kwargs: Dict[str, Any]
-        ) -> Dict[str, Any]:
+    ) -> Dict[str, Any]:
         """
         Prepare the input for the model based on the provider.
 
@@ -583,19 +586,31 @@ class BedrockModelServer(AbsModelServer):
         Returns:
             Dict[str, Any]: The prepared input for the model.
         """
-        def prepare_anthropic_input(prompt: str, model_kwargs: Dict[str, Any]) -> Dict[str, Any]:
-            input_body = {**model_kwargs, "prompt": f"\n\nHuman: {prompt}\n\nAssistant: "}
+
+        def prepare_anthropic_input(
+            prompt: str, model_kwargs: Dict[str, Any]
+        ) -> Dict[str, Any]:
+            input_body = {
+                **model_kwargs,
+                "prompt": f"\n\nHuman: {prompt}\n\nAssistant: ",
+            }
             if "max_tokens_to_sample" not in input_body:
                 input_body["max_tokens_to_sample"] = 256
             return input_body
 
-        def prepare_ai21_cohere_meta_input(prompt: str, model_kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        def prepare_ai21_cohere_meta_input(
+            prompt: str, model_kwargs: Dict[str, Any]
+        ) -> Dict[str, Any]:
             return {**model_kwargs, "prompt": prompt}
 
-        def prepare_amazon_input(prompt: str, model_kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        def prepare_amazon_input(
+            prompt: str, model_kwargs: Dict[str, Any]
+        ) -> Dict[str, Any]:
             return {"inputText": prompt, "textGenerationConfig": {**model_kwargs}}
 
-        def prepare_default_input(prompt: str, model_kwargs: Dict[str, Any]) -> Dict[str, Any]:
+        def prepare_default_input(
+            prompt: str, model_kwargs: Dict[str, Any]
+        ) -> Dict[str, Any]:
             return {"inputText": prompt}
 
         provider_input_preparation = {
@@ -606,9 +621,11 @@ class BedrockModelServer(AbsModelServer):
             "amazon": prepare_amazon_input,
         }
 
-        prepare_input_for_provider = provider_input_preparation.get(provider, prepare_default_input)
+        prepare_input_for_provider = provider_input_preparation.get(
+            provider, prepare_default_input
+        )
         return prepare_input_for_provider(prompt, model_kwargs)
-    
+
     def prepare_output(self, provider: str, response: Any) -> str:
         """
         Prepares the output based on the provider and response.
@@ -623,6 +640,7 @@ class BedrockModelServer(AbsModelServer):
         Raises:
             None
         """
+
         def prepare_anthropic_output(response: Any) -> str:
             response_body = json.loads(response.get("body").read().decode())
             return response_body.get("completion")
@@ -650,9 +668,11 @@ class BedrockModelServer(AbsModelServer):
             "meta": prepare_meta_output,
         }
 
-        prepare_output_for_provider = provider_output_preparation.get(provider, prepare_default_output)
+        prepare_output_for_provider = provider_output_preparation.get(
+            provider, prepare_default_output
+        )
         return prepare_output_for_provider(response)
-    
+
     def invoke_bedrock_model(
         self,
         prompt: str,
@@ -665,7 +685,7 @@ class BedrockModelServer(AbsModelServer):
         Args:
             prompt (str): The input prompt for the model.
             stop (Optional[List[str]]): List of stop tokens to indicate the end of the generated text.
-            **kwargs: Additional keyword arguments to be passed to the model. Please refer to 
+            **kwargs: Additional keyword arguments to be passed to the model. Please refer to
             https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html for more details.
 
         Returns:
@@ -687,7 +707,10 @@ class BedrockModelServer(AbsModelServer):
         # Invoke the model
         try:
             response = self._client.invoke_model(
-                body=body, modelId=self._model_config.model_name, accept=accept, contentType=contentType
+                body=body,
+                modelId=self._model_config.model_name,
+                accept=accept,
+                contentType=contentType,
             )
         except Exception as e:
             raise ValueError(f"Error raised by bedrock service: {e}")
@@ -703,8 +726,8 @@ class BedrockModelServer(AbsModelServer):
     def __call__(self, data: List[str]) -> List[str]:
         """Run model.
 
-        Current bedrock batch inference is implemented by creating asynchronous jobs. 
-        At present, we are not temporarily using Batch Inference. 
+        Current bedrock batch inference is implemented by creating asynchronous jobs.
+        At present, we are not temporarily using Batch Inference.
         Reference: https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference-create.html
 
         Args:
@@ -716,9 +739,6 @@ class BedrockModelServer(AbsModelServer):
         data = self._preprocess(data)
         inference_data = []
         for d in data:
-            inference_data.append(
-                self.invoke_bedrock_model(prompt = d)
-            )
+            inference_data.append(self.invoke_bedrock_model(prompt=d))
         data = self._postprocess(inference_data)
         return data
-

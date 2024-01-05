@@ -1,7 +1,10 @@
 """Splitter Factory Module."""
 from typing import Dict, List
 
-from uniflow.op.extract.split.constants import MARKDOWN_HEADER_SPLITTER, PARAGRAPH_SPLITTER
+from uniflow.op.extract.split.constants import (
+    MARKDOWN_HEADER_SPLITTER,
+    PARAGRAPH_SPLITTER,
+)
 from uniflow.op.extract.split.markdown_header_splitter import MarkdownHeaderSplitter
 from uniflow.op.extract.split.pattern_splitter_op import PatternSplitter
 
@@ -11,7 +14,9 @@ class SplitterOpsFactory:
 
     SPLITTERS = {
         PARAGRAPH_SPLITTER: PatternSplitter(name="paragraph_split_op", splitter="\n\n"),
-        MARKDOWN_HEADER_SPLITTER: MarkdownHeaderSplitter(name="markdown_header_split_op"),
+        MARKDOWN_HEADER_SPLITTER: MarkdownHeaderSplitter(
+            name="markdown_header_split_op"
+        ),
     }
 
     @staticmethod
