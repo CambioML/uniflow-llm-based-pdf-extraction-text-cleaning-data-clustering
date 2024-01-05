@@ -136,7 +136,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
 
 1. Create a `Config` object to pass into the `Client` object.
     ```
-    config = OpenAIConfig(
+    config = TransformOpenAIConfig(
         guided_prompt_template=guided_prompt,
         model_config=OpenAIModelConfig(
             response_format={"type": "json_object"}
