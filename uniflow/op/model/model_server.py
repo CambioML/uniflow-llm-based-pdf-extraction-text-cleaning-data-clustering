@@ -2,19 +2,19 @@
 All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
 """
 
-import re
 import json
+import re
 import warnings
 from functools import partial
 from typing import Any, Dict, List, Optional
 
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
+    BedrockModelConfig,
     HuggingfaceModelConfig,
     LMQGModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
-    BedrockModelConfig,
 )
 
 ###############################################################################
@@ -567,7 +567,7 @@ class BedrockModelServer(AbsModelServer):
     def _get_provider(self) -> str:
         return self._model_config.model_name.split(".")[0]
 
-    def enforce_stop_tokens(text: str, stop: List[str]) -> str:
+    def enforce_stop_tokens(self, text: str, stop: List[str]) -> str:
         """Cut off the text as soon as any stop words occur."""
         return re.split("|".join(stop), text, maxsplit=1)[0]
 
