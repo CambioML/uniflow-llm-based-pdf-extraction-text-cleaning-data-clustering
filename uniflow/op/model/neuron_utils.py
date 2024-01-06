@@ -106,7 +106,7 @@ class Neuron:
         if not os.path.exists(cache_dir):
             os.makedirs(cache_dir)
         zip_filename = os.path.join(cache_dir, f"{expected_md5}.zip")
-        if os.path.exists(zip_filename):
+        if os.path.exists(os.path.join(cache_dir, f"{expected_md5}")):
             return os.path.join(cache_dir, f"{expected_md5}")
         response = requests.get(url, stream=True)
         total_size_in_bytes = int(response.headers.get("content-length", 0))
@@ -118,11 +118,12 @@ class Neuron:
                 progress_bar.update(len(data))
                 file.write(data)
         progress_bar.close()
-        if not Neuron.verify_md5(zip_filename, expected_md5) or expected_md5 != "":
+        if not Neuron.verify_md5(zip_filename, expected_md5):
             raise ValueError("MD5 verification failed")
-
+        print(zip_filename, os.path.join(cache_dir, f"{expected_md5}"))
         with zipfile.ZipFile(zip_filename, "r") as zip_ref:
             zip_ref.extractall(os.path.join(cache_dir, f"{expected_md5}"))
+        os.remove(zip_filename)
         return os.path.join(cache_dir, f"{expected_md5}")
 
     @staticmethod
@@ -158,7 +159,9 @@ class Neuron:
             "Neuron model can only run on the AWS EC2 inf2 instance series."
         )
         tp_degree = Neuron.instance_type_dict[instance_type]
-        assert model_name in Neuron.neuron_model_config
+        assert model_name in Neuron.neuron_model_config, ValueError(
+            f"Current Neuron only support {list(Neuron.neuron_model_config.keys())}"
+        )
         assert batch_size in Neuron.neuron_model_config[model_name], ValueError(
             f"{model_name} only support batch size {list(Neuron.neuron_model_config[model_name].keys())} in {instance_type}"
         )
@@ -170,8 +173,19 @@ class Neuron:
         neuron_config = NeuronConfig(
             grouped_query_attention=constants.GQA.SHARD_OVER_HEADS
         )
-
-        model_split = Neuron.split_neuron_model(model_name)
+        cache_dir = os.path.join(
+            os.path.expanduser("~"),
+            ".cache/uniflow/",
+            model_name.split("/")[1] + "-split",
+        )
+        if os.path.exists(cache_dir):
+            print(
+                f"Model chunks found. If you encounter errors, please delete the cache folder `{cache_dir}`"
+            )
+            model_split = cache_dir
+        else:
+            print("Spliting model, need to wait for a while...")
+            model_split = Neuron.split_neuron_model(model_name)
 
         model_neuron = MistralForSampling.from_pretrained(
             model_split,
@@ -181,6 +195,8 @@ class Neuron:
             amp="bf16",
             neuron_config=neuron_config,
         )
+        if model_neuron.config.window_size is None:
+            model_neuron.config.window_size = 4096
         url, md5 = Neuron.neuron_model_config[model_name][batch_size][n_positions]
         neuron_cache = Neuron.download_and_unzip(url, md5)
         print("loading neuron model from cache, need to wait for a while...")
@@ -191,7 +207,7 @@ class Neuron:
         model = HuggingFaceGenerationModelAdapter(model_config, model_neuron)
         model.reset_generation()
         tokenizer = AutoTokenizer.from_pretrained(model_name)
-        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.pad_token_id = tokenizer.eos_token_id
         return model, tokenizer
 
     @staticmethod
@@ -215,8 +231,11 @@ class Neuron:
         batches = Neuron.batch_list(text_list, 4)
         results = []
         for batch in batches:
-            batch = ["[INST]" + text + "[/INST]" for text in batch]
-            encoded_input = tokenizer(batch, return_tensors="pt", padding=True)
+            encoded_input = tokenizer(
+                ["[INST]" + text + "[/INST]" for text in batch],
+                return_tensors="pt",
+                padding=True,
+            )
             with torch.inference_mode():
                 sample_output = model.generate(
                     input_ids=encoded_input.input_ids,
@@ -224,14 +243,22 @@ class Neuron:
                     do_sample=True,
                     max_length=1024,
                     eos_token_id=tokenizer.eos_token_id,
+                    pad_token_id=tokenizer.pad_token_id,
                     temperature=0.7,
                 )
+
             for sample_idx, tok in enumerate(sample_output):
-                start = sum(
-                    encoded_input.input_ids[sample_idx] != tokenizer.eos_token_id
-                )
-                tok = tok[start + 1 :]
+                start = len(encoded_input.input_ids[sample_idx])
+                tok = tok[start:]
                 end = list(tok).index(tokenizer.eos_token_id)
-                results.append(tokenizer.decode(tok[:end]))
+                results.append(
+                    [
+                        {
+                            "generated_text": (
+                                batch[sample_idx] + tokenizer.decode(tok[:end])
+                            )
+                        }
+                    ]
+                )
         results = results[: len(text_list)]
         return results
