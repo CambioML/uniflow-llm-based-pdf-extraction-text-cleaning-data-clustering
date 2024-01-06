@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uniflow"
-version = "0.0.11"
+version = "0.0.12"
 description = "Unified flow interface for data augmentation for LLM training."
 authors = ["CambioML <wanwanaiai45@gmail.com>"]
 maintainers = ["Rachel Hu <goldpiggy@berkeley.edu>"]
