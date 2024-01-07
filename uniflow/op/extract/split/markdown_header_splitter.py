@@ -56,7 +56,6 @@ class MarkdownHeaderSplitter(Op):
             value_dict = copy.deepcopy(node.value_dict)
             text = value_dict["text"]
             text = self.header_splitter(text.strip(), headers_to_split_on_list)
-            text = self.format_splitter(text)
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
@@ -145,16 +144,5 @@ class MarkdownHeaderSplitter(Op):
             if stripped_line:
                 current_content.append(stripped_line)
                 current_metadata = initial_metadata.copy()
-
-        return lines_with_metadata
-
-    def format_splitter(self, lines_with_metadata):
-        """Format return."""
-        # ret = []
-        # for line in self.lines_with_metadata:
-        #     headers = sorted(line["metadata"].items(), key=lambda x: x[0])
-        #     headers = "\n".join([f"{key}:{value}" for key, value in headers])
-        #     ret.append(headers + "\n\n" + line["content"])
-        # return ret
 
         return [line["content"] for line in lines_with_metadata]
