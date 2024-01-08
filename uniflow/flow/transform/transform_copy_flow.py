@@ -18,7 +18,7 @@ class TransformCopyFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: PromptTemplate,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:  # pylint: disable=useless-parent-delegation
         """Initialize CopyFlow class."""

@@ -70,7 +70,7 @@ class TransformConfig:
     flow_name: str
     model_config: ModelConfig = field(default_factory=ModelConfig)
     num_thread: int = 1
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
             Generate one question and its corresponding answer based on the last context in the last
@@ -113,7 +113,7 @@ class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 
     flow_name: str = "TransformLMQGFlow"
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=LMQGModelConfig())
@@ -124,7 +124,7 @@ class TransformCopyConfig(TransformConfig):
     """Transform Linear Config Class."""
 
     flow_name: str = "TransformCopyFlow"
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=lambda: {})
@@ -140,16 +140,14 @@ class RaterConfig:
     flow_name: str = "RaterFlow"
     model_config: ModelConfig = field(default_factory=ModelConfig)
     label2score: Dict[str, float] = field(default_factory=dict)
-    guided_prompt_template: PromptTemplate = field(default_factory=PromptTemplate)
+    prompt_template: PromptTemplate = field(default_factory=PromptTemplate)
     num_thread: int = 1
 
     def __post_init__(self):
         """Post-initialization to perform label check."""
         # Add label to the end of instruction to help produce more consistent response label.
-        # If {label_list} {label2score} not in guided_prompt_template, it won't cause error
-        self.guided_prompt_template.instruction = str(
-            self.guided_prompt_template.instruction
-        ).format(
+        # If {label_list} {label2score} not in prompt_template, it won't cause error
+        self.prompt_template.instruction = str(self.prompt_template.instruction).format(
             label_list=str(list(self.label2score.keys())),
             label2score=str(list(self.label2score.items())),
         )
@@ -159,7 +157,7 @@ class RaterConfig:
         missing_labels = incompatible_labels["missing_labels"]
         if unexpected_labels:
             raise ValueError(
-                "Inconsistent labels found in guided_prompt_template examples, "
+                "Inconsistent labels found in prompt_template examples, "
                 f"example label {unexpected_labels} not in label2score has keys {list(self.label2score.keys())}",
             )
         if missing_labels:
@@ -167,7 +165,7 @@ class RaterConfig:
 
     def check_labels(self) -> Dict[str, list]:
         """
-        Check if every label in the guided_prompt_template's examples is a key in label2score.
+        Check if every label in the prompt_template's examples is a key in label2score.
 
         Returns:
             Dict: Incompatible Keys, fields:
@@ -176,9 +174,9 @@ class RaterConfig:
         """
         example_labels = set()
         label2score_labels = set()
-        # Check if guided_prompt_template has examples
-        if self.guided_prompt_template.few_shot_prompt:
-            for example in self.guided_prompt_template.few_shot_prompt:
+        # Check if prompt_template has examples
+        if self.prompt_template.few_shot_prompt:
+            for example in self.prompt_template.few_shot_prompt:
                 example_labels.add(example.label)
             label2score_labels = set(self.label2score.keys())
         missing_labels = label2score_labels - example_labels
@@ -201,7 +199,7 @@ class RaterForClassificationOpenAIGPT4Config(RaterConfig):
                                     the server ("OpenAIModelServer"), number of calls (1), temperature (0),
                                     and the response format (plain text).
         label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
-        guided_prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
                                                answer, label, and explanation for each case.
     """
@@ -218,7 +216,7 @@ class RaterForClassificationOpenAIGPT4Config(RaterConfig):
     label2score: Dict[str, float] = field(
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
             Evaluate the appropriateness of a given answer based on the question and the context.
@@ -258,7 +256,7 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
                                     the server ("OpenAIModelServer"), number of calls (1), temperature (0),
                                     and the response format (plain text).
         label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
-        guided_prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
                                                answer, label, and explanation for each case.
     """
@@ -275,7 +273,7 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
     label2score: Dict[str, float] = field(
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
             # Task: Evaluate the appropriateness of a given answer based on a provided context and question.
@@ -322,7 +320,7 @@ class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
                                     and the response format (plain text).
         label2score (Dict[str, float]): Mapping of labels to scores, default is {"accept": 1.0,
                                         "equivalent": 0.0, "reject": -1.0}.
-        guided_prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
                                                grounding answer, generated answer, label, and explanation for each case.
     """
@@ -343,7 +341,7 @@ class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
             "reject": -1.0,
         }
     )
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
             Compare two answers: a generated answer and a grounding answer based on a provided context and question.
@@ -394,7 +392,7 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
                                     and the response format (plain text).
         label2score (Dict[str, float]): Mapping of labels to scores, default is {
                                         "accept": 1.0, "equivalent": 0.0, "reject": -1.0}.
-        guided_prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
                                                grounding answer, generated answer, label, and explanation for each case.
     """
@@ -415,7 +413,7 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
             "reject": -1.0,
         }
     )
-    guided_prompt_template: PromptTemplate = field(
+    prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
             # Task: Evaluate and compare two answers: a generated answer and a grounding answer based on a provided context and question.

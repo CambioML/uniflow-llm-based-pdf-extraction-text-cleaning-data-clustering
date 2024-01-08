@@ -32,19 +32,14 @@ class LLMDataProcessor(AbsLLMProcessor):
             if not isinstance(d, Context):
                 raise ValueError("Input data must be a Context object.")
             output_strings = []
-            guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
-            if (
-                not guided_prompt_template.instruction
-                and not guided_prompt_template.few_shot_prompt
-            ):
+            prompt_template = copy.deepcopy(self._prompt_template)
+            if not prompt_template.instruction and not prompt_template.few_shot_prompt:
                 for key, value in d.model_dump().items():
                     output_strings.append(f"{key}: {value}")
             else:
-                guided_prompt_template.few_shot_prompt.append(d)
-                output_strings.append(
-                    f"instruction: {guided_prompt_template.instruction}"
-                )
-                for example in guided_prompt_template.few_shot_prompt:
+                prompt_template.few_shot_prompt.append(d)
+                output_strings.append(f"instruction: {prompt_template.instruction}")
+                for example in prompt_template.few_shot_prompt:
                     for ex_key, ex_value in example.model_dump().items():
                         output_strings.append(f"{ex_key}: {ex_value}")
 
@@ -85,15 +80,15 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
         for d in data:
             if not isinstance(d, Context):
                 raise ValueError("Input data must be a Context object.")
-            guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
+            prompt_template = copy.deepcopy(self._prompt_template)
 
-            guided_prompt_template.instruction = (
-                f"{guided_prompt_template.instruction}\n\n{OUTPUT_SCHEMA_GUIDE}"
+            prompt_template.instruction = (
+                f"{prompt_template.instruction}\n\n{OUTPUT_SCHEMA_GUIDE}"
             )
 
             input_data = []
-            guided_prompt_template.few_shot_prompt.append(d)
-            input_data.append(guided_prompt_template.model_dump())
+            prompt_template.few_shot_prompt.append(d)
+            input_data.append(prompt_template.model_dump())
         return [json.dumps(d) for d in input_data]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:

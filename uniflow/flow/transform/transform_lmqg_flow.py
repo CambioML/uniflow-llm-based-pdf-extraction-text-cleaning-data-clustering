@@ -15,20 +15,20 @@ class TransformLMQGFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: PromptTemplate,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
-            guided_prompt_template (PromptTemplate): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
         self._model_op = ModelOp(
             name="lmqg_model_op",
             model=LLMDataProcessor(
-                guided_prompt_template=guided_prompt_template,
+                prompt_template=prompt_template,
                 model_config=model_config,
             ),
         )

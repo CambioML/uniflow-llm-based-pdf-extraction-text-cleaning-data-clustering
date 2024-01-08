@@ -137,7 +137,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
 1. Create a `Config` object to pass into the `Client` object.
     ```
     config = TransformOpenAIConfig(
-        guided_prompt_template=guided_prompt,
+        prompt_template=guided_prompt,
         model_config=OpenAIModelConfig(
             response_format={"type": "json_object"}
         ),
@@ -170,7 +170,7 @@ You can also configure the flows by passing custom configurations or arguments t
 Every configuration has the following parameters:
 | Parameter | Type | Description |
 | ------------- | ------------- | ------------- |
-| `guided_prompt_template` | `PromptTemplate` | The template to use for the guided prompt. |
+| `prompt_template` | `PromptTemplate` | The template to use for the guided prompt. |
 | `num_threads` | int | The number of threads to use for the flow. |
 | `model_config` | `ModelConfig` | The configuration to pass to the model. |
 

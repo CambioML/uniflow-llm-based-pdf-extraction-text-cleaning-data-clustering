@@ -20,18 +20,18 @@ class LLMRater(LLMDataProcessor):
 
     def __init__(
         self,
-        guided_prompt_template: PromptTemplate,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """LLM Rater Constructor.
 
         Args:
-            guided_prompt_template (PromptTemplate): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
-        super().__init__(guided_prompt_template, model_config)
+        super().__init__(prompt_template, model_config)
         pattern = r"^[^A-Za-z]+|[^A-Za-z]+$"
         self._label2score = {
             re.sub(pattern, "", k).lower().lower(): float(v)
@@ -98,18 +98,18 @@ class JsonFormattedLLMRater(JsonFormattedDataProcessor):
 
     def __init__(
         self,
-        guided_prompt_template: PromptTemplate,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """Json Formatted LLM Rater Constructor.
 
         Args:
-            guided_prompt_template (PromptTemplate): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
-        super().__init__(guided_prompt_template, model_config)
+        super().__init__(prompt_template, model_config)
         self._pattern = r"^[^A-Za-z]+|[^A-Za-z]+$"
         self._label2score = {
             re.sub(self._pattern, "", k).lower(): float(v)
@@ -117,8 +117,8 @@ class JsonFormattedLLMRater(JsonFormattedDataProcessor):
         }
         self._score2label = {v: k for k, v in self._label2score.items()}
         self._rater_key = None
-        if guided_prompt_template.few_shot_prompt:
-            example_keys = list(guided_prompt_template.few_shot_prompt[0].dict().keys())
+        if prompt_template.few_shot_prompt:
+            example_keys = list(prompt_template.few_shot_prompt[0].dict().keys())
             self._rater_key = example_keys[-1]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
