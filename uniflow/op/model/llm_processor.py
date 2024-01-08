@@ -5,7 +5,9 @@ from typing import Any, Dict, List
 
 from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
 from uniflow.op.model.constants import ERROR, ERROR_CONTEXT, ERROR_LIST, RESPONSE
-from uniflow.op.prompt_schema import Context, GuidedPrompt
+from uniflow.op.prompt_schema import Context
+
+OUTPUT_SCHEMA_GUIDE = "Ensure the response is in json."
 
 
 class LLMDataProcessor(AbsLLMProcessor):
@@ -71,25 +73,6 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
     Extends the LLMDataProcessor Class to ensure the response is in json.
     """
 
-    def __init__(
-        self,
-        guided_prompt_template: GuidedPrompt,
-        model_config: Dict[str, Any],
-    ) -> None:
-        """Initialize Json Model class.
-
-        Args:
-            guided_prompt_template (GuidedPrompt): GuidedPrompt template.
-            model_config (Dict[str, Any]): Model config.
-        """
-        super().__init__(guided_prompt_template, model_config)
-        examples = guided_prompt_template.examples
-        if not examples:
-            raise ValueError(
-                "No examples found in guided_prompt_template. Examples are required to use the JSON mode."
-            )
-        self._json_schema = examples[0].get_custom_schema()
-
     def _serialize(self, data: List[Context]) -> List[str]:
         """Serialize data.
 
@@ -103,14 +86,9 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
             if not isinstance(d, Context):
                 raise ValueError("Input data must be a Context object.")
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
-            output_schema_guide = "Ensure the response is in json."
-            # f"""Provide the parsed json object
-            # that matches the following json_schema (do not deviate at all):
-            #     {self._json_schema}
-            # """
 
             guided_prompt_template.instruction = (
-                f"{guided_prompt_template.instruction}\n\n{output_schema_guide}"
+                f"{guided_prompt_template.instruction}\n\n{OUTPUT_SCHEMA_GUIDE}"
             )
 
             input_data = []

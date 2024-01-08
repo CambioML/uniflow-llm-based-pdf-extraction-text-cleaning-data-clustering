@@ -149,7 +149,10 @@ class RaterConfig:
         # If {label_list} {label2score} not in guided_prompt_template, it won't cause error
         self.guided_prompt_template.instruction = str(
             self.guided_prompt_template.instruction
-        ).format(label_list=str(list(self.label2score.keys())), label2score=str(list(self.label2score.items())))
+        ).format(
+            label_list=str(list(self.label2score.keys())),
+            label2score=str(list(self.label2score.items())),
+        )
 
         incompatible_labels = self.check_labels()
         unexpected_labels = incompatible_labels["unexpected_labels"]
@@ -169,14 +172,15 @@ class RaterConfig:
         Returns:
             Dict: Incompatible Keys, fields:
                 missing_labels (List[str]): labels in label2score but not in examples, this may cause performance loss.
-                unxpected_labels (List[str]): labels in examples but not in label2score, this cause ValueError.
+                unexpected_labels (List[str]): labels in examples but not in label2score, this cause ValueError.
         """
-        # TODO: Does label strictly match in upper/lower letter?
         example_labels = set()
-        for example in self.guided_prompt_template.examples:
-            example_labels.add(example.label)
-        label2score_labels = set(self.label2score.keys())
-
+        label2score_labels = set()
+        # Check if guided_prompt_template has examples
+        if self.guided_prompt_template.examples:
+            for example in self.guided_prompt_template.examples:
+                example_labels.add(example.label)
+            label2score_labels = set(self.label2score.keys())
         missing_labels = label2score_labels - example_labels
         unexpected_labels = example_labels - label2score_labels
         return {
@@ -316,7 +320,7 @@ class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
         model_config (ModelConfig): Configuration for the GPT-4 model. Includes model name ("gpt-4"),
                                     the server ("OpenAIModelServer"), number of calls (1), temperature (0),
                                     and the response format (plain text).
-        label2score (Dict[str, float]): Mapping of labels to scores, default is {"accept": 1.0, 
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"accept": 1.0,
                                         "equivalent": 0.0, "reject": -1.0}.
         guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
