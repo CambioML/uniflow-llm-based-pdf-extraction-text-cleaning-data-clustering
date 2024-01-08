@@ -57,6 +57,6 @@ class GuidedPrompt(BaseModel):
 
     instruction: str = Field(..., min_length=0)
 
-    examples: conlist(Context, min_length=0) = Field([], min_items=0)
+    few_shot_prompt: conlist(Context, min_length=0) = Field([], min_items=0)
 
     model_config = ConfigDict(extra="forbid")

@@ -76,7 +76,7 @@ class TransformConfig:
             Generate one question and its corresponding answer based on the last context in the last
             example. Follow the format of the examples below to include context, question, and answer in the response
             """,
-            examples=[
+            few_shot_prompt=[
                 Context(
                     context="The quick brown fox jumps over the lazy black dog.",
                     question="What is the color of the fox?",
@@ -114,7 +114,7 @@ class TransformLMQGConfig(TransformConfig):
 
     flow_name: str = "TransformLMQGFlow"
     guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(instruction="", examples=[])
+        default_factory=lambda: GuidedPrompt(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=LMQGModelConfig())
 
@@ -125,7 +125,7 @@ class TransformCopyConfig(TransformConfig):
 
     flow_name: str = "TransformCopyFlow"
     guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(instruction="", examples=[])
+        default_factory=lambda: GuidedPrompt(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=lambda: {})
 
@@ -177,8 +177,8 @@ class RaterConfig:
         example_labels = set()
         label2score_labels = set()
         # Check if guided_prompt_template has examples
-        if self.guided_prompt_template.examples:
-            for example in self.guided_prompt_template.examples:
+        if self.guided_prompt_template.few_shot_prompt:
+            for example in self.guided_prompt_template.few_shot_prompt:
                 example_labels.add(example.label)
             label2score_labels = set(self.label2score.keys())
         missing_labels = label2score_labels - example_labels
@@ -226,7 +226,7 @@ class RaterForClassificationOpenAIGPT4Config(RaterConfig):
             If answer is appropriate, you should give a higher score and vise versa. Check label to score dictionary: {label2score}.
             Your response should only focus on the unlabeled sample, including two fields: explanation and label (one of {label_list}).
             """,
-            examples=[
+            few_shot_prompt=[
                 Context(
                     context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
                     question="When was the Eiffel Tower constructed?",
@@ -289,7 +289,7 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
             2. label: Your judgment (one of {label_list}).
             ## Note: Use the below example only for demonstration, do not include in the final response.
             """,
-            examples=[
+            few_shot_prompt=[
                 Context(
                     context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
                     question="When was the Eiffel Tower constructed?",
@@ -351,7 +351,7 @@ class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
             If generated answer is better, you should give a higher score and vise versa. Check label to score dictionary: {label2score}.
             Your response should only focus on the unlabeled sample, including two fields: explanation and label (one of {label_list}).
             """,
-            examples=[
+            few_shot_prompt=[
                 Context(
                     context="Early computers were built to perform a series of single tasks, like a calculator. Basic operating system could automatically run different programs in succession to speed up processing.",
                     question="Did early computers function like modern calculators?",
@@ -431,7 +431,7 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
             ## Note:
             Only use the example below as a few shot demonstrate but not include them in the final response. Your response should only focus on the unlabeled sample.
             """,
-            examples=[
+            few_shot_prompt=[
                 Context(
                     context="Early computers were built to perform a series of single tasks, like a calculator. Basic operating system could automatically run different programs in succession to speed up processing.",
                     question="Did early computers function like modern calculators?",

@@ -125,7 +125,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
 
     guided_prompt = GuidedPrompt(
     instruction="Generate a one sentence summary based on the last context below. Follow the format of the examples below to include context and summary in the response",
-    examples=[
+    few_shot_prompt=[
         Context(
             context="When you're operating on the maker's schedule, meetings are a disaster. A single meeting can blow a whole afternoon, by breaking it into two pieces each too small to do anything hard in. Plus you have to remember to go to the meeting. That's no problem for someone on the manager's schedule. There's always something coming on the next hour; the only question is what. But when someone on the maker's schedule has a meeting, they have to think about it.",
             summary="Meetings disrupt the productivity of those following a maker's schedule, dividing their time into impractical segments, while those on a manager's schedule are accustomed to a continuous flow of tasks.",

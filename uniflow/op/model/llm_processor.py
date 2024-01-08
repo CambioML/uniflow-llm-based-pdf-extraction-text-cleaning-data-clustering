@@ -35,16 +35,16 @@ class LLMDataProcessor(AbsLLMProcessor):
             guided_prompt_template = copy.deepcopy(self._guided_prompt_template)
             if (
                 not guided_prompt_template.instruction
-                and not guided_prompt_template.examples
+                and not guided_prompt_template.few_shot_prompt
             ):
                 for key, value in d.model_dump().items():
                     output_strings.append(f"{key}: {value}")
             else:
-                guided_prompt_template.examples.append(d)
+                guided_prompt_template.few_shot_prompt.append(d)
                 output_strings.append(
                     f"instruction: {guided_prompt_template.instruction}"
                 )
-                for example in guided_prompt_template.examples:
+                for example in guided_prompt_template.few_shot_prompt:
                     for ex_key, ex_value in example.model_dump().items():
                         output_strings.append(f"{ex_key}: {ex_value}")
 
@@ -92,7 +92,7 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
             )
 
             input_data = []
-            guided_prompt_template.examples.append(d)
+            guided_prompt_template.few_shot_prompt.append(d)
             input_data.append(guided_prompt_template.model_dump())
         return [json.dumps(d) for d in input_data]
 

@@ -117,8 +117,8 @@ class JsonFormattedLLMRater(JsonFormattedDataProcessor):
         }
         self._score2label = {v: k for k, v in self._label2score.items()}
         self._rater_key = None
-        if guided_prompt_template.examples:
-            example_keys = list(guided_prompt_template.examples[0].dict().keys())
+        if guided_prompt_template.few_shot_prompt:
+            example_keys = list(guided_prompt_template.few_shot_prompt[0].dict().keys())
             self._rater_key = example_keys[-1]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
