@@ -5,7 +5,7 @@ from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.basic.copy_op import CopyOp
-from uniflow.op.prompt_schema import PromptTemplate
+from uniflow.op.prompt import PromptTemplate
 
 
 class TransformCopyFlow(Flow):

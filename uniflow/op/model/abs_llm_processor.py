@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 from uniflow.op.model.constants import ERROR_LIST, MAX_ATTEMPTS
 from uniflow.op.model.model_server import ModelServerFactory
-from uniflow.op.prompt_schema import Context, PromptTemplate
+from uniflow.op.prompt import Context, PromptTemplate
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

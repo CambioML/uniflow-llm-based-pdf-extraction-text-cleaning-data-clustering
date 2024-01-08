@@ -7,7 +7,7 @@ from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.model.llm_rater import JsonFormattedLLMRater, LLMRater
 from uniflow.op.model.model_op import ModelOp
-from uniflow.op.prompt_schema import PromptTemplate
+from uniflow.op.prompt import PromptTemplate
 
 
 class RaterFlow(Flow):

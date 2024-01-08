@@ -12,7 +12,7 @@ from uniflow.op.model.constants import (
     VOTES,
 )
 from uniflow.op.model.llm_processor import JsonFormattedDataProcessor, LLMDataProcessor
-from uniflow.op.prompt_schema import PromptTemplate
+from uniflow.op.prompt import PromptTemplate
 
 
 class LLMRater(LLMDataProcessor):

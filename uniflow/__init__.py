@@ -1,6 +1,6 @@
 """Uniflow package."""
 
-from uniflow.op.prompt_schema import Context, PromptTemplate
+from uniflow.op.prompt import Context, PromptTemplate
 
 __all__ = ["PromptTemplate", "Context"]
 
