@@ -6,7 +6,7 @@ from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.model.llm_processor import LLMDataProcessor
 from uniflow.op.model.model_op import ModelOp
-from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.prompt_schema import PromptTemplate
 
 
 class HuggingFaceModelFlow(Flow):
@@ -14,13 +14,13 @@ class HuggingFaceModelFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        guided_prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            guided_prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()

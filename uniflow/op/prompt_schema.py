@@ -52,7 +52,7 @@ class Context(BaseModel):
         return schema["properties"]
 
 
-class GuidedPrompt(BaseModel):
+class PromptTemplate(BaseModel):
     """Type for guided prompt."""
 
     instruction: str = Field(..., min_length=0)

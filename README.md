@@ -24,7 +24,7 @@ To use `uniflow`, follow of three main steps:
     This determines the LLM and the different configurable parameters.
 
 1. **Construct your [`Prompts`](#prompting)**\
-    Construct the context that you want to use to prompt your model. You can configure custom instructions and examples using the [`GuidedPrompt`](#guidedprompt) class.
+    Construct the context that you want to use to prompt your model. You can configure custom instructions and examples using the [`PromptTemplate`](#PromptTemplate) class.
 
 1. **Run your [`Flow`](#running-the-flow)**\
     Run the flow on your input data and generate output from your LLM.
@@ -84,8 +84,8 @@ client.run(data)
 
 For a more detailed overview of running the flow, see the [Running the flow](#running-the-flow) section.
 
-### GuidedPrompt
-If you want to run with a custom prompt instruction or few-shot examples, you can use the `GuidedPrompt` object. It has `instruction` and `example` properties.
+### PromptTemplate
+If you want to run with a custom prompt instruction or few-shot examples, you can use the `PromptTemplate` object. It has `instruction` and `example` properties.
 
 | Property | Type | Description |
 | ------------- | ------------- | ------------- |
@@ -94,7 +94,7 @@ If you want to run with a custom prompt instruction or few-shot examples, you ca
 
 You can overwrite any of the defaults as needed.
 
-To see an example of how to use the `GuidedPrompt` to run `uniflow` with a custom `instruction`, few-shot examples, and custom `Context` fields to generate a summary, check out the [openai_pdf_source_10k_summary notebook](./example/model/openai_pdf_source_10k_summary.ipynb)
+To see an example of how to use the `PromptTemplate` to run `uniflow` with a custom `instruction`, few-shot examples, and custom `Context` fields to generate a summary, check out the [openai_pdf_source_10k_summary notebook](./example/model/openai_pdf_source_10k_summary.ipynb)
 
 
 ## Running the Flow
@@ -119,11 +119,11 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
     ]
     ```
 
-1. [Optional] If you want to use a customized instruction and/or examples, create a `GuidedPrompt`.
+1. [Optional] If you want to use a customized instruction and/or examples, create a `PromptTemplate`.
     ```
-    from uniflow.op.prompt_schema import GuidedPrompt
+    from uniflow.op.prompt_schema import PromptTemplate
 
-    guided_prompt = GuidedPrompt(
+    guided_prompt = PromptTemplate(
     instruction="Generate a one sentence summary based on the last context below. Follow the format of the examples below to include context and summary in the response",
     few_shot_prompt=[
         Context(
@@ -170,7 +170,7 @@ You can also configure the flows by passing custom configurations or arguments t
 Every configuration has the following parameters:
 | Parameter | Type | Description |
 | ------------- | ------------- | ------------- |
-| `guided_prompt_template` | `GuidedPrompt` | The template to use for the guided prompt. |
+| `guided_prompt_template` | `PromptTemplate` | The template to use for the guided prompt. |
 | `num_threads` | int | The number of threads to use for the flow. |
 | `model_config` | `ModelConfig` | The configuration to pass to the model. |
 

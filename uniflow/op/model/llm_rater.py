@@ -12,7 +12,7 @@ from uniflow.op.model.constants import (
     VOTES,
 )
 from uniflow.op.model.llm_processor import JsonFormattedDataProcessor, LLMDataProcessor
-from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.prompt_schema import PromptTemplate
 
 
 class LLMRater(LLMDataProcessor):
@@ -20,14 +20,14 @@ class LLMRater(LLMDataProcessor):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        guided_prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """LLM Rater Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            guided_prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
@@ -98,14 +98,14 @@ class JsonFormattedLLMRater(JsonFormattedDataProcessor):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        guided_prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """Json Formatted LLM Rater Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            guided_prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
