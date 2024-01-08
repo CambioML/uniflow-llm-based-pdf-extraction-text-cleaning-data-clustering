@@ -326,17 +326,21 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
         The response should not include examples in the prompt.""",
             examples=[
                 Context(
-                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    context="""The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the
+                    world. It was constructed in 1889 and stands at a height of 324 meters.""",
                     question="When was the Eiffel Tower constructed?",
                     answer="The Eiffel Tower was constructed in 1889.",
-                    explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
+                    explanation="""The context explicitly mentions that the Eiffel Tower was constructed in 1889,
+                    so the answer is correct.""",
                     label="Yes",
                 ),
                 Context(
-                    context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                    context="""Photosynthesis is a process used by plants to convert light energy into chemical energy.
+                    This process primarily occurs in the chloroplasts of plant cells.""",
                     question="Where does photosynthesis primarily occur in plant cells?",
                     answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
-                    explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                    explanation="""The context mentions that photosynthesis primarily occurs in the chloroplasts of
+                    plant cells, so the answer is incorrect.""",
                     label="No",
                 ),
             ],
