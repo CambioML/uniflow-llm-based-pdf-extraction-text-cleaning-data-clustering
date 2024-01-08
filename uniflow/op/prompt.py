@@ -52,11 +52,11 @@ class Context(BaseModel):
         return schema["properties"]
 
 
-class GuidedPrompt(BaseModel):
+class PromptTemplate(BaseModel):
     """Type for guided prompt."""
 
     instruction: str = Field(..., min_length=0)
 
-    examples: conlist(Context, min_length=0)
+    few_shot_prompt: conlist(Context, min_length=0) = Field([], min_items=0)
 
     model_config = ConfigDict(extra="forbid")

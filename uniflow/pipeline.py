@@ -6,7 +6,7 @@ from typing import Any, List, Mapping
 
 from uniflow.flow.client import ExtractClient, TransformClient
 from uniflow.flow.config import PipelineConfig
-from uniflow.op.prompt_schema import Context
+from uniflow.op.prompt import Context
 
 
 class MultiFlowsPipeline:
