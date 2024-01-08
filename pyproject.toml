@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uniflow"
-version = "0.0.12"
+version = "0.0.13"
 description = "Unified flow interface for data augmentation for LLM training."
 authors = ["CambioML <wanwanaiai45@gmail.com>"]
 maintainers = ["Rachel Hu <goldpiggy@berkeley.edu>"]
@@ -8,7 +8,7 @@ license = "Apache License"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
+python = ">=3.8,<3.13"
 python-dotenv = "^1.0.0"
 openai = "^1.2.4"
 graphviz = "^0.20.1"

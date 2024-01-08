@@ -7,7 +7,7 @@ from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.model.llm_rater import JsonFormattedLLMRater, LLMRater
 from uniflow.op.model.model_op import ModelOp
-from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.prompt import PromptTemplate
 
 
 class RaterFlow(Flow):
@@ -17,14 +17,14 @@ class RaterFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """Rater Flow Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
@@ -34,13 +34,13 @@ class RaterFlow(Flow):
             and model_config["response_format"]["type"] == "json_object"  # noqa: W503
         ):
             model = JsonFormattedLLMRater(
-                guided_prompt_template=guided_prompt_template,
+                prompt_template=prompt_template,
                 model_config=model_config,
                 label2score=label2score,
             )
         else:
             model = LLMRater(
-                guided_prompt_template=guided_prompt_template,
+                prompt_template=prompt_template,
                 model_config=model_config,
                 label2score=label2score,
             )
