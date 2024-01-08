@@ -42,7 +42,9 @@ class ExtractServer:
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(self._flow_cls(**kwargs))
 
-    def _run_flow(self, input_list: Mapping[str, Any], index: int) -> Tuple[int, Mapping[str, Any]]:
+    def _run_flow(
+        self, input_list: Mapping[str, Any], index: int
+    ) -> Tuple[int, Mapping[str, Any]]:
         """Run the flow
 
         Args:
@@ -63,7 +65,9 @@ class ExtractServer:
         self._flow_queue.put(f)
         return (index, output)
 
-    def _run_flow_wrapper(self, input_list: Mapping[str, Any], i: int) -> Tuple[int, Mapping[str, Any]]:
+    def _run_flow_wrapper(
+        self, input_list: Mapping[str, Any], i: int
+    ) -> Tuple[int, Mapping[str, Any]]:
         """Wrapper for _run_flow
 
         Args:
@@ -86,11 +90,14 @@ class ExtractServer:
         """
         with futures.ThreadPoolExecutor(max_workers=self._num_thread) as executor:
             output_futures = {
-                executor.submit(self._run_flow_wrapper, input_data, i): i for i, input_data in enumerate(input_list)
+                executor.submit(self._run_flow_wrapper, input_data, i): i
+                for i, input_data in enumerate(input_list)
             }
             results = [None] * len(input_list)
 
-            for future in tqdm(futures.as_completed(output_futures), total=len(input_list)):
+            for future in tqdm(
+                futures.as_completed(output_futures), total=len(input_list)
+            ):
                 index = output_futures[future]
                 results[index] = future.result()[1]
         return results
@@ -126,12 +133,14 @@ class TransformServer:
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
-                        self._config.guided_prompt_template,
+                        self._config.prompt_template,
                         self._config.model_config,
                     )
                 )
 
-    def _run_flow(self, input_list: Mapping[str, Any], index: int) -> Tuple[int, Mapping[str, Any]]:
+    def _run_flow(
+        self, input_list: Mapping[str, Any], index: int
+    ) -> Tuple[int, Mapping[str, Any]]:
         """Run the flow
 
         Args:
@@ -155,7 +164,9 @@ class TransformServer:
         self._flow_queue.put(f)
         return (index, output)
 
-    def _run_flow_wrapper(self, input_list: Mapping[str, Any], i: int) -> Tuple[int, Mapping[str, Any]]:
+    def _run_flow_wrapper(
+        self, input_list: Mapping[str, Any], i: int
+    ) -> Tuple[int, Mapping[str, Any]]:
         """Wrapper for _run_flow
 
         Args:
@@ -167,7 +178,9 @@ class TransformServer:
         """
         return self._run_flow(input_list, i)
 
-    def _divide_data_into_batches(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+    def _divide_data_into_batches(
+        self, input_list: List[Mapping[str, Any]]
+    ) -> List[Mapping[str, Any]]:
         """Divide the list into batches
 
         Args:
@@ -178,7 +191,9 @@ class TransformServer:
         """
         # currently only HuggingFace model support batch.
         # this will require some refactoring to support other models.
-        batch_size = self._config.model_config.get("batch_size", 1)  # pylint: disable=no-member
+        batch_size = self._config.model_config.get(
+            "batch_size", 1
+        )  # pylint: disable=no-member
         if batch_size <= 0:
             raise ValueError("Batch size must be a positive integer.")
         if not input_list:  # Check if the list is empty
@@ -202,12 +217,15 @@ class TransformServer:
         batch_data = self._divide_data_into_batches(input_list)
         with futures.ThreadPoolExecutor(max_workers=self._num_thread) as executor:
             output_futures = {
-                executor.submit(self._run_flow_wrapper, input_data, i): i for i, input_data in enumerate(batch_data)
+                executor.submit(self._run_flow_wrapper, input_data, i): i
+                for i, input_data in enumerate(batch_data)
             }
             # use batch_data size to initialize results
             results = [None] * len(batch_data)
 
-            for future in tqdm(futures.as_completed(output_futures), total=len(batch_data)):
+            for future in tqdm(
+                futures.as_completed(output_futures), total=len(batch_data)
+            ):
                 index = output_futures[future]
                 results[index] = future.result()[1]
         return results
@@ -244,13 +262,15 @@ class RaterServer:
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
-                        self._config.guided_prompt_template,
+                        self._config.prompt_template,
                         self._config.model_config,
                         self._config.label2score,
                     )
                 )
 
-    def _run_flow(self, input_list: Mapping[str, Any], index: int) -> Tuple[int, Mapping[str, Any]]:
+    def _run_flow(
+        self, input_list: Mapping[str, Any], index: int
+    ) -> Tuple[int, Mapping[str, Any]]:
         """Run the flow
 
         Args:
@@ -274,7 +294,9 @@ class RaterServer:
         self._flow_queue.put(f)
         return (index, output)
 
-    def _run_flow_wrapper(self, input_list: Mapping[str, Any], i: int) -> Tuple[int, Mapping[str, Any]]:
+    def _run_flow_wrapper(
+        self, input_list: Mapping[str, Any], i: int
+    ) -> Tuple[int, Mapping[str, Any]]:
         """Wrapper for _run_flow
 
         Args:
@@ -286,7 +308,9 @@ class RaterServer:
         """
         return self._run_flow(input_list, i)
 
-    def _divide_data_into_batches(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
+    def _divide_data_into_batches(
+        self, input_list: List[Mapping[str, Any]]
+    ) -> List[Mapping[str, Any]]:
         """Divide the list into batches
 
         Args:
@@ -297,7 +321,9 @@ class RaterServer:
         """
         # currently only HuggingFace model support batch.
         # this will require some refactoring to support other models.
-        batch_size = self._config.model_config.get("batch_size", 1)  # pylint: disable=no-member
+        batch_size = self._config.model_config.get(
+            "batch_size", 1
+        )  # pylint: disable=no-member
         if batch_size <= 0:
             raise ValueError("Batch size must be a positive integer.")
         if not input_list:  # Check if the list is empty
@@ -321,12 +347,15 @@ class RaterServer:
         batch_data = self._divide_data_into_batches(input_list)
         with futures.ThreadPoolExecutor(max_workers=self._num_thread) as executor:
             output_futures = {
-                executor.submit(self._run_flow_wrapper, input_data, i): i for i, input_data in enumerate(batch_data)
+                executor.submit(self._run_flow_wrapper, input_data, i): i
+                for i, input_data in enumerate(batch_data)
             }
             # use batch_data size to initialize results
             results = [None] * len(batch_data)
 
-            for future in tqdm(futures.as_completed(output_futures), total=len(batch_data)):
+            for future in tqdm(
+                futures.as_completed(output_futures), total=len(batch_data)
+            ):
                 index = output_futures[future]
                 results[index] = future.result()[1]
         return results

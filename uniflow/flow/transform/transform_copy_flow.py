@@ -5,7 +5,7 @@ from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.basic.copy_op import CopyOp
-from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.prompt import PromptTemplate
 
 
 class TransformCopyFlow(Flow):
@@ -18,7 +18,7 @@ class TransformCopyFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:  # pylint: disable=useless-parent-delegation
         """Initialize CopyFlow class."""

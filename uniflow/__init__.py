@@ -1,7 +1,7 @@
 """Uniflow package."""
 
-from uniflow.op.prompt_schema import Context, GuidedPrompt
+from uniflow.op.prompt import Context, PromptTemplate
 
-__all__ = ["GuidedPrompt", "Context"]
+__all__ = ["PromptTemplate", "Context"]
 
-__version__ = "0.0.11"
+__version__ = "0.0.13"

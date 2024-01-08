@@ -22,8 +22,6 @@ python_to_json_types = {
 class Context(BaseModel):
     """Type for prompt context."""
 
-    context: str = Field(..., min_length=1)
-
     model_config = ConfigDict(extra="allow")
 
     def get_custom_schema(self) -> Dict[str, Any]:
@@ -54,11 +52,11 @@ class Context(BaseModel):
         return schema["properties"]
 
 
-class GuidedPrompt(BaseModel):
+class PromptTemplate(BaseModel):
     """Type for guided prompt."""
 
     instruction: str = Field(..., min_length=0)
 
-    examples: conlist(Context, min_length=0)
+    few_shot_prompt: conlist(Context, min_length=0) = Field([], min_items=0)
 
     model_config = ConfigDict(extra="forbid")

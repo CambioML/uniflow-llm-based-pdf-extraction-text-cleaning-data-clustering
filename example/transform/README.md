@@ -5,7 +5,7 @@ The base `Config` is the base configuration that all other configurations inheri
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `flow_name` | `str` | [ModelFlow] | The name of the flow to run. |
-| `guided_prompt_template` | `GuidedPrompt` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
+| `prompt_template` | `PromptTemplate` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
 | `num_threads` | `int` | 1 | The number of threads to use. |
 | `model_config` | `ModelConfig` | `ModelConfig` | The model configuration to use. |
 
@@ -23,7 +23,7 @@ The `OpenAIConfig` configuration runs the following default parameters:
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `flow_name` | `str` | `OpenAIModelFlow` | The name of the flow to run. |
-| `guided_prompt_template` | `GuidedPrompt` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
+| `prompt_template` | `PromptTemplate` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
 | `num_threads` | `int` | 1 | The number of threads to use. |
 | `model_config` | `ModelConfig` | `OpenAIModelConfig` | The model configuration to use. |
 
@@ -44,7 +44,7 @@ The `HuggingfaceConfig` configuration has the following default parameters:
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `flow_name` | `str` | [HuggingfaceModelFlow](../../README.md#model) | The name of the flow to run. |
-| `guided_prompt_template` | `GuidedPrompt` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
+| `prompt_template` | `PromptTemplate` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
 | `num_threads` | `int` | 1 | The number of threads to use. |
 | `model_config` | `ModelConfig` | `HuggingfaceModelConfig` | The model configuration to use. |
 
@@ -63,7 +63,7 @@ The `LMQGModelConfig` configuration runs with the following default parameters:
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `flow_name` | `str` | `LMQGModelFlow` | The name of the flow to run. |
-| `guided_prompt_template` | `GuidedPrompt` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
+| `prompt_template` | `PromptTemplate` | [Default](../../README.md#2-prompting) | The template to use for the guided prompt. |
 | `num_threads` | `int` | 1 | The number of threads to use. |
 | `model_config` | `ModelConfig` | `LMQGModelConfig` | The model configuration to use. |
 

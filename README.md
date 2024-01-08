@@ -24,7 +24,7 @@ To use `uniflow`, follow of three main steps:
     This determines the LLM and the different configurable parameters.
 
 1. **Construct your [`Prompts`](#prompting)**\
-    Construct the context that you want to use to prompt your model. You can configure custom instructions and examples using the [`GuidedPrompt`](#guidedprompt) class.
+    Construct the context that you want to use to prompt your model. You can configure custom instructions and examples using the [`PromptTemplate`](#PromptTemplate) class.
 
 1. **Run your [`Flow`](#running-the-flow)**\
     Run the flow on your input data and generate output from your LLM.
@@ -70,7 +70,7 @@ The `Context` class is used to pass in the context for the LLM prompt. A `Contex
 
 To run `uniflow` with the default instructions and few-shot examples, you can pass in a list of `Context` objects to the flow. For example:
 ```
-from uniflow.op.prompt_schema import Context
+from uniflow.op.prompt import Context
 
 data = [
     Context(
@@ -84,8 +84,8 @@ client.run(data)
 
 For a more detailed overview of running the flow, see the [Running the flow](#running-the-flow) section.
 
-### GuidedPrompt
-If you want to run with a custom prompt instruction or few-shot examples, you can use the `GuidedPrompt` object. It has `instruction` and `example` properties.
+### PromptTemplate
+If you want to run with a custom prompt instruction or few-shot examples, you can use the `PromptTemplate` object. It has `instruction` and `example` properties.
 
 | Property | Type | Description |
 | ------------- | ------------- | ------------- |
@@ -94,7 +94,7 @@ If you want to run with a custom prompt instruction or few-shot examples, you ca
 
 You can overwrite any of the defaults as needed.
 
-To see an example of how to use the `GuidedPrompt` to run `uniflow` with a custom `instruction`, few-shot examples, and custom `Context` fields to generate a summary, check out the [openai_pdf_source_10k_summary notebook](./example/model/openai_pdf_source_10k_summary.ipynb)
+To see an example of how to use the `PromptTemplate` to run `uniflow` with a custom `instruction`, few-shot examples, and custom `Context` fields to generate a summary, check out the [openai_pdf_source_10k_summary notebook](./example/model/openai_pdf_source_10k_summary.ipynb)
 
 
 ## Running the Flow
@@ -104,7 +104,7 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
     ```
     from uniflow.flow.client import TransformClient
     from uniflow.flow.config import TransformOpenAIConfig, OpenAIModelConfig
-    from uniflow.op.prompt_schema import Context
+    from uniflow.op.prompt import Context
     ```
 1. Preprocess your data in to chunks to pass into the flow. In the future we will have `Preprocessing` flows to help with this step, but for now you can use a library of your choice, like [pypdf](https://pypi.org/project/pypdf/), to chunk your data.
     ```
@@ -119,25 +119,25 @@ Once you've decided on your `Config` and prompting strategy, you can run the flo
     ]
     ```
 
-1. [Optional] If you want to use a customized instruction and/or examples, create a `GuidedPrompt`.
+1. [Optional] If you want to use a customized instruction and/or examples, create a `PromptTemplate`.
     ```
-    from uniflow.op.prompt_schema import GuidedPrompt
+    from uniflow.op.prompt import PromptTemplate
 
-    guided_prompt = GuidedPrompt(
+    guided_prompt = PromptTemplate(
     instruction="Generate a one sentence summary based on the last context below. Follow the format of the examples below to include context and summary in the response",
-    examples=[
+    few_shot_prompt=[
         Context(
             context="When you're operating on the maker's schedule, meetings are a disaster. A single meeting can blow a whole afternoon, by breaking it into two pieces each too small to do anything hard in. Plus you have to remember to go to the meeting. That's no problem for someone on the manager's schedule. There's always something coming on the next hour; the only question is what. But when someone on the maker's schedule has a meeting, they have to think about it.",
             summary="Meetings disrupt the productivity of those following a maker's schedule, dividing their time into impractical segments, while those on a manager's schedule are accustomed to a continuous flow of tasks.",
         ),
     ],
-)
+    )
     ```
 
 1. Create a `Config` object to pass into the `Client` object.
     ```
-    config = OpenAIConfig(
-        guided_prompt_template=guided_prompt,
+    config = TransformOpenAIConfig(
+        prompt_template=guided_prompt,
         model_config=OpenAIModelConfig(
             response_format={"type": "json_object"}
         ),
@@ -170,7 +170,7 @@ You can also configure the flows by passing custom configurations or arguments t
 Every configuration has the following parameters:
 | Parameter | Type | Description |
 | ------------- | ------------- | ------------- |
-| `guided_prompt_template` | `GuidedPrompt` | The template to use for the guided prompt. |
+| `prompt_template` | `PromptTemplate` | The template to use for the guided prompt. |
 | `num_threads` | int | The number of threads to use for the flow. |
 | `model_config` | `ModelConfig` | The configuration to pass to the model. |
 
@@ -213,7 +213,7 @@ Here is an example of how to pass in a custom configuration to the `Client` obje
 ```
 from uniflow.flow.client import TransformClient
 from uniflow.flow.config import TransformOpenAIConfig, OpenAIModelConfig
-from uniflow.op.prompt_schema import Context
+from uniflow.op.prompt import Context
 
 
 contexts = ["It was a sunny day and the sky color is blue.", "My name is bobby and I am a talent software engineer working on AI/ML."]
