@@ -3,7 +3,7 @@
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
-from uniflow import Context, GuidedPrompt
+from uniflow import Context, PromptTemplate
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.model.model_config import (
     BedrockModelConfig,
@@ -71,11 +71,13 @@ class TransformConfig:
     flow_name: str
     model_config: ModelConfig = field(default_factory=ModelConfig)
     num_thread: int = 1
-    guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(
-            instruction="""Generate one question and its corresponding answer based on the last context in the last
-    example. Follow the format of the examples below to include context, question, and answer in the response""",
-            examples=[
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Generate one question and its corresponding answer based on the last context in the last
+            example. Follow the format of the examples below to include context, question, and answer in the response
+            """,
+            few_shot_prompt=[
                 Context(
                     context="The quick brown fox jumps over the lazy black dog.",
                     question="What is the color of the fox?",
@@ -112,7 +114,7 @@ class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 
     flow_name: str = "TransformLMQGFlow"
-    guided_prompt_template: GuidedPrompt = field(default_factory=lambda: GuidedPrompt(instruction="", examples=[]))
+    prompt_template: PromptTemplate = field(default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[]))
     model_config: ModelConfig = field(default_factory=LMQGModelConfig())
 
 
@@ -121,7 +123,7 @@ class TransformCopyConfig(TransformConfig):
     """Transform Linear Config Class."""
 
     flow_name: str = "TransformCopyFlow"
-    guided_prompt_template: GuidedPrompt = field(default_factory=lambda: GuidedPrompt(instruction="", examples=[]))
+    prompt_template: PromptTemplate = field(default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[]))
     model_config: ModelConfig = field(default_factory=lambda: {})
 
 
@@ -132,28 +134,27 @@ class TransformCopyConfig(TransformConfig):
 class RaterConfig:
     """Rater Config Class."""
 
-    flow_name: str
+    flow_name: str = "RaterFlow"
     model_config: ModelConfig = field(default_factory=ModelConfig)
     label2score: Dict[str, float] = field(default_factory=dict)
-    guided_prompt_template: GuidedPrompt = field(default_factory=GuidedPrompt)
+    prompt_template: PromptTemplate = field(default_factory=PromptTemplate)
     num_thread: int = 1
 
     def __post_init__(self):
         """Post-initialization to perform label check."""
-        # Add label to the end of instruction to help produce
-        # more consistent response label.
-        label_enforce_instruction_postfix = (
-            f" The response label should be one of the following: {str(list(self.label2score.keys()))}."
+        # Add label to the end of instruction to help produce more consistent response label.
+        # If {label_list} {label2score} not in prompt_template, it won't cause error
+        self.prompt_template.instruction = str(self.prompt_template.instruction).format(
+            label_list=str(list(self.label2score.keys())),
+            label2score=str(list(self.label2score.items())),
         )
-        if label_enforce_instruction_postfix not in str(self.guided_prompt_template.instruction):
-            self.guided_prompt_template.instruction += label_enforce_instruction_postfix
 
         incompatible_labels = self.check_labels()
         unexpected_labels = incompatible_labels["unexpected_labels"]
         missing_labels = incompatible_labels["missing_labels"]
         if unexpected_labels:
             raise ValueError(
-                "Inconsistent labels found in guided_prompt_template examples, "
+                "Inconsistent labels found in prompt_template examples, "
                 f"example label {unexpected_labels} not in label2score has keys {list(self.label2score.keys())}",
             )
         if missing_labels:
@@ -161,19 +162,20 @@ class RaterConfig:
 
     def check_labels(self) -> Dict[str, list]:
         """
-        Check if every label in the guided_prompt_template's examples is a key in label2score.
+        Check if every label in the prompt_template's examples is a key in label2score.
 
         Returns:
             Dict: Incompatible Keys, fields:
-                - 'missing_labels' (List[str]): labels in label2score but not in examples, this may cause performance lose.
-                - 'unxpected_labels' (List[str]): labels in examples but not in label2score, this cause ValueError.
+                missing_labels (List[str]): labels in label2score but not in examples, this may cause performance loss.
+                unexpected_labels (List[str]): labels in examples but not in label2score, this cause ValueError.
         """
-        # TODO: Does label strictly match in upper/lower letter?
         example_labels = set()
-        for example in self.guided_prompt_template.examples:
-            example_labels.add(example.label)
-        label2score_labels = set(self.label2score.keys())
-
+        label2score_labels = set()
+        # Check if prompt_template has examples
+        if self.prompt_template.few_shot_prompt:
+            for example in self.prompt_template.few_shot_prompt:
+                example_labels.add(example.label)
+            label2score_labels = set(self.label2score.keys())
         missing_labels = label2score_labels - example_labels
         unexpected_labels = example_labels - label2score_labels
         return {
@@ -183,7 +185,7 @@ class RaterConfig:
 
 
 @dataclass
-class RaterClassificationOpenAIGPT4Config(RaterConfig):
+class RaterForClassificationOpenAIGPT4Config(RaterConfig):
     """
     The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to evaluate the
     correctness of answers in relation to given questions and contexts.
@@ -191,8 +193,123 @@ class RaterClassificationOpenAIGPT4Config(RaterConfig):
     Attributes:
         flow_name (str): Name of the rating flow, default is "RaterFlow".
         model_config (ModelConfig): Configuration for the GPT-4 model. Includes model name ("gpt-4"),
-                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0.2),
+                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0),
                                     and the response format (plain text).
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
+
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "text"},
+        )
+    )
+    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Evaluate the appropriateness of a given answer based on the question and the context.
+            There are few examples below, consisting of context, question, answer, explanation and label.
+            If answer is appropriate, you should give a higher score and vise versa. Check label to score dictionary: {label2score}.
+            Your response should only focus on the unlabeled sample, including two fields: explanation and label (one of {label_list}).
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    question="When was the Eiffel Tower constructed?",
+                    answer="The Eiffel Tower was constructed in 1889.",
+                    explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
+                    label="Yes",
+                ),
+                Context(
+                    context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                    question="Where does photosynthesis primarily occur in plant cells?",
+                    answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                    explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                    label="No",
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
+    """
+    The configuration primarily focuses on setting up the parameters for utilizing GPT-3.5 to evaluate the
+    correctness of answers in relation to given questions and contexts.
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the GPT-3.5 model. Includes model name ("gpt-3.5-turbo-1106"),
+                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0),
+                                    and the response format (plain text).
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
+
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "text"},
+        )
+    )
+    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            # Task: Evaluate the appropriateness of a given answer based on a provided context and question.
+            ## Input:
+            1. context: A brief text containing key information.
+            2. question: A query related to the context, testing knowledge that can be inferred or directly obtained from it.
+            3. answer: A response to the question.
+            ## Evaluation Criteria: If answer is appropriate, you should give a higher score and vise versa. Check label to score dictionary: {label2score}.
+            ## Response Format: Your response should only include two fields below:
+            1. explanation: Reasoning behind your judgment, explaining why the answer is appropriate or not.
+            2. label: Your judgment (one of {label_list}).
+            ## Note: Use the below example only for demonstration, do not include in the final response.
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    question="When was the Eiffel Tower constructed?",
+                    answer="The Eiffel Tower was constructed in 1889.",
+                    explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
+                    label="Yes",
+                ),
+                Context(
+                    context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                    question="Where does photosynthesis primarily occur in plant cells?",
+                    answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                    explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                    label="No",
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class RaterForClassificationBedrockClaudeConfig(RaterConfig):
+    """Rater classification Bedrock Claude Config Class.
+    The configuration primarily focuses on setting up the parameters for utilizing Bedrock to evaluate the
+    correctness of answers in relation to given questions and contexts.
+
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the Bedrock model. Includes aws_region ("us-west-2"), aws_profile ("default"),
+        aws_access_key_id, aws_secret_key_id, aws_secret_access_key, aws_session_token, batch_size(1),
+        model name ("anthropic.claude-v2"), batch_size (1), the server ("BedrockModelServer"), and the model_kwargs.
         label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
         guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
@@ -200,18 +317,10 @@ class RaterClassificationOpenAIGPT4Config(RaterConfig):
     """
 
     flow_name: str = "RaterFlow"
-    model_config: ModelConfig = field(
-        default_factory=lambda: OpenAIModelConfig(
-            model_name="gpt-4",
-            model_server="OpenAIModelServer",
-            num_call=1,
-            temperature=0.2,
-            response_format={"type": "text"},
-        )
-    )
+    model_config: ModelConfig = field(default_factory=BedrockModelConfig)
     label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
-    guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
             instruction="""Rate the answer based on the question and the context.
         Follow the format of the examples below to include context, question, answer, and label in the response.
         The response should not include examples in the prompt.""",
@@ -236,107 +345,54 @@ class RaterClassificationOpenAIGPT4Config(RaterConfig):
 
 
 @dataclass
-class RaterClassificationBedrockClaudeConfig(RaterConfig):
-    """Rater classification Bedrock Claude Config Class.
-    The configuration primarily focuses on setting up the parameters for utilizing Bedrock to evaluate the
-    correctness of answers in relation to given questions and contexts.
+class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
+    """
+    The configuration primarily focuses on setting up the parameters for utilizing GPT-4 to compare the
+    correctness of generated answers with grounding answers in relation to given questions and contexts.
 
     Attributes:
         flow_name (str): Name of the rating flow, default is "RaterFlow".
-        model_config (ModelConfig): Configuration for the Bedrock model. Includes aws_region ("us-west-2"), aws_profile ("default"),
-        aws_access_key_id, aws_secret_key_id, aws_secret_access_key, aws_session_token, batch_size(1),
-        model name ("anthropic.claude-v2"), batch_size (1), the server ("BedrockModelServer"), and the model_kwargs.
-        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
-        guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
+        model_config (ModelConfig): Configuration for the GPT-4 model. Includes model name ("gpt-4"),
+                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0),
+                                    and the response format (plain text).
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"accept": 1.0,
+                                        "equivalent": 0.0, "reject": -1.0}.
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
-                                               answer, label, and explanation for each case.
+                                               grounding answer, generated answer, label, and explanation for each case.
     """
 
-    flow_name: str = "RaterFlow"
-    model_config: ModelConfig = field(default_factory=BedrockModelConfig)
-    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
-    guided_prompt_template: GuidedPrompt = GuidedPrompt(
-        instruction="""Rate the answer based on the question and the context.
-        Follow the format of the examples below to include context, question, answer, and label in the response.
-        The response should not include examples in the prompt.""",
-        examples=[
-            Context(
-                context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
-                question="When was the Eiffel Tower constructed?",
-                answer="The Eiffel Tower was constructed in 1889.",
-                explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
-                label="Yes",
-            ),
-            Context(
-                context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
-                question="Where does photosynthesis primarily occur in plant cells?",
-                answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
-                explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
-                label="No",
-            ),
-        ],
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "text"},
+        )
     )
-
-
-@dataclass
-class RaterForGeneratedAnswerConfig(RaterConfig):
-    """Rater classification Config Class."""
-
-    flow_name: str = "RaterFlow"
-    model_config: ModelConfig = field(default_factory=OpenAIModelConfig())
     label2score: Dict[str, float] = field(
         default_factory=lambda: {
-            "strong accept": 2.0,
             "accept": 1.0,
             "equivalent": 0.0,
             "reject": -1.0,
-            "strong reject": -2.0,
         }
     )
-    # NOTE: This flow seems very sensitive to the choice of prompt.
-    # For a more stable performance, prompt should be improved.
-    guided_prompt_template: GuidedPrompt = field(
-        default_factory=lambda: GuidedPrompt(
-            # instruction="""Rate the generated answer compared to the grounding answer to the question. Accept means the generated answer is better than the grounding answer and reject means worse.
-            # Follow the format of the examples below to include context, question, grounding answer, generated answer and label in the response.
-            # The response should not include examples in the prompt.""",
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
             instruction="""
-        Task: Answer Evaluation and Comparison
-        Objective:
-        You are required to evaluate and compare two answers: a "Generated Answer" and a "Grounding Answer." Your task is to judge which answer is better in the context of the provided information.
-        Input:
-        1. context: A brief text, usually a couple of sentences or a paragraph, providing the relevant background or scenario.
-        2. question: A question designed to probe knowledge that can be directly inferred from the context.
-        3. grounding Answer: An answer that has been pre-formulated based on the context, usually human.
-        4. generated Answer: An answer provided by some language model or chat system to the question and context.
-        Evaluation Criteria:
-        You must compare the "Generated Answer" with the "Grounding Answer" and determine which one is more appropriate, accurate, and relevant to the given context and question. Use the following labels to categorize your judgment:
-        1. strong accept: The Generated Answer is significantly better than the Grounding Answer.
-        2. accept: The Generated Answer is somewhat better than the Grounding Answer.
-        3. equivalent: Both answers are equally good.
-        4. reject: The Generated Answer is somewhat worse than the Grounding Answer.
-        5. strong reject: The Generated Answer is significantly worse than the Grounding Answer.
-        Response Format:
-        Your response should include:
-        1. label: Your judgment (one of the five labels mentioned above).
-        2. explanatoin: A clear and concise thought for your judgment, detailing why you think the Generated Answer is better, worse, or equivalent to the Grounding Answer.
-        Note: Only use the example below as a few shot demonstrate but not including them in the final response.
-        # """,
-            examples=[
-                Context(
-                    context="Basic operating system features were developed in the 1950s, and more complex functions were introduced in the 1960s.",
-                    question="When were basic operating system features developed?",
-                    grounding_answer="In the 1960s, people developed some basic operating system functions.",
-                    generated_answer="Basic operating system features were developed in the 1950s.",
-                    explanation="The generated answer is much better because it correctly identifies the 1950s as the time when basic operating system features were developed",
-                    label="strong accept",
-                ),
+            Compare two answers: a generated answer and a grounding answer based on a provided context and question.
+            There are few annotated examples below, consisting of context, question, grounding answer, generated answer, explanation and label.
+            If generated answer is better, you should give a higher score and vise versa. Check label to score dictionary: {label2score}.
+            Your response should only focus on the unlabeled sample, including two fields: explanation and label (one of {label_list}).
+            """,
+            few_shot_prompt=[
                 Context(
                     context="Early computers were built to perform a series of single tasks, like a calculator. Basic operating system could automatically run different programs in succession to speed up processing.",
                     question="Did early computers function like modern calculators?",
                     grounding_answer="No. Early computers were used primarily for complex calculating.",
                     generated_answer="Yes. Early computers were built to perform a series of single tasks, similar to a calculator.",
-                    explanation="The generated answer is better as it correctly captures the essence of the early computers' functionality, which was to perform single tasks akin to calculators.",
+                    explanation="The generated answer is better because it correctly captures the essence of the early computers' functionality, which was to perform single tasks akin to calculators.",
                     label="accept",
                 ),
                 Context(
@@ -355,13 +411,85 @@ class RaterForGeneratedAnswerConfig(RaterConfig):
                     explanation="The generated answer is worse because it inaccurately suggests the addition of capabilities of hardware in 1960s which is not supported by the context.",
                     label="reject",
                 ),
+            ],
+        )
+    )
+
+
+@dataclass
+class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
+    """
+    The configuration primarily focuses on setting up the parameters for utilizing GPT-3.5 to evaluate the
+    correctness of answers in relation to given questions and contexts.
+
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the GPT-3.5 model. Includes model name ("gpt-3-turbo-1106"),
+                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0),
+                                    and the response format (plain text).
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {
+                                        "accept": 1.0, "equivalent": 0.0, "reject": -1.0}.
+        prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               grounding answer, generated answer, label, and explanation for each case.
+    """
+
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "text"},
+        )
+    )
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {
+            "accept": 1.0,
+            "equivalent": 0.0,
+            "reject": -1.0,
+        }
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            # Task: Evaluate and compare two answers: a generated answer and a grounding answer based on a provided context and question.
+            ## Input: A sample to be labeled:
+            1. context: A brief text containing key information.
+            2. question: A query related to the context, testing knowledge that can be inferred or directly obtained from it.
+            3. grounding Answer: Pre-formulated, usually from human.
+            4. generated Answer: From a language model.
+            ## Evaluation Criteria: If generated answer is better, you should give a higher score and vise versa. Check label to score dictionary: {label2score}.
+            ## Response Format: Your response should only include two fields below:
+            1. explanatoin: Reasoning behind your judgment, detailing why the generated answer is better, equivalent or worse.
+            2. label: Your judgment (one of {label_list}).
+            ## Note:
+            Only use the example below as a few shot demonstrate but not include them in the final response. Your response should only focus on the unlabeled sample.
+            """,
+            few_shot_prompt=[
                 Context(
-                    context="Operating systems did not exist in their modern and more complex forms until the early 1960s. When personal computers became popular in the 1980s, operating systems were made for them similar in concept to those used on larger computers.",
-                    question="When did operating systems in personal computer were similar to those used on larger computers?",
-                    grounding_answer="In 1980s, as personal computers became popular.",
-                    generated_answer="In the early 1960s, as operating system became more complex.",
-                    explanation="The generated answer is much worse as it incorrectly states the early 1960s as the period of popularity for personal computers, contradicting the context which indicates the 1980s.",
-                    label="strong reject",
+                    context="Early computers were built to perform a series of single tasks, like a calculator. Basic operating system could automatically run different programs in succession to speed up processing.",
+                    question="Did early computers function like modern calculators?",
+                    grounding_answer="No. Early computers were used primarily for complex calculating.",
+                    generated_answer="Yes. Early computers were built to perform a series of single tasks, similar to a calculator.",
+                    explanation="The generated answer is better because it correctly captures the essence of the early computers' functionality, which was to perform single tasks akin to calculators.",
+                    label="accept",
+                ),
+                Context(
+                    context="Operating systems did not exist in their modern and more complex forms until the early 1960s. Hardware features were added, that enabled use of runtime libraries, interrupts, and parallel processing.",
+                    question="When did operating systems start to resemble their modern forms?",
+                    grounding_answer="Operating systems started to resemble their modern forms in the early 1960s.",
+                    generated_answer="Modern and more complex forms of operating systems began to emerge in the early 1960s.",
+                    explanation="Both answers are equally good as they accurately pinpoint the early 1960s as the period when modern operating systems began to develop.",
+                    label="equivalent",
+                ),
+                Context(
+                    context="Operating systems did not exist in their modern and more complex forms until the early 1960s. Hardware features were added, that enabled use of runtime libraries, interrupts, and parallel processing.",
+                    question="What features were added to hardware in the 1960s?",
+                    grounding_answer="Hardware in the 1960s saw the addition of features like runtime libraries and parallel processing.",
+                    generated_answer="The 1960s saw the addition of input output control and compatible timesharing capabilities in hardware.",
+                    explanation="The generated answer is worse because it inaccurately suggests the addition of capabilities of hardware in 1960s which is not supported by the context.",
+                    label="reject",
                 ),
             ],
         )

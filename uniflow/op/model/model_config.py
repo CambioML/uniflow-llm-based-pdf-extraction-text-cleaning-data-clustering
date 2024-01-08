@@ -43,6 +43,8 @@ class HuggingfaceModelConfig(ModelConfig):
     model_name: str = "mistralai/Mistral-7B-Instruct-v0.1"
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
+    load_in_4bit: bool = False
+    load_in_8bit: bool = True
 
 
 @dataclass
@@ -67,7 +69,7 @@ class NougatModelConfig(ModelConfig):
 class BedrockModelConfig:
     """Bedrock Model Config Class."""
 
-    aws_region: str = "us-west-2"
+    aws_region: str
     aws_profile: str = "default"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""

@@ -12,7 +12,7 @@ from uniflow.op.model.constants import (
     VOTES,
 )
 from uniflow.op.model.llm_processor import JsonFormattedDataProcessor, LLMDataProcessor
-from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.prompt import PromptTemplate
 
 
 class LLMRater(LLMDataProcessor):
@@ -20,21 +20,19 @@ class LLMRater(LLMDataProcessor):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """LLM Rater Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
-        super().__init__(guided_prompt_template, model_config)
-        example_keys = list(guided_prompt_template.examples[0].dict().keys())
+        super().__init__(prompt_template, model_config)
         pattern = r"^[^A-Za-z]+|[^A-Za-z]+$"
-        self._rater_key = example_keys[-1]
         self._label2score = {
             re.sub(pattern, "", k).lower().lower(): float(v)
             for k, v in label2score.items()
@@ -100,26 +98,28 @@ class JsonFormattedLLMRater(JsonFormattedDataProcessor):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
         label2score: Dict[str, float],
     ) -> None:
         """Json Formatted LLM Rater Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
             label2score (Dict[str, float]): String to score mapping.
         """
-        super().__init__(guided_prompt_template, model_config)
-        example_keys = list(guided_prompt_template.examples[0].dict().keys())
+        super().__init__(prompt_template, model_config)
         self._pattern = r"^[^A-Za-z]+|[^A-Za-z]+$"
-        self._rater_key = example_keys[-1]
         self._label2score = {
             re.sub(self._pattern, "", k).lower(): float(v)
             for k, v in label2score.items()
         }
         self._score2label = {v: k for k, v in self._label2score.items()}
+        self._rater_key = None
+        if prompt_template.few_shot_prompt:
+            example_keys = list(prompt_template.few_shot_prompt[0].dict().keys())
+            self._rater_key = example_keys[-1]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
@@ -132,13 +132,20 @@ class JsonFormattedLLMRater(JsonFormattedDataProcessor):
         """
         data = super()._deserialize(data)
         response = data[RESPONSE]
-
-        labels = [
-            re.sub(self._pattern, "", r[self._rater_key]).lower()
-            if self._rater_key in r
-            else None
-            for r in response
-        ]
+        if self._rater_key:
+            labels = [
+                re.sub(self._pattern, "", r[self._rater_key]).lower()
+                if self._rater_key in r
+                else None
+                for r in response
+            ]
+        else:
+            # If the rater key is not specified, use the last key in the response
+            # as the rater key for the first response.
+            self._rater_key = list(response[0].keys())[-1]
+            labels = [
+                re.sub(self._pattern, "", r[self._rater_key]).lower() for r in response
+            ]
         scores = []
         for label in labels:
             if label is not None and label in self._label2score:

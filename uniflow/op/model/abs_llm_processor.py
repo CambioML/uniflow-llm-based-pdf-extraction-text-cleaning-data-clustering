@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 from uniflow.op.model.constants import ERROR_LIST, MAX_ATTEMPTS
 from uniflow.op.model.model_server import ModelServerFactory
-from uniflow.op.prompt_schema import Context, GuidedPrompt
+from uniflow.op.prompt import Context, PromptTemplate
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,18 +15,18 @@ class AbsLLMProcessor:
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:
         """Initialize Model class.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         model_server_cls = ModelServerFactory.get(model_config["model_server"])
         self._model_server = model_server_cls(model_config)
-        self._guided_prompt_template = guided_prompt_template
+        self._prompt_template = prompt_template
 
     def _serialize(self, data: List[Context]) -> List[str]:
         """Serialize data.
