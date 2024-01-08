@@ -133,7 +133,7 @@ class TransformServer:
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
-                        self._config.guided_prompt_template,
+                        self._config.prompt_template,
                         self._config.model_config,
                     )
                 )
@@ -262,7 +262,7 @@ class RaterServer:
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
-                        self._config.guided_prompt_template,
+                        self._config.prompt_template,
                         self._config.model_config,
                         self._config.label2score,
                     )

@@ -5,7 +5,7 @@ from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.model.llm_processor import LLMDataProcessor
 from uniflow.op.model.model_op import ModelOp
-from uniflow.op.prompt_schema import GuidedPrompt
+from uniflow.op.prompt import PromptTemplate
 
 
 class TransformLMQGFlow(Flow):
@@ -15,20 +15,20 @@ class TransformLMQGFlow(Flow):
 
     def __init__(
         self,
-        guided_prompt_template: GuidedPrompt,
+        prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:
         """HuggingFace Model Flow Constructor.
 
         Args:
-            guided_prompt_template (GuidedPrompt): Guided prompt template.
+            prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         super().__init__()
         self._model_op = ModelOp(
             name="lmqg_model_op",
             model=LLMDataProcessor(
-                guided_prompt_template=guided_prompt_template,
+                prompt_template=prompt_template,
                 model_config=model_config,
             ),
         )
