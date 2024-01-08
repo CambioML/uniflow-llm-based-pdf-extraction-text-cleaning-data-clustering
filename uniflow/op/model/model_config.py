@@ -44,6 +44,8 @@ class HuggingfaceModelConfig(ModelConfig):
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
     neuron: bool = False
+    load_in_4bit: bool = False
+    load_in_8bit: bool = True
 
 
 @dataclass

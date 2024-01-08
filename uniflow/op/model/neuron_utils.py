@@ -1,6 +1,7 @@
 import hashlib
 import os
 import zipfile
+from typing import Dict, List, Union
 
 import requests
 import torch
@@ -15,7 +16,8 @@ try:
     from transformers_neuronx.module import save_pretrained_split
 except ModuleNotFoundError as exc:
     raise ModuleNotFoundError(
-        "Please install transformers_neuronx. You can use `pip install transformers-neuronx --extra-index-url=https://pip.repos.neuron.amazonaws.com` to install it."
+        "Please install transformers_neuronx."
+        "You can use `pip install transformers-neuronx --extra-index-url=https://pip.repos.neuron.amazonaws.com` to install it."
     ) from exc
 
 
@@ -24,7 +26,7 @@ class Neuron:
     Neuron class.
     """
 
-    neuron_model_config = {
+    neuron_model_config: Dict[str, Dict[int, Dict[int, List[Union[str, str]]]]] = {
         "mistralai/Mistral-7B-Instruct-v0.2": {
             1: {
                 8192: [
@@ -46,7 +48,7 @@ class Neuron:
             },
         }
     }
-    instance_type_dict = {
+    instance_type_dict: Dict[str, int] = {
         "inf2.xlarge": 2,
         "inf2.8xlarge": 2,
         "inf2.24xlarge": 12,
@@ -54,9 +56,18 @@ class Neuron:
     }
 
     @staticmethod
-    def get_instance_type():
+    def get_instance_type() -> str:
         """
         Get the instance type of the current instance.
+
+        Returns:
+            str: The instance type of the current AWS instance.
+
+        Raises:
+            Exception: If there is an error accessing the metadata service.
+
+        References:
+            - AWS EC2 User Guide: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
         """
         url = "http://169.254.169.254/latest/meta-data/instance-type"
         try:
@@ -69,7 +80,7 @@ class Neuron:
             return f"Error: {e}"
 
     @staticmethod
-    def verify_md5(file_path, expected_md5):
+    def verify_md5(file_path: str, expected_md5: str) -> bool:
         """
         Verify the MD5 of a file against an expected MD5 hash.
 
@@ -88,7 +99,7 @@ class Neuron:
         return file_md5 == expected_md5
 
     @staticmethod
-    def download_and_unzip(url, expected_md5):
+    def download_and_unzip(url: str, expected_md5: str) -> str:
         """
         Download a file from a URL and unzip it.
 
@@ -127,7 +138,7 @@ class Neuron:
         return os.path.join(cache_dir, f"{expected_md5}")
 
     @staticmethod
-    def split_neuron_model(model_name):
+    def split_neuron_model(model_name: str) -> str:
         """
         Split weights
 
@@ -150,9 +161,16 @@ class Neuron:
         return cache_dir
 
     @staticmethod
-    def get_neuron_model(model_name, batch_size):
+    def get_neuron_model(model_name: str, batch_size: int):
         """
-        Get the neuron model for the given model name, batch size and n_positions.
+        Get the neuron model for the given model name and batch size.
+
+        Args:
+            model_name (str): The name of the model.
+            batch_size (int): The batch size.
+
+        Returns:
+            The neuron model.
         """
         instance_type = Neuron.get_instance_type()
         assert "inf2" in instance_type, ValueError(
@@ -211,9 +229,16 @@ class Neuron:
         return model, tokenizer
 
     @staticmethod
-    def batch_list(lst, batch_size):
+    def batch_list(lst: List, batch_size: int) -> List[List]:
         """
         Split a list into batches of a specified size.
+
+        Args:
+            lst (list): The list to be split into batches.
+            batch_size (int): The size of each batch.
+
+        Returns:
+            list: A list of batches, where each batch contains elements from the original list.
         """
         batches = []
         for i in range(0, len(lst), batch_size):
@@ -224,9 +249,17 @@ class Neuron:
         return batches
 
     @staticmethod
-    def neuron_infer(text_list, model, tokenizer):
+    def neuron_infer(text_list: List[str], model, tokenizer) -> List[Dict[str, str]]:
         """
         Run neuron inference on a list of texts.
+
+        Args:
+            text_list (list): A list of texts to perform inference on.
+            model: The neuron model used for inference.
+            tokenizer: The tokenizer used to preprocess the texts.
+
+        Returns:
+            list: A list of dictionaries containing the generated text for each input text.
         """
         batches = Neuron.batch_list(text_list, 4)
         results = []

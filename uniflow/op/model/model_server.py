@@ -275,6 +275,12 @@ class HuggingfaceModelServer(AbsModelServer):
                 batch_size=self._model_config.batch_size,
             )
         else:
+            if self._model_config.load_in_4bit or self._model_config.load_in_8bit:
+                self._model_config.load_in_4bit = False
+                self._model_config.load_in_8bit = False
+                print(
+                    "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
+                )
             from uniflow.op.model.neuron_utils import (  # pylint: disable=import-outside-toplevel
                 Neuron,
             )
@@ -301,7 +307,8 @@ class HuggingfaceModelServer(AbsModelServer):
             self._model_config.model_name,
             device_map="auto",
             offload_folder="./offload",
-            load_in_4bit=True,
+            load_in_4bit=self._model_config.load_in_4bit,
+            load_in_8bit=self._model_config.load_in_8bit,
         )
         return model, tokenizer
 
