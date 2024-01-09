@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from uniflow import Context, PromptTemplate
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.model.model_config import (
+    BedrockModelConfig,
     HuggingfaceModelConfig,
     LMQGModelConfig,
     ModelConfig,
@@ -249,7 +250,6 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
     """
     The configuration primarily focuses on setting up the parameters for utilizing GPT-3.5 to evaluate the
     correctness of answers in relation to given questions and contexts.
-
     Attributes:
         flow_name (str): Name of the rating flow, default is "RaterFlow".
         model_config (ModelConfig): Configuration for the GPT-3.5 model. Includes model name ("gpt-3.5-turbo-1106"),
@@ -300,6 +300,57 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
                     question="Where does photosynthesis primarily occur in plant cells?",
                     answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
                     explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                    label="No",
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class RaterForClassificationBedrockClaudeConfig(RaterConfig):
+    """Rater classification Bedrock Claude Config Class.
+    The configuration primarily focuses on setting up the parameters for utilizing Bedrock to evaluate the
+    correctness of answers in relation to given questions and contexts.
+
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the Bedrock model. Includes aws_region ("us-west-2"), aws_profile ("default"),
+        aws_access_key_id, aws_secret_key_id, aws_secret_access_key, aws_session_token, batch_size(1),
+        model name ("anthropic.claude-v2"), batch_size (1), the server ("BedrockModelServer"), and the model_kwargs.
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        prompt_template (PromptTemplate): Template for prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
+
+    flow_name: str = "RaterFlow"
+    model_config: ModelConfig = field(default_factory=BedrockModelConfig)
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""Rate the answer based on the question and the context.
+        Follow the format of the examples below to include context, question, answer, and label in the response.
+        The response should not include examples in the prompt.""",
+            few_shot_prompt=[
+                Context(
+                    context="""The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the
+                    world. It was constructed in 1889 and stands at a height of 324 meters.""",
+                    question="When was the Eiffel Tower constructed?",
+                    answer="The Eiffel Tower was constructed in 1889.",
+                    explanation="""The context explicitly mentions that the Eiffel Tower was constructed in 1889,
+                    so the answer is correct.""",
+                    label="Yes",
+                ),
+                Context(
+                    context="""Photosynthesis is a process used by plants to convert light energy into chemical energy.
+                    This process primarily occurs in the chloroplasts of plant cells.""",
+                    question="Where does photosynthesis primarily occur in plant cells?",
+                    answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                    explanation="""The context mentions that photosynthesis primarily occurs in the chloroplasts of
+                    plant cells, so the answer is incorrect.""",
                     label="No",
                 ),
             ],

@@ -69,7 +69,7 @@ class NougatModelConfig(ModelConfig):
 class BedrockModelConfig:
     """Bedrock Model Config Class."""
 
-    aws_region: str
+    aws_region: str = ""
     aws_profile: str = "default"
     aws_access_key_id: str = ""
     aws_secret_access_key: str = ""
