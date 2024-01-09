@@ -114,7 +114,9 @@ class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 
     flow_name: str = "TransformLMQGFlow"
-    prompt_template: PromptTemplate = field(default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[]))
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
+    )
     model_config: ModelConfig = field(default_factory=LMQGModelConfig())
 
 
@@ -123,7 +125,9 @@ class TransformCopyConfig(TransformConfig):
     """Transform Linear Config Class."""
 
     flow_name: str = "TransformCopyFlow"
-    prompt_template: PromptTemplate = field(default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[]))
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
+    )
     model_config: ModelConfig = field(default_factory=lambda: {})
 
 
@@ -210,7 +214,9 @@ class RaterForClassificationOpenAIGPT4Config(RaterConfig):
             response_format={"type": "text"},
         )
     )
-    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
@@ -264,7 +270,9 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
             response_format={"type": "text"},
         )
     )
-    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
@@ -318,7 +326,9 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
 
     flow_name: str = "RaterFlow"
     model_config: ModelConfig = field(default_factory=BedrockModelConfig)
-    label2score: Dict[str, float] = field(default_factory=lambda: {"Yes": 1.0, "No": 0.0})
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""Rate the answer based on the question and the context.
