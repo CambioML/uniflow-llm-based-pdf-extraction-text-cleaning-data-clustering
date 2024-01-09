@@ -4,7 +4,10 @@ from dataclasses import dataclass, field
 from typing import Dict, Optional
 
 from uniflow import Context, PromptTemplate
-from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
+from uniflow.op.extract.split.constants import (
+    MARKDOWN_HEADER_SPLITTER,
+    PARAGRAPH_SPLITTER,
+)
 from uniflow.op.model.model_config import (
     BedrockModelConfig,
     HuggingfaceModelConfig,
@@ -50,6 +53,7 @@ class ExtractMarkdownConfig(ExtractConfig):
     """Extract Markdown Config Class."""
 
     flow_name: str = "ExtractMarkdownFlow"
+    splitter: str = MARKDOWN_HEADER_SPLITTER
 
 
 @dataclass
