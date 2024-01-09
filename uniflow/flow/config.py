@@ -134,6 +134,70 @@ class TransformCopyConfig(TransformConfig):
     )
     model_config: ModelConfig = field(default_factory=lambda: {})
 
+class TransformForClassificationOpenAIGPT3p5Config(TransformConfig):
+    flow_name: str = "TransformOpenAIFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "text"},
+        )
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Does the text mention any cutting-edged technology applications, any new technology methods, or any new area of innovations? If yes, return the names of each technology in a list of strings as the answer. If no, return an empty list.
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="Our new business wins are supported by our product leadership strategy of bringing new product to market that provides value for our customers, such as market-leading 500 bar GDi technology, helping customers improve efficiency, reduce emissions and lower costs leveraging our GDi technology and capital to provide a value-focused solution for our off-highway diesel applications and hydrogen ICE that differentiates us from our competition. We're helping our customers move towards carbon neutral and carbon-free fuels with solutions using ethanol, biofuels and hydrogen, as it's our view that a liquefied or gaseous fuel is going to be a key element of our journey to carbon neutrality.",
+                    answer=["500 bar GDi technology", "carbon neutral"]
+                ),
+                    Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    answer=[],
+                ),
+            ],
+        )
+    )
+
+@dataclass
+class TransformForClusteringOpenAIGPT4Config:
+    flow_name: str = "TransformOpenAIFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "json_object"}
+        )
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+                As an expert in cutting-edge technologies, your task is to analyze a given list of technology-related terms. Your goal is to cluster these terms into groups based on their semantic similarities. Each group represents a unique category or 'signal' of technology. You will return your analysis as a dictionary. In this dictionary, each key is a 'signal', representing a specific category, and the associated value is a list of technology terms that belong to that category based on their semantic meaning.
+            """,
+            few_shot_prompt = [
+                Context(
+                    context=["artificial intelligence", "AI", "500 bar GDi technology", "ML", "500 bar GDi", "machine learning"],
+                    answer={
+                        "500_BAR_GDI": ["500 bar GDi technology", "500 bar GDi"],
+                        "AIML": ["artificial intelligence", "AI", "ML", "machine learning"],
+                    }
+                ),
+                Context(
+                    context=["cryptocurrency", "blockchain", "Bitcoin", "Ethereum", "digital currency", "crypto mining"],
+                    answer={
+                        "CRYPTO_CURRENCY": ["cryptocurrency", "Bitcoin", "Ethereum", "digital currency"],
+                        "BLOCKCHAIN_TECH": ["blockchain", "crypto mining"],
+                    },
+                ),
+            ]
+        )
+    )
 
 ###########################################################
 #                   All AutoRater Config                  #
