@@ -251,20 +251,61 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
-        from transformers import pipeline  # pylint: disable=import-outside-toplevel
+        super().__init__(model_config)
+        self._model_config = HuggingfaceModelConfig(**self._model_config)
+        if self._model_config.neuron is False:
+            try:
+                from transformers import (  # pylint: disable=import-outside-toplevel
+                    pipeline,
+                )
+            except ModuleNotFoundError as exc:
+                raise ModuleNotFoundError(
+                    "Please install transformers to use HuggingfaceModelServer. You can use `pip install transformers` to install it."
+                ) from exc
+            model, tokenizer = self._get_model()
+            # explicitly set batch_size for pipeline
+            # for batch inference.
+            self._pipeline = pipeline(
+                "text-generation",
+                model=model,
+                tokenizer=tokenizer,
+                device_map="auto",
+                max_new_tokens=768,
+                num_return_sequences=1,
+                repetition_penalty=1.2,
+                eos_token_id=tokenizer.eos_token_id,
+                pad_token_id=tokenizer.pad_token_id,
+                batch_size=self._model_config.batch_size,
+            )
+        else:
+            if self._model_config.load_in_4bit or self._model_config.load_in_8bit:
+                self._model_config.load_in_4bit = False
+                self._model_config.load_in_8bit = False
+                print(
+                    "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
+                )
+            from uniflow.op.model.neuron_utils import (  # pylint: disable=import-outside-toplevel
+                Neuron,
+            )
+
+            model, tokenizer = Neuron.get_neuron_model(
+                self._model_config.model_name, self._model_config.batch_size
+            )
+            self._pipeline = partial(
+                Neuron.neuron_infer, model=model, tokenizer=tokenizer
+            )
+
+    def _get_model(self):
+        """Get model."""
         from transformers import (  # pylint: disable=import-outside-toplevel
             AutoModelForCausalLM,
             AutoTokenizer,
         )
 
-        super().__init__(model_config)
-        self._model_config = HuggingfaceModelConfig(**self._model_config)
-
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
         )
         tokenizer.pad_token = tokenizer.eos_token
-
         model = AutoModelForCausalLM.from_pretrained(
             self._model_config.model_name,
             device_map="auto",
@@ -272,21 +313,7 @@ class HuggingfaceModelServer(AbsModelServer):
             load_in_4bit=self._model_config.load_in_4bit,
             load_in_8bit=self._model_config.load_in_8bit,
         )
-
-        # explicitly set batch_size for pipeline
-        # for batch inference.
-        self._pipeline = pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=tokenizer,
-            device_map="auto",
-            max_new_tokens=768,
-            num_return_sequences=1,
-            repetition_penalty=1.2,
-            eos_token_id=tokenizer.eos_token_id,
-            pad_token_id=tokenizer.pad_token_id,
-            batch_size=self._model_config.batch_size,
-        )
+        return model, tokenizer
 
     def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
@@ -383,11 +410,11 @@ class NougatModelServer(AbsModelServer):
         # import in class level to avoid installing nougat package
         try:
             from nougat import NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import (
-                get_checkpoint,  # pylint: disable=import-outside-toplevel
+            from nougat.utils.checkpoint import (  # pylint: disable=import-outside-toplevel
+                get_checkpoint,
             )
-            from nougat.utils.device import (
-                move_to_device,  # pylint: disable=import-outside-toplevel
+            from nougat.utils.device import (  # pylint: disable=import-outside-toplevel
+                move_to_device,
             )
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
@@ -434,11 +461,11 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        from nougat.postprocessing import (
-            markdown_compatible,  # pylint: disable=import-outside-toplevel
+        from nougat.postprocessing import (  # pylint: disable=import-outside-toplevel
+            markdown_compatible,
         )
-        from nougat.utils.dataset import (
-            LazyDataset,  # pylint: disable=import-outside-toplevel
+        from nougat.utils.dataset import (  # pylint: disable=import-outside-toplevel
+            LazyDataset,
         )
         from torch.utils.data import (  # pylint: disable=import-outside-toplevel
             ConcatDataset,
@@ -460,7 +487,7 @@ class NougatModelServer(AbsModelServer):
             )
             predictions = []
             page_num = 0
-            for i, (sample, is_last_page) in enumerate(dataloader):
+            for sample, is_last_page in dataloader:
                 model_output = self.model.inference(
                     image_tensors=sample, early_stopping=False
                 )
