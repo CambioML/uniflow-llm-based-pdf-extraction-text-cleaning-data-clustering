@@ -319,7 +319,7 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
         aws_access_key_id, aws_secret_key_id, aws_secret_access_key, aws_session_token, batch_size(1),
         model name ("anthropic.claude-v2"), batch_size (1), the server ("BedrockModelServer"), and the model_kwargs.
         label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
-        guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
+        prompt_template (PromptTemplate): Template for prompts used in rating. Includes instructions
                                                for rating, along with examples that detail the context, question,
                                                answer, label, and explanation for each case.
     """
@@ -334,7 +334,7 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
             instruction="""Rate the answer based on the question and the context.
         Follow the format of the examples below to include context, question, answer, and label in the response.
         The response should not include examples in the prompt.""",
-            examples=[
+            few_shot_prompt=[
                 Context(
                     context="""The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the
                     world. It was constructed in 1889 and stands at a height of 324 meters.""",
