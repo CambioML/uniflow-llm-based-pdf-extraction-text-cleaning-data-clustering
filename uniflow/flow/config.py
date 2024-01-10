@@ -328,7 +328,6 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
                                                answer, label, and explanation for each case.
     """
 
-    flow_name: str = "RaterFlow"
     model_config: ModelConfig = field(default_factory=BedrockModelConfig)
     label2score: Dict[str, float] = field(
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
@@ -355,6 +354,50 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
                     answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
                     explanation="""The context mentions that photosynthesis primarily occurs in the chloroplasts of
                     plant cells, so the answer is incorrect.""",
+                    label="No",
+                ),
+            ],
+        )
+    )
+    
+@dataclass
+class RaterForClassificationHuggingfaceConfig(RaterConfig):
+    """
+    The configuration primarily focuses on setting up the parameters for utilizing Huggingface model to
+    evaluate the correctness of answers in relation to given questions and contexts.
+
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the huggingeface model. Includes model_name("mistralai/Mistral-7B-Instruct-v0"),
+                                    model_server ("HuggingfaceModelServer"), batch_size (1), neuron (False),
+                                    load_in_4bit (False), load_in_8bit (True)
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        guided_prompt_template (GuidedPrompt): Template for guided prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
+
+    model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig())
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""Evaluate if a given answer is appropriate based on the question and the context.
+            Follow the format of the examples below, consisting of context, question, answer, explanation and label (you must choose one from {label_list}).""",
+            few_shot_prompt=[
+                Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    question="When was the Eiffel Tower constructed?",
+                    answer="The Eiffel Tower was constructed in 1889.",
+                    explanation="The answer is consistency to the fact that Eiffel Tower was constructed in 1889 mentioned in context, so the answer is correct.",
+                    label="Yes",
+                ),
+                Context(
+                    context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                    question="Where does photosynthesis primarily occur in plant cells?",
+                    answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                    explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells but not mitochondria indicated by answer, so the answer is incorrect.",
                     label="No",
                 ),
             ],
