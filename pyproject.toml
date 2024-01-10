@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "uniflow"
-version = "0.0.13"
-description = "Unified flow interface for data augmentation for LLM training."
+version = "0.0.14"
+description = "Unified interface for pre-training data augmentation and post-training evaluation of Large Language Models (LLMs)."
 authors = ["CambioML <wanwanaiai45@gmail.com>"]
 maintainers = ["Rachel Hu <goldpiggy@berkeley.edu>"]
 license = "Apache License"

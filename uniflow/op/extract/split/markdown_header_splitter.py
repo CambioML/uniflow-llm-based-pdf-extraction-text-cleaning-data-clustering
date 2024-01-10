@@ -33,6 +33,8 @@ class MarkdownHeaderSplitter(Op):
         ("##", "Header 2"),
         ("###", "Header 3"),
         ("####", "Header 4"),
+        ("#####", "Header 5"),
+        ("######", "Header 6"),
     ]
 
     def __call__(
@@ -72,7 +74,7 @@ class MarkdownHeaderSplitter(Op):
         if headers_to_split_on_list is None:
             headers_to_split_on_list = self.headers_to_split_on_default
 
-        # Final output
+        # Result
         lines_with_metadata: List[LineType] = []
 
         # Content and metadata of the chunk currently being processed
@@ -143,4 +145,4 @@ class MarkdownHeaderSplitter(Op):
                 current_content.append(stripped_line)
                 current_metadata = initial_metadata.copy()
 
-        return lines_with_metadata
+        return [line["content"] for line in lines_with_metadata]

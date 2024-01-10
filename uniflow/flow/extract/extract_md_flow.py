@@ -6,7 +6,8 @@ from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.extract.load.txt_op import ExtractTxtOp
-from uniflow.op.extract.split.markdown_header_splitter import MarkdownHeaderSplitter
+from uniflow.op.extract.split.constants import MARKDOWN_HEADER_SPLITTER
+from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
 
 
 class ExtractMarkdownFlow(Flow):
@@ -14,11 +15,11 @@ class ExtractMarkdownFlow(Flow):
 
     TAG = EXTRACT
 
-    def __init__(self) -> None:
+    def __init__(self, splitter: str = MARKDOWN_HEADER_SPLITTER) -> None:
         """Extract md Flow Constructor."""
         super().__init__()
         self._extract_md_op = ExtractTxtOp(name="extract_md_op")
-        self._split_md_op = MarkdownHeaderSplitter(name="process_md_op")
+        self._split_md_op = SplitterOpsFactory.get(splitter)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract md Flow.
