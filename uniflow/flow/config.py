@@ -191,12 +191,23 @@ class TransformForClusteringOpenAIGPT4Config:
                     }
                 ),
                 Context(
-                    context=["cryptocurrency", "blockchain", "Bitcoin", "Ethereum", "digital currency", "crypto mining"],
+                    context=[
+                        "cryptocurrency", "blockchain", "Bitcoin", "Ethereum", "digital currency", 
+                        "crypto mining", "mRNA vaccine", "gene editing", "CRISPR", 
+                        "Ethereum platform", "Ether", "NFTs", "DNA sequencing", "bioinformatics", "mRNA therapy"
+                    ],
                     answer={
-                        "CRYPTO_CURRENCY": ["cryptocurrency", "Bitcoin", "Ethereum", "digital currency"],
-                        "BLOCKCHAIN_TECH": ["blockchain", "crypto mining"],
+                        "BIO_TECH": [
+                            "mRNA vaccine", "gene editing", "CRISPR", "DNA sequencing", 
+                            "bioinformatics", "mRNA therapy"
+                        ],
+                        "BLOCKCHAIN_TECH": [
+                            "blockchain", "crypto mining",  "Bitcoin", 
+                            "cryptocurrency", "Ethereum",  "NFTs"
+                        ],
                     },
-                ),
+                )
+
             ]
         )
     )
