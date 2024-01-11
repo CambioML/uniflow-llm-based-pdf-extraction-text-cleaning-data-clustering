@@ -294,6 +294,7 @@ class HuggingfaceModelServer(AbsModelServer):
             self._pipeline = partial(
                 Neuron.neuron_infer, model=model, tokenizer=tokenizer
             )
+        self._tokenizer = tokenizer
 
     def _get_model(self):
         """Get model."""
@@ -324,6 +325,13 @@ class HuggingfaceModelServer(AbsModelServer):
         Returns:
             List[str]: Preprocessed data.
         """
+        if self._model_config.response_start_key is not None:
+            data = [[{"role": "user", "content": d}] for d in data]
+            data = [
+                self._tokenizer.apply_chat_template(d, tokenize=False)
+                + f"\n{self._model_config.response_start_key}: "
+                for d in data
+            ]
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
@@ -335,6 +343,8 @@ class HuggingfaceModelServer(AbsModelServer):
         Returns:
             List[str]: Postprocessed data.
         """
+        # TODO: need to add a post process to reform the response
+        # with context and question if the model is a QA model.
         return [d["generated_text"] for output_list in data for d in output_list]
 
     def __call__(self, data: List[str]) -> List[str]:

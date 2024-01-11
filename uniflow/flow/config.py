@@ -114,6 +114,16 @@ class TransformHuggingFaceConfig(TransformConfig):
 
 
 @dataclass
+class TransformQAHuggingFaceConfig(TransformConfig):
+    """Transform Hugging Face QA Config Class."""
+
+    flow_name: str = "TransformHuggingFaceFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(response_start_key="question")
+    )
+
+
+@dataclass
 class TransformLMQGConfig(TransformConfig):
     """Transform LMQG Config Class."""
 

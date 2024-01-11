@@ -46,6 +46,7 @@ class HuggingfaceModelConfig(ModelConfig):
     neuron: bool = False
     load_in_4bit: bool = False
     load_in_8bit: bool = True
+    response_start_key: str = None
 
 
 @dataclass
