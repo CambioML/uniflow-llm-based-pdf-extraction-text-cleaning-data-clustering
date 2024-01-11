@@ -179,7 +179,7 @@ class TransformForClusteringOpenAIGPT4Config:
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
-                As an expert in cutting-edge technologies, your mission is to analyze a list of technology-related terms. Your primary goal is twofold: firstly, to cluster these terms into distinct groups based on their semantic similarities, where each group encapsulates a specific technological concept. Secondly, within these clusters, identify and merge terms that are essentially synonymous. Your final output should be a well-structured dictionary. In this dictionary, each key signifies a unique category of technology, and its corresponding value is a list of technology terms.
+                Your task as a technology expert is to categorize a list of tech terms. First, cluster these terms into distinct groups based on their semantic similarities, where each group encapsulates a specific technological concept. Second, within these clusters, identify and merge terms that are essentially synonymous. Your final output should be a well-structured dictionary, where each key signifies a unique category of technology, and its corresponding value is a list of technology terms.
             """,
 
             few_shot_prompt = [
