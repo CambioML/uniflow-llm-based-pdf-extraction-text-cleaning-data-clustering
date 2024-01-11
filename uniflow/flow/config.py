@@ -359,7 +359,8 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
             ],
         )
     )
-    
+
+
 @dataclass
 class RaterForClassificationHuggingfaceConfig(RaterConfig):
     """
