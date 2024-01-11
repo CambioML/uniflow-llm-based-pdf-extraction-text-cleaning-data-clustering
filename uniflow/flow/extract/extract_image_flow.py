@@ -1,4 +1,4 @@
-"""Extract PDF Flow."""
+"""Extract Image Flow."""
 
 from typing import Any, Dict, Sequence
 
@@ -21,20 +21,20 @@ class ExtractImageFlow(Flow):
         model_config: Dict[str, Any],
         splitter: str = PARAGRAPH_SPLITTER,
     ) -> None:
-        """Extract PDF Flow Constructor.
+        """Extract Image Flow Constructor.
 
         Args:
             model_config (Dict[str, Any]): Model config.
             splitter (str): Splitter to use. Defaults to "".
         """
         super().__init__()
-        self._extract_pdf_op = ExtractImageOp(
+        self._extract_image_op = ExtractImageOp(
             name="extract_image_op",
             model=LLMDataPreprocessor(
                 model_config=model_config,
             ),
         )
-        self._process_pdf_op = ProcessImageOp(name="process_image_op")
+        self._process_image_op = ProcessImageOp(name="process_image_op")
         self._split_op = SplitterOpsFactory.get(splitter)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
@@ -46,7 +46,7 @@ class ExtractImageFlow(Flow):
         Returns:
             Sequence[Node]: Nodes after running.
         """
-        nodes = self._extract_pdf_op(nodes)
-        nodes = self._process_pdf_op(nodes)
+        nodes = self._extract_image_op(nodes)
+        nodes = self._process_image_op(nodes)
         nodes = self._split_op(nodes)
         return nodes

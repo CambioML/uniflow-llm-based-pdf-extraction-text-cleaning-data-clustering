@@ -70,7 +70,7 @@ class NougatModelConfig(ModelConfig):
 
 @dataclass
 class LayoutModelConfig(ModelConfig):
-    """Nougat Model Config Class."""
+    """Layout Model Config Class."""
 
     model_name: str = "unstructuredio/yolo_x_layout"
     model_file: str = "yolox_l0.05.onnx"

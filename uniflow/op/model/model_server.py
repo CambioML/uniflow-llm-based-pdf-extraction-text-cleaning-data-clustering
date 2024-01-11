@@ -922,8 +922,8 @@ class LayoutModelServer(AbsModelServer):
         import cv2  # pylint: disable=import-outside-toplevel
         import numpy as np  # pylint: disable=import-outside-toplevel
 
-        from .layout_utils import (  # pylint: disable=import-outside-toplevel
-            recursive_xy_cut,
+        from uniflow.op.model.layout_utils import (  # pylint: disable=import-outside-toplevel
+            XYCut,
         )
 
         outs = []
@@ -970,13 +970,15 @@ class LayoutModelServer(AbsModelServer):
                 )
             res = []
             boxes = [res["bbox"] for res in res_list]
-            recursive_xy_cut(np.asarray(boxes).astype(int), np.arange(len(boxes)), res)
+            XYCut.recursive_xy_cut(
+                np.asarray(boxes).astype(int), np.arange(len(boxes)), res
+            )
             sorted_res_list = [res_list[idx] for idx in res]
             final_md = ""
             for _, region in enumerate(sorted_res_list):
                 if len(region["res"]) == 0:
                     continue
-                elif region["type"] in ("title", "page-header", "section-header"):
+                if region["type"] in ("title", "page-header", "section-header"):
                     final_md += (
                         "## "
                         + " ".join([text["text"] for text in region["res"]])

@@ -51,7 +51,7 @@ class ExtractPDFConfig(ExtractConfig):
 
 @dataclass
 class ExtractImageConfig(ExtractConfig):
-    """Layout Config Class."""
+    """Extract Image Config Class"""
 
     flow_name: str = "ExtractImageFlow"
     model_config: ModelConfig = field(default_factory=LayoutModelConfig())
