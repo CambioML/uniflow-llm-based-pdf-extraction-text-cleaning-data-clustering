@@ -149,7 +149,7 @@ class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
             instruction="""
-            Act as a tech expert on a quest to uncover the latest advancements in the world of technology. Does the text mention any cutting-edged technology applications, any new technology methods, or any new area of innovations? If yes, return the names of each technology in a list of strings as the answer. If no, return an empty list. Make sure you always return a list.
+            Your role is to explore the forefront of technological developments. Examine the text for mentions of state-of-the-art technology applications, innovative methods, or emerging areas of innovation. If present, list each technology by name in a string format. If none are mentioned, return an empty list. Ensure the response is always in a list format.
             """,
             few_shot_prompt=[
                 Context(
@@ -202,8 +202,10 @@ class TransformForClusteringOpenAIGPT4Config:
                             "bioinformatics", "mRNA therapy"
                         ],
                         "BLOCKCHAIN_TECH": [
-                            "blockchain", "crypto mining",  "Bitcoin", 
-                            "cryptocurrency", "Ethereum",  "NFTs"
+                            "blockchain", "crypto mining", "NFTs"
+                        ],
+                        "CRYPTOCURRENCY": [
+                            "Bitcoin", "cryptocurrency", "Ethereum"
                         ],
                     },
                 )
