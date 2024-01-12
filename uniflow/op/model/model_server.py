@@ -249,6 +249,8 @@ class AzureOpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
+    PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
+
     def __init__(self, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
         super().__init__(model_config)
@@ -325,7 +327,7 @@ class HuggingfaceModelServer(AbsModelServer):
         Returns:
             List[str]: Preprocessed data.
         """
-        if self._model_config.response_start_key is not None:
+        if self._model_config.response_start_key:
             data = [[{"role": "user", "content": d}] for d in data]
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False)
@@ -343,9 +345,15 @@ class HuggingfaceModelServer(AbsModelServer):
         Returns:
             List[str]: Postprocessed data.
         """
-        # TODO: need to add a post process to reform the response
-        # with context and question if the model is a QA model.
-        return [d["generated_text"] for output_list in data for d in output_list]
+        response_list = []
+        for output_list in data:
+            for d in output_list:
+                if self._model_config.response_start_key:
+                    response = re.sub(self.PATTERN, "", d["generated_text"]).strip()
+                    response_list.append(response)
+                else:
+                    response_list.append(d["generated_text"])
+        return response_list
 
     def __call__(self, data: List[str]) -> List[str]:
         """Run model.
