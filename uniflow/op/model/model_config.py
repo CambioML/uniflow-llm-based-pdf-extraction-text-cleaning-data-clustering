@@ -47,6 +47,7 @@ class HuggingfaceModelConfig(ModelConfig):
     load_in_4bit: bool = False
     load_in_8bit: bool = True
     response_start_key: str = None
+    response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
 
 
 @dataclass
