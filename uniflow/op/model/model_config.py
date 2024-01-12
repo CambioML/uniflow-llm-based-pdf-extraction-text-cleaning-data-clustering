@@ -40,7 +40,7 @@ class AzureOpenAIModelConfig:
 class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
-    model_name: str = "mistralai/Mistral-7B-Instruct-v0.1"
+    model_name: str = "mistralai/Mistral-7B-Instruct-v0.2"
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
     neuron: bool = False
