@@ -69,6 +69,16 @@ class NougatModelConfig(ModelConfig):
 
 
 @dataclass
+class LayoutModelConfig(ModelConfig):
+    """Layout Model Config Class."""
+
+    model_name: str = "unstructuredio/yolo_x_layout"
+    model_file: str = "yolox_l0.05.onnx"
+    model_server: str = "LayoutModelServer"
+    ocr_lang: list = field(default_factory=lambda: ["en"])
+
+
+@dataclass
 class BedrockModelConfig:
     """Bedrock Model Config Class."""
 

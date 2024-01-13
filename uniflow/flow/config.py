@@ -11,6 +11,7 @@ from uniflow.op.extract.split.constants import (
 from uniflow.op.model.model_config import (
     BedrockModelConfig,
     HuggingfaceModelConfig,
+    LayoutModelConfig,
     LMQGModelConfig,
     ModelConfig,
     NougatModelConfig,
@@ -45,6 +46,15 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = field(default_factory=NougatModelConfig)
+    splitter: str = PARAGRAPH_SPLITTER
+
+
+@dataclass
+class ExtractImageConfig(ExtractConfig):
+    """Extract Image Config Class"""
+
+    flow_name: str = "ExtractImageFlow"
+    model_config: ModelConfig = field(default_factory=LayoutModelConfig())
     splitter: str = PARAGRAPH_SPLITTER
 
 
