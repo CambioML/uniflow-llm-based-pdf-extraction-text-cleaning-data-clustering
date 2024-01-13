@@ -25,7 +25,7 @@ class AbsLLMProcessor:
             model_config (Dict[str, Any]): Model config.
         """
         model_server_cls = ModelServerFactory.get(model_config["model_server"])
-        self._model_server = model_server_cls(model_config)
+        self._model_server = model_server_cls(prompt_template, model_config)
         self._prompt_template = prompt_template
 
     def _serialize(self, data: List[Context]) -> List[str]:

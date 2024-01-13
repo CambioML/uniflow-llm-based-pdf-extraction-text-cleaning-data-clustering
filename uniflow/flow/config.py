@@ -44,7 +44,7 @@ class ExtractPDFConfig(ExtractConfig):
     """Nougat Config Class."""
 
     flow_name: str = "ExtractPDFFlow"
-    model_config: ModelConfig = field(default_factory=NougatModelConfig())
+    model_config: ModelConfig = field(default_factory=NougatModelConfig)
     splitter: str = PARAGRAPH_SPLITTER
 
 
@@ -102,7 +102,7 @@ class TransformOpenAIConfig(TransformConfig):
     """Transform OpenAI Config Class."""
 
     flow_name: str = "TransformOpenAIFlow"
-    model_config: ModelConfig = field(default_factory=OpenAIModelConfig())
+    model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
 
 
 @dataclass
@@ -110,7 +110,76 @@ class TransformHuggingFaceConfig(TransformConfig):
     """Transform Hugging Face Config Class."""
 
     flow_name: str = "TransformHuggingFaceFlow"
-    model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig())
+    model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig)
+
+
+@dataclass
+class TransformQAHuggingFaceConfig(TransformConfig):
+    """Transform Hugging Face Config Class for raw response format."""
+
+    flow_name: str = "TransformHuggingFaceFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(
+            response_start_key="question", response_format={"type": "text"}
+        )
+    )
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+        Generate one question and its corresponding answer based on the last context in the last
+        example. Follow the format of the examples below to include context, question, and answer in the response.
+        """,
+            few_shot_prompt=[
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the fox?",
+                    answer="brown.",
+                ),
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the dog?",
+                    answer="black.",
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
+    """Transform Hugging Face QA Config Class for Json response format."""
+
+    flow_name: str = "TransformHuggingFaceFlow"
+    # model will start generating response starting from
+    # question, so the response start key is question.
+    # this is very important for the model to generate valid json response.
+    model_config: ModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(
+            response_start_key="question", response_format={"type": "json_object"}
+        )
+    )
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+        Generate one question and its corresponding answer based on the last context in the last
+        example. Follow the format of the examples below to include context, question, and answer in the response.
+        """,
+            few_shot_prompt=[
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the fox?",
+                    answer="brown.",
+                ),
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the dog?",
+                    answer="black.",
+                ),
+            ],
+        )
+    )
 
 
 @dataclass
@@ -121,7 +190,7 @@ class TransformLMQGConfig(TransformConfig):
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
-    model_config: ModelConfig = field(default_factory=LMQGModelConfig())
+    model_config: ModelConfig = field(default_factory=LMQGModelConfig)
 
 
 @dataclass
