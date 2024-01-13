@@ -202,7 +202,8 @@ class TransformCopyConfig(TransformConfig):
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=lambda: {})
-    
+
+
 @dataclass
 class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
     flow_name: str = "TransformOpenAIFlow"
@@ -223,15 +224,16 @@ class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
             few_shot_prompt=[
                 Context(
                     context="Our new business wins are supported by our product leadership strategy of bringing new product to market that provides value for our customers, such as market-leading 500 bar GDi technology, helping customers improve efficiency, reduce emissions and lower costs leveraging our GDi technology and capital to provide a value-focused solution for our off-highway diesel applications and hydrogen ICE that differentiates us from our competition. We're helping our customers move towards carbon neutral and carbon-free fuels with solutions using ethanol, biofuels and hydrogen, as it's our view that a liquefied or gaseous fuel is going to be a key element of our journey to carbon neutrality.",
-                    answer=["500 bar GDi technology", "carbon neutral"]
+                    answer=["500 bar GDi technology", "carbon neutral"],
                 ),
-                    Context(
+                Context(
                     context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
                     answer=[],
                 ),
             ],
         )
     )
+
 
 @dataclass
 class TransformForClusteringOpenAIGPT4Config:
@@ -242,7 +244,7 @@ class TransformForClusteringOpenAIGPT4Config:
             model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"type": "json_object"}
+            response_format={"type": "json_object"},
         )
     )
     prompt_template: PromptTemplate = field(
@@ -250,38 +252,56 @@ class TransformForClusteringOpenAIGPT4Config:
             instruction="""
                 Your task as a technology expert is to categorize a list of tech terms. First, cluster these terms into distinct groups based on their semantic similarities, where each group encapsulates a specific technological concept. Second, within these clusters, identify and merge terms that are essentially synonymous. Your final output should be a well-structured dictionary, where each key signifies a unique category of technology, and its corresponding value is a list of technology terms.
             """,
-
-            few_shot_prompt = [
+            few_shot_prompt=[
                 Context(
-                    context=["artificial intelligence", "AI", "500 bar GDi technology", "ML", "500 bar GDi", "machine learning"],
+                    context=[
+                        "artificial intelligence",
+                        "AI",
+                        "500 bar GDi technology",
+                        "ML",
+                        "500 bar GDi",
+                        "machine learning",
+                    ],
                     answer={
-                        "500_BAR_GDI": [ "500 bar GDi"],
+                        "500_BAR_GDI": ["500 bar GDi"],
                         "AIML": ["AI", "ML"],
-                    }
+                    },
                 ),
                 Context(
                     context=[
-                        "cryptocurrency", "blockchain", "Bitcoin", "Ethereum", "digital currency", 
-                        "crypto mining", "mRNA vaccine", "gene editing", "CRISPR", 
-                        "Ethereum platform", "Ether", "NFTs", "DNA sequencing", "bioinformatics", "mRNA therapy"
+                        "cryptocurrency",
+                        "blockchain",
+                        "Bitcoin",
+                        "Ethereum",
+                        "digital currency",
+                        "crypto mining",
+                        "mRNA vaccine",
+                        "gene editing",
+                        "CRISPR",
+                        "Ethereum platform",
+                        "Ether",
+                        "NFTs",
+                        "DNA sequencing",
+                        "bioinformatics",
+                        "mRNA therapy",
                     ],
                     answer={
                         "BIO_TECH": [
-                            "mRNA vaccine", "gene editing", "CRISPR", "DNA sequencing", 
-                            "bioinformatics", "mRNA therapy"
+                            "mRNA vaccine",
+                            "gene editing",
+                            "CRISPR",
+                            "DNA sequencing",
+                            "bioinformatics",
+                            "mRNA therapy",
                         ],
-                        "BLOCKCHAIN_TECH": [
-                            "blockchain", "crypto mining", "NFTs"
-                        ],
-                        "CRYPTOCURRENCY": [
-                            "Bitcoin", "cryptocurrency", "Ethereum"
-                        ],
+                        "BLOCKCHAIN_TECH": ["blockchain", "crypto mining", "NFTs"],
+                        "CRYPTOCURRENCY": ["Bitcoin", "cryptocurrency", "Ethereum"],
                     },
-                )
-
-            ]
+                ),
+            ],
         )
     )
+
 
 ###########################################################
 #                   All AutoRater Config                  #
