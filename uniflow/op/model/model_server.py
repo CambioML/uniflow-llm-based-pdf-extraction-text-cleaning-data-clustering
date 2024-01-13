@@ -6,6 +6,7 @@ import json
 import logging
 import re
 import warnings
+from abc import abstractmethod
 from functools import partial
 from typing import Any, Dict, List, Optional
 
@@ -676,16 +677,27 @@ class AWSBaseModelServer(AbsModelServer):
         """Cut off the text as soon as any stop words occur."""
         return re.split("|".join(stop), text, maxsplit=1)[0]
 
-    def __call__(self, data: List[str]) -> List[str]:
-        """Run model.
-
-        Args:
-            data (List[str]): Data to run.
-
-        Returns:
-            List[str]: Output data.
+    @abstractmethod
+    def prepare_input(
+        self, provider: str, prompt: str, model_kwargs: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """
-        # Add your implementation here
+        Prepare the input for the model.
+        """
+        pass
+
+    @abstractmethod
+    def prepare_output(self, provider: str, response: Any) -> str:
+        """
+        Prepares the output based on the provider and response.
+        """
+        pass
+
+    @abstractmethod
+    def __call__(self, data: List[str]) -> List[str]:
+        """
+        Run model.
+        """
         pass
 
 
@@ -929,13 +941,13 @@ class SageMakerModelServer(AWSBaseModelServer):
                 "inputs": f"{prompt}",
                 "parameters": model_kwargs,
             }
-            return json.dumps(input_body)
+            return input_body
 
         def prepare_default_input(
             prompt: str, model_kwargs: Dict[str, Any]
         ) -> Dict[str, Any]:
-            input_str = json.dumps({"inputs": prompt, "parameters": model_kwargs})
-            return input_str
+            input_body = {"inputs": prompt, "parameters": model_kwargs}
+            return input_body
 
         model_input_preparation = {
             "falcon": prepare_falcon_input,
@@ -1006,6 +1018,7 @@ class SageMakerModelServer(AWSBaseModelServer):
 
         # Combine the prompt and model parameters into a single input body
         input_body = self.prepare_input(model_type, prompt, params)
+        body = json.dumps(input_body)
         accept = "application/json"
         content_type = "application/json"
 
@@ -1013,12 +1026,12 @@ class SageMakerModelServer(AWSBaseModelServer):
         try:
             response = self._client.invoke_endpoint(
                 EndpointName=self._model_config.endpoint_name,
-                Body=input_body,
+                Body=body,
                 ContentType=content_type,
                 Accept=accept,
             )
         except Exception as e:
-            raise ValueError(f"Error raised by bedrock service: {e}") from e
+            raise ValueError(f"Error raised by sagemaker service: {e}") from e
 
         # Perform post-processing on the response
         text = self.prepare_output(model_type, response)
@@ -1030,10 +1043,6 @@ class SageMakerModelServer(AWSBaseModelServer):
 
     def __call__(self, data: List[str]) -> List[str]:
         """Run model.
-
-        Current bedrock batch inference is implemented by creating asynchronous jobs.
-        At present, we are not temporarily using Batch Inference.
-        Reference: https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference-create.html
 
         Args:
             data List[str]: Data to run.
