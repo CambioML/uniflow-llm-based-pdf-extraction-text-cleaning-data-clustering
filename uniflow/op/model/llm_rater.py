@@ -93,8 +93,79 @@ class LLMRater(LLMDataProcessor):
         return data
 
 
-class JsonFormattedLLMRater(JsonFormattedDataProcessor):
-    """Json Formatted LLM Rater"""
+class OpenAIJsonFormattedLLMRater(JsonFormattedDataProcessor):
+    """OpenAI formatted LLM Rater"""
+
+    def __init__(
+        self,
+        prompt_template: PromptTemplate,
+        model_config: Dict[str, Any],
+        label2score: Dict[str, float],
+    ) -> None:
+        """Json Formatted LLM Rater Constructor.
+
+        Args:
+            prompt_template (PromptTemplate): Guided prompt template.
+            model_config (Dict[str, Any]): Model config.
+            label2score (Dict[str, float]): String to score mapping.
+        """
+        super().__init__(prompt_template, model_config)
+        self._pattern = r"^[^A-Za-z]+|[^A-Za-z]+$"
+        self._label2score = {
+            re.sub(self._pattern, "", k).lower(): float(v)
+            for k, v in label2score.items()
+        }
+        self._score2label = {v: k for k, v in self._label2score.items()}
+        self._rater_key = None
+        if prompt_template.few_shot_prompt:
+            example_keys = list(prompt_template.few_shot_prompt[0].dict().keys())
+            self._rater_key = example_keys[-1]
+
+    def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
+        """Deserialize data.
+
+        Args:
+            data (List[str]): Data to deserialize.
+
+        Returns:
+            List[Dict[str, Any]]: Deserialized data.
+        """
+        data = super()._deserialize(data)
+        response = data[RESPONSE]
+        if self._rater_key:
+            labels = [
+                re.sub(self._pattern, "", r[self._rater_key]).lower()
+                if self._rater_key in r
+                else None
+                for r in response
+            ]
+        else:
+            # If the rater key is not specified, use the last key in the response
+            # as the rater key for the first response.
+            self._rater_key = list(response[0].keys())[-1]
+            labels = [
+                re.sub(self._pattern, "", r[self._rater_key]).lower() for r in response
+            ]
+        scores = []
+        for label in labels:
+            if label is not None and label in self._label2score:
+                scores.append(self._label2score[label])
+        majority_vote = Counter(labels).most_common(1)[0][0]
+        mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
+        data.update(
+            {
+                MAJORITY_VOTE: majority_vote,
+                AVERAGE_SCORE: mean_score,
+                VOTES: labels,
+                SCORES: scores,
+            }
+        )
+
+        return data
+
+
+class HuggingfaceJsonFormattedLLMRater(LLMDataProcessor):
+    """Huggingface formatted Json Formatted LLM Rater"""
 
     def __init__(
         self,
