@@ -11,6 +11,7 @@ from uniflow.op.extract.split.constants import (
 from uniflow.op.model.model_config import (
     BedrockModelConfig,
     HuggingfaceModelConfig,
+    LayoutModelConfig,
     LMQGModelConfig,
     ModelConfig,
     NougatModelConfig,
@@ -44,7 +45,16 @@ class ExtractPDFConfig(ExtractConfig):
     """Nougat Config Class."""
 
     flow_name: str = "ExtractPDFFlow"
-    model_config: ModelConfig = field(default_factory=NougatModelConfig())
+    model_config: ModelConfig = field(default_factory=NougatModelConfig)
+    splitter: str = PARAGRAPH_SPLITTER
+
+
+@dataclass
+class ExtractImageConfig(ExtractConfig):
+    """Extract Image Config Class"""
+
+    flow_name: str = "ExtractImageFlow"
+    model_config: ModelConfig = field(default_factory=LayoutModelConfig())
     splitter: str = PARAGRAPH_SPLITTER
 
 
@@ -102,7 +112,7 @@ class TransformOpenAIConfig(TransformConfig):
     """Transform OpenAI Config Class."""
 
     flow_name: str = "TransformOpenAIFlow"
-    model_config: ModelConfig = field(default_factory=OpenAIModelConfig())
+    model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
 
 
 @dataclass
@@ -110,7 +120,76 @@ class TransformHuggingFaceConfig(TransformConfig):
     """Transform Hugging Face Config Class."""
 
     flow_name: str = "TransformHuggingFaceFlow"
-    model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig())
+    model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig)
+
+
+@dataclass
+class TransformQAHuggingFaceConfig(TransformConfig):
+    """Transform Hugging Face Config Class for raw response format."""
+
+    flow_name: str = "TransformHuggingFaceFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(
+            response_start_key="question", response_format={"type": "text"}
+        )
+    )
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+        Generate one question and its corresponding answer based on the last context in the last
+        example. Follow the format of the examples below to include context, question, and answer in the response.
+        """,
+            few_shot_prompt=[
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the fox?",
+                    answer="brown.",
+                ),
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the dog?",
+                    answer="black.",
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
+    """Transform Hugging Face QA Config Class for Json response format."""
+
+    flow_name: str = "TransformHuggingFaceFlow"
+    # model will start generating response starting from
+    # question, so the response start key is question.
+    # this is very important for the model to generate valid json response.
+    model_config: ModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(
+            response_start_key="question", response_format={"type": "json_object"}
+        )
+    )
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+        Generate one question and its corresponding answer based on the last context in the last
+        example. Follow the format of the examples below to include context, question, and answer in the response.
+        """,
+            few_shot_prompt=[
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the fox?",
+                    answer="brown.",
+                ),
+                Context(
+                    context="The quick brown fox jumps over the lazy black dog.",
+                    question="What is the color of the dog?",
+                    answer="black.",
+                ),
+            ],
+        )
+    )
 
 
 @dataclass
@@ -121,7 +200,7 @@ class TransformLMQGConfig(TransformConfig):
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
-    model_config: ModelConfig = field(default_factory=LMQGModelConfig())
+    model_config: ModelConfig = field(default_factory=LMQGModelConfig)
 
 
 @dataclass
@@ -133,6 +212,105 @@ class TransformCopyConfig(TransformConfig):
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=lambda: {})
+
+
+@dataclass
+class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
+    flow_name: str = "TransformOpenAIFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "text"},
+        )
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Your role is to explore the forefront of technological developments. Examine the text for mentions of state-of-the-art technology applications, innovative methods, or emerging areas of innovation. If present, list each technology by name in a string format. If none are mentioned, return an empty list. Ensure the response is always in a list format.
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="Our new business wins are supported by our product leadership strategy of bringing new product to market that provides value for our customers, such as market-leading 500 bar GDi technology, helping customers improve efficiency, reduce emissions and lower costs leveraging our GDi technology and capital to provide a value-focused solution for our off-highway diesel applications and hydrogen ICE that differentiates us from our competition. We're helping our customers move towards carbon neutral and carbon-free fuels with solutions using ethanol, biofuels and hydrogen, as it's our view that a liquefied or gaseous fuel is going to be a key element of our journey to carbon neutrality.",
+                    answer=["500 bar GDi technology", "carbon neutral"],
+                ),
+                Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    answer=[],
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class TransformForClusteringOpenAIGPT4Config:
+    flow_name: str = "TransformOpenAIFlow"
+    model_config: ModelConfig = field(
+        default_factory=lambda: OpenAIModelConfig(
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
+            num_call=1,
+            temperature=0,
+            response_format={"type": "json_object"},
+        )
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+                Your task as a technology expert is to categorize a list of tech terms. First, cluster these terms into distinct groups based on their semantic similarities, where each group encapsulates a specific technological concept. Second, within these clusters, identify and merge terms that are essentially synonymous. Your final output should be a well-structured dictionary, where each key signifies a unique category of technology, and its corresponding value is a list of technology terms.
+            """,
+            few_shot_prompt=[
+                Context(
+                    context=[
+                        "artificial intelligence",
+                        "AI",
+                        "500 bar GDi technology",
+                        "ML",
+                        "500 bar GDi",
+                        "machine learning",
+                    ],
+                    answer={
+                        "500_BAR_GDI": ["500 bar GDi"],
+                        "AIML": ["AI", "ML"],
+                    },
+                ),
+                Context(
+                    context=[
+                        "cryptocurrency",
+                        "blockchain",
+                        "Bitcoin",
+                        "Ethereum",
+                        "digital currency",
+                        "crypto mining",
+                        "mRNA vaccine",
+                        "gene editing",
+                        "CRISPR",
+                        "Ethereum platform",
+                        "Ether",
+                        "NFTs",
+                        "DNA sequencing",
+                        "bioinformatics",
+                        "mRNA therapy",
+                    ],
+                    answer={
+                        "BIO_TECH": [
+                            "mRNA vaccine",
+                            "gene editing",
+                            "CRISPR",
+                            "DNA sequencing",
+                            "bioinformatics",
+                            "mRNA therapy",
+                        ],
+                        "BLOCKCHAIN_TECH": ["blockchain", "crypto mining", "NFTs"],
+                        "CRYPTOCURRENCY": ["Bitcoin", "cryptocurrency", "Ethereum"],
+                    },
+                ),
+            ],
+        )
+    )
 
 
 ###########################################################

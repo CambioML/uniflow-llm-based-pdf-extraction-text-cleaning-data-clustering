@@ -40,12 +40,14 @@ class AzureOpenAIModelConfig:
 class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
-    model_name: str = "mistralai/Mistral-7B-Instruct-v0.1"
+    model_name: str = "mistralai/Mistral-7B-Instruct-v0.2"
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
     neuron: bool = False
     load_in_4bit: bool = False
     load_in_8bit: bool = True
+    response_start_key: str = None
+    response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
 
 
 @dataclass
@@ -64,6 +66,16 @@ class NougatModelConfig(ModelConfig):
     model_name: str = "0.1.0-small"
     batch_size: int = 1
     model_server: str = "NougatModelServer"
+
+
+@dataclass
+class LayoutModelConfig(ModelConfig):
+    """Layout Model Config Class."""
+
+    model_name: str = "unstructuredio/yolo_x_layout"
+    model_file: str = "yolox_l0.05.onnx"
+    model_server: str = "LayoutModelServer"
+    ocr_lang: list = field(default_factory=lambda: ["en"])
 
 
 @dataclass

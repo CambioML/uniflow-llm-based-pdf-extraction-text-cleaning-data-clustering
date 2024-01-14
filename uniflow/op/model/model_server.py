@@ -3,6 +3,7 @@ All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServe
 """
 
 import json
+import logging
 import re
 import warnings
 from functools import partial
@@ -12,11 +13,15 @@ from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
     BedrockModelConfig,
     HuggingfaceModelConfig,
+    LayoutModelConfig,
     LMQGModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
 )
+from uniflow.op.prompt import PromptTemplate
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 ###############################################################################
 #                             All Model Servers                               #
 ###############################################################################
@@ -76,13 +81,23 @@ class AbsModelServer:
         super().__init_subclass__()
         ModelServerFactory.register(cls.__name__, cls)
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    def __init__(
+        self,
+        prompt_template: PromptTemplate,
+        model_config: Dict[str, Any],
+    ) -> None:
         """Initialize AbsModelServer class.
 
         Args:
+            prompt_template (PromptTemplate): Prompt template.
             model_config (Dict[str, Any]): Model config.
         """
         self._model_config = model_config
+        self._example_keys = None
+        if prompt_template.few_shot_prompt:
+            self._example_keys = list(
+                prompt_template.few_shot_prompt[0].model_dump().keys()
+            )
 
     def _preprocess(self, data: str) -> str:
         """Preprocess data.
@@ -121,11 +136,13 @@ class AbsModelServer:
 class OpenAIModelServer(AbsModelServer):
     """OpenAI Model Server Class."""
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
         # import in class level to avoid installing openai package
         from openai import OpenAI  # pylint: disable=import-outside-toplevel
 
-        super().__init__(model_config)
+        super().__init__(prompt_template, model_config)
         self._model_config = OpenAIModelConfig(**self._model_config)
         self._client = OpenAI()
 
@@ -183,11 +200,13 @@ class OpenAIModelServer(AbsModelServer):
 class AzureOpenAIModelServer(AbsModelServer):
     """Azure OpenAI Model Server Class."""
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
         # import in class level to avoid installing openai package
         from openai import AzureOpenAI  # pylint: disable=import-outside-toplevel
 
-        super().__init__(model_config)
+        super().__init__(prompt_template, model_config)
         self._model_config = AzureOpenAIModelConfig(**self._model_config)
         self._client = AzureOpenAI(
             api_key=self._model_config.api_key,
@@ -249,9 +268,13 @@ class AzureOpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
+
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
         # import in class level to avoid installing transformers package
-        super().__init__(model_config)
+        super().__init__(prompt_template, model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
         if self._model_config.neuron is False:
             try:
@@ -294,6 +317,7 @@ class HuggingfaceModelServer(AbsModelServer):
             self._pipeline = partial(
                 Neuron.neuron_infer, model=model, tokenizer=tokenizer
             )
+        self._tokenizer = tokenizer
 
     def _get_model(self):
         """Get model."""
@@ -324,6 +348,31 @@ class HuggingfaceModelServer(AbsModelServer):
         Returns:
             List[str]: Preprocessed data.
         """
+        # add role and content key to data for apply_chat_template
+        # as argument
+        data = [[{"role": "user", "content": d}] for d in data]
+        # if response_start_key is provided (few shot mode), add it with colon after
+        # the end of instruction token for better instruction following performance.
+        # Below is an example, if you have a QA prompt template like this for 1 shot mode:
+
+        # <s>[INST] "instruction: This is an instruction.\n <-- instruction
+        # context: ... <-- few shot context
+        # question: ... <-- few shot question
+        # answer: ... <-- few shot answer
+        # context: ... [/INST] <-- input context with [/INST]
+        # question:   <-- response_start_key is added here !!!
+        if self._model_config.response_start_key:
+            data = [
+                self._tokenizer.apply_chat_template(d, tokenize=False)
+                + f"\n{self._model_config.response_start_key}: "  # noqa: W503
+                for d in data
+            ]
+        # if response_start_key is not provided, simply add the instruction token
+        # using apply_chat_template
+        else:
+            data = [
+                self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
+            ]
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
@@ -335,7 +384,47 @@ class HuggingfaceModelServer(AbsModelServer):
         Returns:
             List[str]: Postprocessed data.
         """
-        return [d["generated_text"] for output_list in data for d in output_list]
+        response_list = []
+        # clean up instruction token.
+        for output_list in data:
+            for d in output_list:
+                response = re.sub(self.PATTERN, "", d["generated_text"]).strip()
+                response_list.append(response)
+
+        # if response_format is json_object, parse the response into json_object.
+        if (
+            self._model_config.response_format
+            and self._model_config.response_format["type"]  # noqa: W503
+            == "json_object"  # noqa: W503
+        ):
+            # if example_keys (through few shot prompt) are provided,
+            # parse the response into json_object.
+            if self._example_keys:
+                keywords = [f"{example_key}:" for example_key in self._example_keys]
+                pattern = "|".join(map(re.escape, keywords))
+                json_response_list = []
+                for response in response_list:
+                    segments = [
+                        segment.strip() for segment in re.split(pattern, response)
+                    ]
+                    offset = len(segments) - len(self._example_keys)
+                    result_dict = {
+                        key: value
+                        for key, value in zip(self._example_keys, segments[offset:])
+                    }
+
+                    json_response_list.append(result_dict)
+                    response_list = json_response_list
+            else:
+                # if example_keys are not provided, simply return the raw response
+                # even if response_format is json_object. This is because without
+                # few shot prompt, model is not stable to generate parsed response
+                # into json_object.
+                logging.info(
+                    "No example keys found in the prompt template. Returning the raw response without json_object format."
+                )
+
+        return response_list
 
     def __call__(self, data: List[str]) -> List[str]:
         """Run model.
@@ -355,11 +444,13 @@ class HuggingfaceModelServer(AbsModelServer):
 class LMQGModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
         # import in class level to avoid installing transformers package
         from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
 
-        super().__init__(model_config)
+        super().__init__(prompt_template, model_config)
         self._model_config = LMQGModelConfig(**self._model_config)
 
         self._model = TransformersQG(
@@ -406,7 +497,9 @@ class LMQGModelServer(AbsModelServer):
 class NougatModelServer(AbsModelServer):
     """Nougat Model Server Class."""
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
         # import in class level to avoid installing nougat package
         try:
             from nougat import NougatModel  # pylint: disable=import-outside-toplevel
@@ -421,7 +514,7 @@ class NougatModelServer(AbsModelServer):
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
             ) from exc
 
-        super().__init__(model_config)
+        super().__init__(prompt_template, model_config)
         self._model_config = NougatModelConfig(**self._model_config)
         checkpoint = get_checkpoint(None, model_tag=self._model_config.model_name)
         self.model = NougatModel.from_pretrained(checkpoint)
@@ -520,12 +613,14 @@ class BedrockModelServer(AbsModelServer):
     Additionally, it is important to verify that your boto3 version supports the Bedrock runtime.
     """
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
         try:
             # import in class level to avoid installing boto3
             import boto3
 
-            super().__init__(model_config)
+            super().__init__(prompt_template, model_config)
             self._model_config = BedrockModelConfig(**self._model_config)
 
             # If user specifies profile in model config, use that profile
@@ -769,3 +864,141 @@ class BedrockModelServer(AbsModelServer):
             inference_data.append(self.invoke_bedrock_model(prompt=d))
         data = self._postprocess(inference_data)
         return data
+
+
+class LayoutModelServer(AbsModelServer):
+    """Layout Model Server Class."""
+
+    def __init__(self, model_config: Dict[str, Any]) -> None:
+        super().__init__(model_config)
+        self._model_config = LayoutModelConfig(**self._model_config)
+        try:
+            import easyocr  # pylint: disable=import-outside-toplevel
+
+            self.reader = easyocr.Reader(self._model_config.ocr_lang)
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install easyocr to use LayoutModelServer. You can use `pip install easyocr` to install it."
+            ) from exc
+        from .layout_utils import (  # pylint: disable=import-outside-toplevel
+            LayoutPredictor,
+        )
+
+        self.layout_predictor = LayoutPredictor(
+            self._model_config.model_name, self._model_config.model_file
+        )
+
+    def _preprocess(self, data: str) -> List[str]:
+        """Preprocess data.
+
+        Args:
+            data (List[str]): Data to preprocess.
+
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: List[str]) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (List[str]): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        return [d["generated_text"] for output_list in data for d in output_list]
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model.
+
+        Args:
+            data (List[str]): Data to run.
+
+        Returns:
+            List[str]: Output data.
+        """
+        import cv2  # pylint: disable=import-outside-toplevel
+        import numpy as np  # pylint: disable=import-outside-toplevel
+
+        from uniflow.op.model.layout_utils import (  # pylint: disable=import-outside-toplevel
+            XYCut,
+        )
+
+        outs = []
+        for img in data:
+            img = cv2.imread(img)
+            ori_im = img.copy()
+            h, w, _ = img.shape
+            layout_res = self.layout_predictor(img)
+            res_list = []
+            for region in layout_res:
+                res = ""
+                if region["bbox"] is not None:
+                    x1, y1, x2, y2 = region["bbox"]
+                    x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+                    roi_img = ori_im[y1:y2, x1:x2, :]
+                else:
+                    x1, y1, x2, y2 = 0, 0, w, h
+                    roi_img = ori_im
+                wht_im = np.ones(ori_im.shape, dtype=ori_im.dtype)
+
+                wht_im[y1:y2, x1:x2, :] = roi_img
+                result = self.reader.readtext(wht_im)
+                if len(result) == 0:
+                    continue
+                filter_boxes, filter_rec_res, scores = zip(*result)
+                res = []
+                for box, rec_res, score in zip(filter_boxes, filter_rec_res, scores):
+                    rec_str = rec_res
+                    rec_conf = score
+                    res.append(
+                        {
+                            "text": rec_str,
+                            "confidence": float(rec_conf),
+                            "text_region": box,
+                        }
+                    )
+                res_list.append(
+                    {
+                        "type": region["type"].lower(),
+                        "bbox": [x1, y1, x2, y2],
+                        "img": roi_img,
+                        "res": res,
+                    }
+                )
+            res = []
+            boxes = [res["bbox"] for res in res_list]
+            XYCut.recursive_xy_cut(
+                np.asarray(boxes).astype(int), np.arange(len(boxes)), res
+            )
+            sorted_res_list = [res_list[idx] for idx in res]
+            final_md = ""
+            for _, region in enumerate(sorted_res_list):
+                if len(region["res"]) == 0:
+                    continue
+                if region["type"] in ("title", "page-header", "section-header"):
+                    final_md += (
+                        "## "
+                        + " ".join([text["text"] for text in region["res"]])
+                        + "\n\n"
+                    )
+                elif region["type"] in (
+                    "picture",
+                    "footnote",
+                    "formula",
+                    "list-item",
+                    "text",
+                    "caption",
+                    "page-footer",
+                    "table",
+                ):
+                    final_md += (
+                        " ".join([text["text"] for text in region["res"]]) + "\n\n"
+                    )
+                else:
+                    print(region["type"])
+            out = re.sub(r"\n{3,}", "\n\n", final_md.strip()).strip()
+            outs.append(out)
+        return outs
