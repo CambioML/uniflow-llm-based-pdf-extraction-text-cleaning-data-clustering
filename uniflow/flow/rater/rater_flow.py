@@ -32,12 +32,6 @@ class RaterFlow(Flow):
         if (
             "response_format" in model_config
             and model_config["response_format"]["type"] == "json_object"  # noqa: W503
-            # TODO: This is a quick and dirty fix that JsonFormattedLLMRater
-            # is only for OpenAI model to return json string and use load to
-            # load into json object. For other model, it must use LLMRater
-            # for Huggingface model, it further support json_object by manually parse
-            # the response into json format while not relying on the model.
-            and "openai" in model_config["model_server"].lower()  # noqa: W503
         ):
             model = JsonFormattedLLMRater(
                 prompt_template=prompt_template,
