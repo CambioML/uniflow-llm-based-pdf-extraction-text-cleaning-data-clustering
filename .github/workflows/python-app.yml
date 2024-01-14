@@ -39,10 +39,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --statistics
     - name: Format code with Black
       run: |
-        black . --exclude="" --check
+        black . --exclude="" --check --verbose
     - name: Sort imports with isort
       run: |
-        isort . --profile=black --check-only
+        isort . --profile=black --check-only --verbose
     - name: Test with unittest
       run: |
         poetry run python -m unittest discover
