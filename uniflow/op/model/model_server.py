@@ -616,15 +616,15 @@ class AWSBaseModelServer(AbsModelServer):
 
             # If user specifies profile in model config, use that profile
             if "aws_profile" in model_config:
-                aws_profile = model_config["aws_profile"]
-                self.session = boto3.Session(profile_name=aws_profile)
+                aws_profile = model_config.get("aws_profile", "default")
+                self._session = boto3.Session(profile_name=aws_profile)
             # Otherwise if the user specifies credentials directly in the model config, use those credentials
             elif model_config.get("aws_access_key_id") and model_config.get(
                 "aws_secret_access_key"
             ):
-                self.session = boto3.Session(
-                    aws_access_key_id=model_config["aws_access_key_id"],
-                    aws_secret_access_key=model_config["aws_secret_access_key"],
+                self._session = boto3.Session(
+                    aws_access_key_id=model_config.get("aws_access_key_id"),
+                    aws_secret_access_key=model_config.get("aws_secret_access_key"),
                     aws_session_token=model_config.get("aws_session_token"),
                 )
                 warnings.warn(
@@ -632,7 +632,7 @@ class AWSBaseModelServer(AbsModelServer):
                     "Please use a profile instead."
                 )
             else:
-                self.session = boto3.Session(profile_name="default")
+                self._session = boto3.Session(profile_name="default")
                 warnings.warn(
                     "Using default profile to create the session. "
                     "Please pass the profile name in the model config."
@@ -684,21 +684,21 @@ class AWSBaseModelServer(AbsModelServer):
         """
         Prepare the input for the model.
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def prepare_output(self, provider: str, response: Any) -> str:
         """
         Prepares the output based on the provider and response.
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def __call__(self, data: List[str]) -> List[str]:
         """
         Run model.
         """
-        pass
+        raise NotImplementedError
 
 
 class BedrockModelServer(AWSBaseModelServer):
@@ -719,7 +719,7 @@ class BedrockModelServer(AWSBaseModelServer):
     ) -> None:
         super().__init__(prompt_template, model_config)
         self._model_config = BedrockModelConfig(**self._model_config)
-        self._client = self.session.client(
+        self._client = self._session.client(
             "bedrock-runtime", region_name=self.aws_region
         )
 
@@ -915,7 +915,7 @@ class SageMakerModelServer(AWSBaseModelServer):
     ) -> None:
         super().__init__(prompt_template, model_config)
         self._model_config = SageMakerModelConfig(**self._model_config)
-        self._client = self.session.client(
+        self._client = self._session.client(
             "sagemaker-runtime", region_name=self.aws_region
         )
 
@@ -943,7 +943,7 @@ class SageMakerModelServer(AWSBaseModelServer):
             }
             return input_body
 
-        def prepare_default_input(
+        def prepare_mistral_input(
             prompt: str, model_kwargs: Dict[str, Any]
         ) -> Dict[str, Any]:
             input_body = {"inputs": prompt, "parameters": model_kwargs}
@@ -951,11 +951,11 @@ class SageMakerModelServer(AWSBaseModelServer):
 
         model_input_preparation = {
             "falcon": prepare_falcon_input,
-            "mistral": prepare_default_input,
+            "mistral": prepare_mistral_input,
         }
 
         prepare_input_for_model = model_input_preparation.get(
-            model_type, prepare_default_input
+            model_type, prepare_mistral_input
         )
         return prepare_input_for_model(prompt, model_kwargs)
 
@@ -978,17 +978,17 @@ class SageMakerModelServer(AWSBaseModelServer):
             response_body = json.loads(response.get("Body").read())
             return response_body[0].get("generated_text")
 
-        def prepare_default_output(response: Any) -> str:
+        def prepare_mistral_output(response: Any) -> str:
             response_body = json.loads(response.get("Body").read())
             return response_body.get("outputs")
 
         model_output_preparation = {
             "falcon": prepare_falcon_output,
-            "mistral": prepare_default_output,
+            "mistral": prepare_mistral_output,
         }
 
         prepare_output_for_model = model_output_preparation.get(
-            model_type, prepare_default_output
+            model_type, prepare_mistral_output
         )
         return prepare_output_for_model(response)
 

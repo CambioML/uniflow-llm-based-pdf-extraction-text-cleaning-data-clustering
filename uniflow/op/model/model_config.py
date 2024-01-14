@@ -96,7 +96,7 @@ class BedrockModelConfig:
 
 @dataclass
 class SageMakerModelConfig:
-    """Bedrock Model Config Class."""
+    """SageMaker Model Config Class."""
 
     endpoint_name: str
     model_type: str
