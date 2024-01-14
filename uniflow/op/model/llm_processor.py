@@ -107,7 +107,6 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
 
         for d in data:
             try:
-                print(isinstance(d, dict))
                 # this is a quick and dirty fix because huggingface model server
                 # might already return the response in json format
                 output_list.append(d if isinstance(d, dict) else json.loads(d))
