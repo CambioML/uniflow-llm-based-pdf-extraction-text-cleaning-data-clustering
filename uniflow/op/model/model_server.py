@@ -1061,8 +1061,10 @@ class SageMakerModelServer(AWSBaseModelServer):
 class LayoutModelServer(AbsModelServer):
     """Layout Model Server Class."""
 
-    def __init__(self, model_config: Dict[str, Any]) -> None:
-        super().__init__(model_config)
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
+        super().__init__(prompt_template, model_config)
         self._model_config = LayoutModelConfig(**self._model_config)
         try:
             import easyocr  # pylint: disable=import-outside-toplevel
