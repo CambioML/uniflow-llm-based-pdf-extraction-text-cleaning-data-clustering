@@ -556,7 +556,13 @@ class RaterForClassificationHuggingfaceConfig(RaterConfig):
                                                answer, label, and explanation for each case.
     """
 
-    model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig())
+    model_config: ModelConfig = field(
+        default_factory=HuggingfaceModelConfig(
+            response_start_key="explanation",
+            response_format={"type": "text"},
+            batch_size=1
+        )
+    )
     label2score: Dict[str, float] = field(
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
