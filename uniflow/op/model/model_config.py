@@ -47,6 +47,9 @@ class HuggingfaceModelConfig(ModelConfig):
     load_in_4bit: bool = False
     load_in_8bit: bool = True
     max_new_tokens: int = 768
+    do_sample: bool = False
+    temperature: float = 0.0
+    num_beams: int = 1
     num_return_sequences: int = 1
     repetition_penalty: float = 1.2
     response_start_key: str = None
