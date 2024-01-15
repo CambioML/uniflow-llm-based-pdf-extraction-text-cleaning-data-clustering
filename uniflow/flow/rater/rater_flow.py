@@ -33,7 +33,10 @@ class RaterFlow(Flow):
             label2score (Dict[str, float]): String to score mapping.
         """
         super().__init__()
-        if model_config["response_format"]["type"] == "json_object":
+        if (
+            "response_format" in model_config
+            and model_config["response_format"]["type"] == "json_object"  # noqa: W503
+        ):
             if "openai" in model_config["model_server"].lower():
                 model = OpenAIJsonFormattedLLMRater(
                     prompt_template=prompt_template,
