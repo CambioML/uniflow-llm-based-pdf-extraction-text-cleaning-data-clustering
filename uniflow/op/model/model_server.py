@@ -2,11 +2,11 @@
 All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
 """
 
+import abc
 import json
 import logging
 import re
 import warnings
-from abc import abstractmethod
 from functools import partial
 from typing import Any, Dict, List, Optional
 
@@ -677,7 +677,7 @@ class AWSBaseModelServer(AbsModelServer):
         """Cut off the text as soon as any stop words occur."""
         return re.split("|".join(stop), text, maxsplit=1)[0]
 
-    @abstractmethod
+    @abc.abstractmethod
     def prepare_input(
         self, provider: str, prompt: str, model_kwargs: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -686,14 +686,14 @@ class AWSBaseModelServer(AbsModelServer):
         """
         raise NotImplementedError
 
-    @abstractmethod
+    @abc.abstractmethod
     def prepare_output(self, provider: str, response: Any) -> str:
         """
         Prepares the output based on the provider and response.
         """
         raise NotImplementedError
 
-    @abstractmethod
+    @abc.abstractmethod
     def __call__(self, data: List[str]) -> List[str]:
         """
         Run model.
