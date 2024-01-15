@@ -16,6 +16,7 @@ from uniflow.op.model.model_config import (
     ModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
+    SageMakerModelConfig,
 )
 
 ###########################################################
@@ -507,6 +508,55 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
     """
 
     model_config: ModelConfig = field(default_factory=BedrockModelConfig)
+    label2score: Dict[str, float] = field(
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
+    )
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Evaluate the appropriateness of a given answer based on the question and the context.
+            There are few examples below, consisting of context, question, answer, explanation and label.
+            If answer is appropriate, you should give a label representing higher score and vise versa. Check label to score dictionary: {label2score}.
+            Your response should only focus on the unlabeled sample, including two fields: explanation and label (one of {label_list}).
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="The Eiffel Tower, located in Paris, France, is one of the most famous landmarks in the world. It was constructed in 1889 and stands at a height of 324 meters.",
+                    question="When was the Eiffel Tower constructed?",
+                    answer="The Eiffel Tower was constructed in 1889.",
+                    explanation="The context explicitly mentions that the Eiffel Tower was constructed in 1889, so the answer is correct.",
+                    label="Yes",
+                ),
+                Context(
+                    context="Photosynthesis is a process used by plants to convert light energy into chemical energy. This process primarily occurs in the chloroplasts of plant cells.",
+                    question="Where does photosynthesis primarily occur in plant cells?",
+                    answer="Photosynthesis primarily occurs in the mitochondria of plant cells.",
+                    explanation="The context mentions that photosynthesis primarily occurs in the chloroplasts of plant cells, so the answer is incorrect.",
+                    label="No",
+                ),
+            ],
+        )
+    )
+
+
+@dataclass
+class RaterForClassificationSageMakerEndpointConfig(RaterConfig):
+    """Rater classification SageMaker Endpoint Config Class.
+    The configuration primarily focuses on setting up the parameters for utilizing SageMaker ENdpoint to evaluate the
+    correctness of answers in relation to given questions and contexts.
+
+    Attributes:
+        flow_name (str): Name of the rating flow, default is "RaterFlow".
+        model_config (ModelConfig): Configuration for the SageMaker model. Includes aws_region ("us-west-2"), aws_profile ("default"),
+        aws_access_key_id, aws_secret_key_id, aws_secret_access_key, aws_session_token, and the model_kwargs.
+        label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
+        prompt_template (PromptTemplate): Template for prompts used in rating. Includes instructions
+                                               for rating, along with examples that detail the context, question,
+                                               answer, label, and explanation for each case.
+    """
+
+    flow_name: str = "RaterFlow"
+    model_config: ModelConfig = field(default_factory=SageMakerModelConfig)
     label2score: Dict[str, float] = field(
         default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
