@@ -32,10 +32,10 @@
 
 - **GET: /api/v1/flow/expandReduce**
   - take an id and return its status.
-  - retuest format `{id: a five digits number}`, example: `{id: 12345}`
+  - request format `{id: a five digits number}`, example: `{id: 12345}`
   - respond format `{status: str}`, example: `{status: pending}`
 
 - **GET: /api/v1/node/value**
   - get all key value pairs from single page(max 50 rows)
-  - retuest format `{page: integer}`, example: `{page: 1}`
+  - request format `{page: integer}`, example: `{page: 1}`
   - respond format `{key: value, ...}` max 50 pairs, example: `{"How are you?": "Fine."}`
