@@ -3,6 +3,8 @@ from uniflow.constants import EXPAND_REDUCE
 from uniflow.op.basic.expand_op import ExpandOp
 from uniflow.op.basic.reduce_op import ReduceOp
 from uniflow.node import Node
+from uniflow.db.store_node import store_node, store_edge
+
 
 class ExpandReduceFlow(Flow):
     """ExpandReduceFlow class.
@@ -26,5 +28,17 @@ class ExpandReduceFlow(Flow):
         Returns:
             Node: Node after running.
         """
-        nodes = self._expand_op(node)
-        return self._reduce_op(expand_1=nodes[0], expand_2=nodes[1])
+        # for root, nodes are more likely already in the db
+        store_node(node=node)
+
+        expand_nodes = self._expand_op(node)
+        for expand_node in expand_nodes:
+            store_node(node=expand_node)
+            store_edge(node=node, next=expand_node)
+
+        reduce_node = self._reduce_op(expand_1=expand_nodes[0], expand_2=expand_nodes[1])
+        store_node(reduce_node)
+        store_edge(node=expand_nodes[0], next=reduce_node)
+        store_edge(node=expand_nodes[1], next=reduce_node)
+
+        return reduce_node
