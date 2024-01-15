@@ -46,6 +46,9 @@ class HuggingfaceModelConfig(ModelConfig):
     neuron: bool = False
     load_in_4bit: bool = False
     load_in_8bit: bool = True
+    max_new_tokens: int = 768
+    num_return_sequences: int = 1
+    repetition_penalty: float = 1.2
     response_start_key: str = None
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
 
