@@ -2,24 +2,40 @@
 
 ## Database:
 - ***Postgresql 12***
-    - install postgresql.
-      `sudo apt-get update`
-      `yes | sudo apt-get install postgresql`
+  - install postgresql.
+    `sudo apt-get update`
+    `yes | sudo apt-get install postgresql`
 
-    - start the DB server.
-      `sudo service postgresql start`
+  - start the DB server.
+    `sudo service postgresql start`
 
-    - enter DB, set a password.
-      `sudo -u postgres psql postgres`
-      `\password postgres`
-      `\t`
+  - enter DB, set a password.
+    `sudo -u postgres psql postgres`
+    `\password postgres`
+    `\t`
 
-    - create DB for uniflow.
-      `sudo -u postgres createdb uniflow -O uniflowAdmin`
+  - create DB for uniflow.
+    `sudo -u postgres createdb uniflow -O uniflowAdmin`
 
-    - go to *uniflow/uniflow/db*, load schema.
-      `\i schema.sql` then `\q`
+  - go to *uniflow/uniflow/db*, load schema.
+    `\i schema.sql` then `\q`
 
-    - make it ready for python.
-      `pip3 install psycopg2`
-      `pip3 install psycopg2-binary` if import error occur.
+  - make it ready for python.
+    `pip3 install psycopg2` or
+    `pip3 install psycopg2-binary` if import error occur.
+
+## API:
+- **POST: /api/v1/flow/expandReduce**
+  - take an input and build as root node, then do expand and reduce op.
+  - request format `{key: value, ...}`, example: `{"How are you?": "Fine."}`
+  - respond format `{id: a five digits number}`, example: `{id: 12345}`
+
+- **GET: /api/v1/flow/expandReduce**
+  - take an id and return its status.
+  - retuest format `{id: a five digits number}`, example: `{id: 12345}`
+  - respond format `{status: str}`, example: `{status: pending}`
+
+- **GET: /api/v1/node/value**
+  - get all key value pairs from single page(max 50 rows)
+  - retuest format `{page: integer}`, example: `{page: 1}`
+  - respond format `{key: value, ...}` max 50 pairs, example: `{"How are you?": "Fine."}`

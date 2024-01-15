@@ -1,6 +1,5 @@
 import psycopg2
 import threading
-from typing import Any
 
 from uniflow.node import Node
 
