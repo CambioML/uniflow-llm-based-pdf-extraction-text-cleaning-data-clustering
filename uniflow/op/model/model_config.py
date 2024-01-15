@@ -92,3 +92,18 @@ class BedrockModelConfig:
     model_server: str = "BedrockModelServer"
     # TODO: Need to consider the best approach for handling model arguments
     model_kwargs: Dict[str, Any] = field(default_factory=lambda: {})
+
+
+@dataclass
+class SageMakerModelConfig:
+    """SageMaker Model Config Class."""
+
+    endpoint_name: str
+    model_type: str
+    aws_region: str = "us-west-2"
+    aws_profile: str = "default"
+    aws_access_key_id: str = ""
+    aws_secret_access_key: str = ""
+    aws_session_token: str = ""
+    model_server: str = "SageMakerModelServer"
+    model_kwargs: Dict[str, Any] = field(default_factory=lambda: {})

@@ -2,6 +2,7 @@
 All Model Servers including ModelServerFactory, AbsModelServer, OpenAIModelServer and HuggingfaceModelServer.
 """
 
+import abc
 import json
 import logging
 import re
@@ -17,6 +18,7 @@ from uniflow.op.model.model_config import (
     LMQGModelConfig,
     NougatModelConfig,
     OpenAIModelConfig,
+    SageMakerModelConfig,
 )
 from uniflow.op.prompt import PromptTemplate
 
@@ -600,18 +602,8 @@ class NougatModelServer(AbsModelServer):
         return outs
 
 
-class BedrockModelServer(AbsModelServer):
-    """Bedrock Model Server Class.
-
-    The AWS client authenticates by automatically loading credentials as per the methods outlined here:
-    https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
-
-    If you wish to use a specific credential profile, please provide the profile name from your ~/.aws/credentials file.
-
-    Make sure that the credentials or roles in use have the necessary policies for Bedrock service access.
-
-    Additionally, it is important to verify that your boto3 version supports the Bedrock runtime.
-    """
+class AWSBaseModelServer(AbsModelServer):
+    """AWS Base Model Server Class."""
 
     def __init__(
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
@@ -621,44 +613,38 @@ class BedrockModelServer(AbsModelServer):
             import boto3
 
             super().__init__(prompt_template, model_config)
-            self._model_config = BedrockModelConfig(**self._model_config)
 
             # If user specifies profile in model config, use that profile
             if "aws_profile" in model_config:
-                aws_profile = self._model_config.aws_profile
-                session = boto3.Session(profile_name=aws_profile)
+                aws_profile = model_config.get("aws_profile", "default")
+                self._session = boto3.Session(profile_name=aws_profile)
             # Otherwise if the user specifies credentials directly in the model config, use those credentials
-            elif (
-                self._model_config.aws_access_key_id
-                and self._model_config.aws_secret_access_key
+            elif model_config.get("aws_access_key_id") and model_config.get(
+                "aws_secret_access_key"
             ):
-                session = boto3.Session(
-                    aws_access_key_id=self._model_config.aws_access_key_id,
-                    aws_secret_access_key=self._model_config.aws_secret_access_key,
-                    aws_session_token=self._model_config.aws_session_token,
+                self._session = boto3.Session(
+                    aws_access_key_id=model_config.get("aws_access_key_id"),
+                    aws_secret_access_key=model_config.get("aws_secret_access_key"),
+                    aws_session_token=model_config.get("aws_session_token"),
                 )
                 warnings.warn(
                     "Using AWS credentials directly in the model config is not recommended. "
                     "Please use a profile instead."
                 )
             else:
-                session = boto3.Session(profile_name="default")
+                self._session = boto3.Session(profile_name="default")
                 warnings.warn(
                     "Using default profile to create the session. "
                     "Please pass the profile name in the model config."
                 )
 
-            aws_region = (
-                self._model_config.aws_region if self._model_config.aws_region else None
-            )
+            self.aws_region = model_config.get("aws_region", None)
 
-            self._client = session.client("bedrock-runtime", region_name=aws_region)
-
-        except ImportError:
+        except ImportError as exc:
             raise ModuleNotFoundError(
                 "Failed to import the 'boto3' Python package. "
                 "Please install it by running `pip install boto3`."
-            )
+            ) from exc
         except Exception as e:
             raise ValueError(
                 "Failed to load credentials for authenticating with the AWS client. "
@@ -687,12 +673,58 @@ class BedrockModelServer(AbsModelServer):
         """
         return data
 
-    def _get_provider(self) -> str:
-        return self._model_config.model_name.split(".")[0]
-
     def enforce_stop_tokens(self, text: str, stop: List[str]) -> str:
         """Cut off the text as soon as any stop words occur."""
         return re.split("|".join(stop), text, maxsplit=1)[0]
+
+    @abc.abstractmethod
+    def prepare_input(
+        self, provider: str, prompt: str, model_kwargs: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Prepare the input for the model.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def prepare_output(self, provider: str, response: Any) -> str:
+        """
+        Prepares the output based on the provider and response.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def __call__(self, data: List[str]) -> List[str]:
+        """
+        Run model.
+        """
+        raise NotImplementedError
+
+
+class BedrockModelServer(AWSBaseModelServer):
+    """Bedrock Model Server Class.
+
+    The AWS client authenticates by automatically loading credentials as per the methods outlined here:
+    https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+
+    If you wish to use a specific credential profile, please provide the profile name from your ~/.aws/credentials file.
+
+    Make sure that the credentials or roles in use have the necessary policies for Bedrock service access.
+
+    Additionally, it is important to verify that your boto3 version supports the Bedrock runtime.
+    """
+
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
+        super().__init__(prompt_template, model_config)
+        self._model_config = BedrockModelConfig(**self._model_config)
+        self._client = self._session.client(
+            "bedrock-runtime", region_name=self.aws_region
+        )
+
+    def _get_provider(self) -> str:
+        return self._model_config.model_name.split(".")[0]
 
     def prepare_input(
         self, provider: str, prompt: str, model_kwargs: Dict[str, Any]
@@ -835,7 +867,7 @@ class BedrockModelServer(AbsModelServer):
                 contentType=contentType,
             )
         except Exception as e:
-            raise ValueError(f"Error raised by bedrock service: {e}")
+            raise ValueError(f"Error raised by bedrock service: {e}") from e
 
         # Perform post-processing on the response
         text = self.prepare_output(provider, response)
@@ -862,6 +894,166 @@ class BedrockModelServer(AbsModelServer):
         inference_data = []
         for d in data:
             inference_data.append(self.invoke_bedrock_model(prompt=d))
+        data = self._postprocess(inference_data)
+        return data
+
+
+class SageMakerModelServer(AWSBaseModelServer):
+    """
+    SageMaker Model Server Class.
+
+    The AWS client authenticates by automatically loading credentials as per the methods outlined here:
+    https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html
+
+    If you wish to use a specific credential profile, please provide the profile name from your ~/.aws/credentials file.
+
+    Make sure that the credentials or roles in use have the necessary policies for SageMaker service access.
+    """
+
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
+        super().__init__(prompt_template, model_config)
+        self._model_config = SageMakerModelConfig(**self._model_config)
+        self._client = self._session.client(
+            "sagemaker-runtime", region_name=self.aws_region
+        )
+
+    def prepare_input(
+        self, model_type: str, prompt: str, model_kwargs: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Prepare the input for the model based on the model_type.
+
+        Args:
+            model_type (str): The type of the model.
+            prompt (str): The input prompt.
+            model_kwargs (Dict[str, Any]): Additional model arguments.
+
+        Returns:
+            Dict[str, Any]: The prepared input for the model.
+        """
+
+        def prepare_falcon_input(
+            prompt: str, model_kwargs: Dict[str, Any]
+        ) -> Dict[str, Any]:
+            input_body = {
+                "inputs": f"{prompt}",
+                "parameters": model_kwargs,
+            }
+            return input_body
+
+        def prepare_mistral_input(
+            prompt: str, model_kwargs: Dict[str, Any]
+        ) -> Dict[str, Any]:
+            input_body = {"inputs": prompt, "parameters": model_kwargs}
+            return input_body
+
+        model_input_preparation = {
+            "falcon": prepare_falcon_input,
+            "mistral": prepare_mistral_input,
+        }
+
+        prepare_input_for_model = model_input_preparation.get(
+            model_type, prepare_mistral_input
+        )
+        return prepare_input_for_model(prompt, model_kwargs)
+
+    def prepare_output(self, model_type: str, response: Any) -> str:
+        """
+        Prepares the output based on the model_type and response.
+
+        Args:
+            model_type (str): The model_type of the response.
+            response (Any): The response object.
+
+        Returns:
+            str: The prepared output.
+
+        Raises:
+            None
+        """
+
+        def prepare_falcon_output(response: Any) -> str:
+            response_body = json.loads(response.get("Body").read())
+            return response_body[0].get("generated_text")
+
+        def prepare_mistral_output(response: Any) -> str:
+            response_body = json.loads(response.get("Body").read())
+            return response_body.get("outputs")
+
+        model_output_preparation = {
+            "falcon": prepare_falcon_output,
+            "mistral": prepare_mistral_output,
+        }
+
+        prepare_output_for_model = model_output_preparation.get(
+            model_type, prepare_mistral_output
+        )
+        return prepare_output_for_model(response)
+
+    def invoke_sagemaker_model(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> str:
+        """
+        Invokes the sagemaker model with the given prompt and optional stop tokens.
+
+        Args:
+            prompt (str): The input prompt for the model.
+            stop (Optional[List[str]]): List of stop tokens to indicate the end of the generated text.
+            **kwargs: Additional keyword arguments to be passed to the model.
+
+        Returns:
+            str: The generated text from the sagemaker model.
+
+        Raises:
+            ValueError: If there is an error raised by the Amazon Sagemaker service.
+        """
+        model_type = self._model_config.model_type
+        _model_kwargs = self._model_config.model_kwargs or {}
+        params = {**_model_kwargs, **kwargs}
+
+        # Combine the prompt and model parameters into a single input body
+        input_body = self.prepare_input(model_type, prompt, params)
+        body = json.dumps(input_body)
+        accept = "application/json"
+        content_type = "application/json"
+
+        # Invoke the model
+        try:
+            response = self._client.invoke_endpoint(
+                EndpointName=self._model_config.endpoint_name,
+                Body=body,
+                ContentType=content_type,
+                Accept=accept,
+            )
+        except Exception as e:
+            raise ValueError(f"Error raised by sagemaker service: {e}") from e
+
+        # Perform post-processing on the response
+        text = self.prepare_output(model_type, response)
+
+        if stop is not None:
+            text = self.enforce_stop_tokens(text, stop)
+
+        return text
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model.
+
+        Args:
+            data List[str]: Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        data = self._preprocess(data)
+        inference_data = []
+        for d in data:
+            inference_data.append(self.invoke_sagemaker_model(prompt=d))
         data = self._postprocess(inference_data)
         return data
 
