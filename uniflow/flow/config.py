@@ -610,7 +610,7 @@ class RaterForClassificationHuggingfaceConfig(RaterConfig):
         default_factory=HuggingfaceModelConfig(
             response_start_key="explanation",
             response_format={"type": "text"},
-            batch_size=1
+            batch_size=1,
         )
     )
     label2score: Dict[str, float] = field(
