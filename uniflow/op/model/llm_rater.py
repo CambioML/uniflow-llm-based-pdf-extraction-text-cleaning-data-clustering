@@ -75,7 +75,7 @@ class LLMRater(LLMDataProcessor):
         response = data[RESPONSE]
         reformatted_responses = []
         for i in range(0, len(response), self._num_samples):
-            samples = response[i : (i + 1) * self._num_samples]  # noqa: E203
+            samples = response[i : i + self._num_samples]  # noqa: E203
 
             labels = [_extract_label(d) for d in samples]
             scores = []
@@ -141,7 +141,7 @@ class OpenAIJsonFormattedLLMRater(JsonFormattedDataProcessor):
         reformatted_responses = []
 
         for i in range(0, len(response), self._num_samples):
-            samples = response[i : (i + 1) * self._num_samples]  # noqa: E203
+            samples = response[i : i + self._num_samples]  # noqa: E203
             if self._rater_key:
                 labels = [
                     re.sub(self._pattern, "", r[self._rater_key]).lower()
@@ -218,7 +218,7 @@ class HuggingfaceJsonFormattedLLMRater(LLMDataProcessor):
         reformatted_responses = []
 
         for i in range(0, len(response), self._num_samples):
-            samples = response[i : (i + 1) * self._num_samples]  # noqa: E203
+            samples = response[i : i + self._num_samples]  # noqa: E203
             if self._rater_key:
                 labels = [
                     re.sub(self._pattern, "", r[self._rater_key]).lower()
