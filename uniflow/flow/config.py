@@ -346,6 +346,17 @@ class RaterConfig:
             )
         if missing_labels:
             print(f"The label2score label {missing_labels} not in example label.")
+        # batch_size must be divisible by num_return_sequences for HuggingfaceModelConfig only
+        # This might need to be extended to other model configs in the future.
+        if isinstance(self.model_config, HuggingfaceModelConfig):
+            if (
+                self.model_config.batch_size % self.model_config.num_return_sequences
+                != 0  # noqa E501
+            ):
+                raise ValueError(
+                    f"batch_size {self.model_config.batch_size} must be divisible by"
+                    f"num_return_sequences {self.model_config.num_return_sequences}"
+                )
 
     def check_labels(self) -> Dict[str, list]:
         """
