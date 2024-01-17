@@ -2,16 +2,10 @@
 import logging
 import os
 
-OPS_NAME = set()
 OPS_SCOPE = []
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-
-def clear_ops_name():
-    """Clear ops name."""
-    OPS_NAME.clear()
 
 
 def get_op_scope_name(name: str) -> str:
