@@ -1,7 +1,6 @@
 import unittest
 from typing import Sequence
 
-import uniflow.op.utils as utils
 from uniflow.node import Node
 from uniflow.op.op import Op
 
@@ -22,16 +21,6 @@ class TestOp(unittest.TestCase):
     def test_init(self):
         self.assertEqual(self.op._scope_name, self.op_name)
         self.assertEqual(self.op._count, 0)
-        self.assertIn(self.op_name, utils.OPS_NAME)
-
-        # TODO: fix 'test_op' KeyError on __del__
-        # with self.assertRaises(ValueError):
-        #     DummyOp(self.op_name)
-
-    def test_del(self):
-        self.assertIn(self.op_name, utils.OPS_NAME)
-        del self.op
-        self.assertNotIn(self.op_name, utils.OPS_NAME)
 
     def test_clear_count(self):
         self.op._count = 10

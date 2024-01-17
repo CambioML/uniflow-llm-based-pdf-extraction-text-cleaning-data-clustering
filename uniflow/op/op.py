@@ -37,13 +37,6 @@ class Op(abc.ABC):
         """
         self._scope_name = utils.get_op_scope_name(name)
         self._count = 0
-        if self._scope_name in utils.OPS_NAME:
-            raise ValueError(f"{self._scope_name} already exists.")
-        utils.OPS_NAME.add(self._scope_name)
-
-    def __del__(self) -> None:
-        """Destructor of op class for uniflow."""
-        utils.OPS_NAME.remove(self._scope_name)
 
     def clear_count(self) -> None:
         """Clear count of the op."""
