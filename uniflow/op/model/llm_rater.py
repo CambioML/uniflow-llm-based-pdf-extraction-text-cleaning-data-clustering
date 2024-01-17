@@ -8,6 +8,7 @@ from uniflow.op.model.constants import (
     AVERAGE_SCORE,
     MAJORITY_VOTE,
     RESPONSE,
+    SAMPLES,
     SCORES,
     VOTES,
 )
@@ -72,23 +73,28 @@ class LLMRater(LLMDataProcessor):
 
         data = super()._deserialize(data)
         response = data[RESPONSE]
+        reformatted_responses = []
+        for i in range(0, len(response), self._num_samples):
+            samples = response[i : i + self._num_samples]  # noqa: E203
 
-        labels = [_extract_label(d) for d in response]
-        scores = []
-        for label in labels:
-            if label is not None:
-                scores.append(self._label2score[label])
-        majority_vote = Counter(labels).most_common(1)[0][0]
-        mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
+            labels = [_extract_label(d) for d in samples]
+            scores = []
+            for label in labels:
+                if label is not None:
+                    scores.append(self._label2score[label])
+            majority_vote = Counter(labels).most_common(1)[0][0]
+            mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
 
-        data.update(
-            {
-                MAJORITY_VOTE: majority_vote,
-                AVERAGE_SCORE: mean_score,
-                VOTES: labels,
-                SCORES: scores,
-            }
-        )
+            reformatted_responses.append(
+                {
+                    SAMPLES: samples,
+                    MAJORITY_VOTE: majority_vote,
+                    AVERAGE_SCORE: mean_score,
+                    VOTES: labels,
+                    SCORES: scores,
+                }
+            )
+        data[RESPONSE] = reformatted_responses
 
         return data
 
@@ -132,35 +138,41 @@ class OpenAIJsonFormattedLLMRater(JsonFormattedDataProcessor):
         """
         data = super()._deserialize(data)
         response = data[RESPONSE]
-        if self._rater_key:
-            labels = [
-                re.sub(self._pattern, "", r[self._rater_key]).lower()
-                if self._rater_key in r
-                else None
-                for r in response
-            ]
-        else:
-            # If the rater key is not specified, use the last key in the response
-            # as the rater key for the first response.
-            self._rater_key = list(response[0].keys())[-1]
-            labels = [
-                re.sub(self._pattern, "", r[self._rater_key]).lower() for r in response
-            ]
-        scores = []
-        for label in labels:
-            if label is not None and label in self._label2score:
-                scores.append(self._label2score[label])
-        majority_vote = Counter(labels).most_common(1)[0][0]
-        mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
-        data.update(
-            {
-                MAJORITY_VOTE: majority_vote,
-                AVERAGE_SCORE: mean_score,
-                VOTES: labels,
-                SCORES: scores,
-            }
-        )
+        reformatted_responses = []
 
+        for i in range(0, len(response), self._num_samples):
+            samples = response[i : i + self._num_samples]  # noqa: E203
+            if self._rater_key:
+                labels = [
+                    re.sub(self._pattern, "", r[self._rater_key]).lower()
+                    if self._rater_key in r
+                    else None
+                    for r in samples
+                ]
+            else:
+                # If the rater key is not specified, use the last key in the response
+                # as the rater key for the first response.
+                self._rater_key = list(response[0].keys())[-1]
+                labels = [
+                    re.sub(self._pattern, "", r[self._rater_key]).lower()
+                    for r in samples
+                ]
+            scores = []
+            for label in labels:
+                if label is not None and label in self._label2score:
+                    scores.append(self._label2score[label])
+            majority_vote = Counter(labels).most_common(1)[0][0]
+            mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
+            reformatted_responses.append(
+                {
+                    SAMPLES: samples,
+                    MAJORITY_VOTE: majority_vote,
+                    AVERAGE_SCORE: mean_score,
+                    VOTES: labels,
+                    SCORES: scores,
+                }
+            )
+        data[RESPONSE] = reformatted_responses
         return data
 
 
@@ -203,33 +215,39 @@ class HuggingfaceJsonFormattedLLMRater(LLMDataProcessor):
         """
         data = super()._deserialize(data)
         response = data[RESPONSE]
-        if self._rater_key:
-            labels = [
-                re.sub(self._pattern, "", r[self._rater_key]).lower()
-                if self._rater_key in r
-                else None
-                for r in response
-            ]
-        else:
-            # If the rater key is not specified, use the last key in the response
-            # as the rater key for the first response.
-            self._rater_key = list(response[0].keys())[-1]
-            labels = [
-                re.sub(self._pattern, "", r[self._rater_key]).lower() for r in response
-            ]
-        scores = []
-        for label in labels:
-            if label is not None and label in self._label2score:
-                scores.append(self._label2score[label])
-        majority_vote = Counter(labels).most_common(1)[0][0]
-        mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
-        data.update(
-            {
-                MAJORITY_VOTE: majority_vote,
-                AVERAGE_SCORE: mean_score,
-                VOTES: labels,
-                SCORES: scores,
-            }
-        )
+        reformatted_responses = []
 
+        for i in range(0, len(response), self._num_samples):
+            samples = response[i : i + self._num_samples]  # noqa: E203
+            if self._rater_key:
+                labels = [
+                    re.sub(self._pattern, "", r[self._rater_key]).lower()
+                    if self._rater_key in r
+                    else None
+                    for r in samples
+                ]
+            else:
+                # If the rater key is not specified, use the last key in the response
+                # as the rater key for the first response.
+                self._rater_key = list(response[0].keys())[-1]
+                labels = [
+                    re.sub(self._pattern, "", r[self._rater_key]).lower()
+                    for r in samples
+                ]
+            scores = []
+            for label in labels:
+                if label is not None and label in self._label2score:
+                    scores.append(self._label2score[label])
+            majority_vote = Counter(labels).most_common(1)[0][0]
+            mean_score = sum(scores) / len(scores) if len(scores) > 0 else None
+            reformatted_responses.append(
+                {
+                    SAMPLES: samples,
+                    MAJORITY_VOTE: majority_vote,
+                    AVERAGE_SCORE: mean_score,
+                    VOTES: labels,
+                    SCORES: scores,
+                }
+            )
+        data[RESPONSE] = reformatted_responses
         return data

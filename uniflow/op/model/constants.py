@@ -8,6 +8,7 @@ MAJORITY_VOTE = "majority_vote"
 AVERAGE_SCORE = "average_score"
 VOTES = "votes"
 SCORES = "scores"
+SAMPLES = "samples"
 
 
 MAX_ATTEMPTS = 3

@@ -27,6 +27,13 @@ class AbsLLMProcessor:
         model_server_cls = ModelServerFactory.get(model_config["model_server"])
         self._model_server = model_server_cls(prompt_template, model_config)
         self._prompt_template = prompt_template
+        self._num_samples = 1
+        # for Huggingface model
+        if "num_return_sequences" in model_config:
+            self._num_samples = model_config["num_return_sequences"]
+        # for OpenAI model
+        elif "num_call" in model_config:
+            self._num_samples = model_config["num_call"]
 
     def _serialize(self, data: List[Context]) -> List[str]:
         """Serialize data.
