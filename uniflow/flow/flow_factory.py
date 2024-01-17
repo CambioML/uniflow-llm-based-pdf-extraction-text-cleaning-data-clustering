@@ -10,18 +10,18 @@ class FlowFactory:
     _flows = {EXTRACT: {}, TRANSFORM: {}, RATER: {}}
 
     @classmethod
-    def register(cls, name: str, flow_cls: "Flow") -> None:  # noqa: F821
+    def register(cls, name: str, flow_cls: """Flow""") -> None:  # noqa: F821
         """Register flow.
 
         Args:
             name (str): Flow name.
             flow_cls (Flow): Flow class.
         """
-        if hasattr(flow_cls, "TAG") and flow_cls.TAG in cls._flows:
+        if hasattr(flow_cls, """TAG""") and flow_cls.TAG in cls._flows:
             cls._flows[flow_cls.TAG][name] = flow_cls
 
     @classmethod
-    def get(cls, name: str, flow_type: str) -> "Flow":  # noqa: F821
+    def get(cls, name: str, flow_type: str) -> """Flow""":  # noqa: F821
         """Get flow.
 
         Args:
@@ -35,7 +35,7 @@ class FlowFactory:
         """
         flow_cls = cls._flows.get(flow_type).get(name)
         if not flow_cls:
-            raise ValueError(f"No flow registered under '{name}'")
+            raise ValueError(f"""No flow registered under '{name}'""")
         return flow_cls
 
     @classmethod

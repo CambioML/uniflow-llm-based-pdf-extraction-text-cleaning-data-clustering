@@ -29,12 +29,12 @@ class ExtractImageFlow(Flow):
         """
         super().__init__()
         self._extract_image_op = ExtractImageOp(
-            name="extract_image_op",
+            name="""extract_image_op""",
             model=LLMDataPreprocessor(
                 model_config=model_config,
             ),
         )
-        self._process_image_op = ProcessImageOp(name="process_image_op")
+        self._process_image_op = ProcessImageOp(name="""process_image_op""")
         self._split_op = SplitterOpsFactory.get(splitter)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:

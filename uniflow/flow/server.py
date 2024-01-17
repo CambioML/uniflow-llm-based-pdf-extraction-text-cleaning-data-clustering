@@ -35,11 +35,11 @@ class ExtractServer:
         self._flow_queue = Queue(self._num_thread)
         kwargs = {}
         if self._config.model_config:
-            kwargs["model_config"] = self._config.model_config
+            kwargs["""model_config"""] = self._config.model_config
         if self._config.splitter:
-            kwargs["splitter"] = self._config.splitter
+            kwargs["""splitter"""] = self._config.splitter
         for i in range(self._num_thread):
-            with OpScope(name="thread_" + str(i)):
+            with OpScope(name="""thread_""" + str(i)):
                 self._flow_queue.put(self._flow_cls(**kwargs))
 
     def _run_flow(
@@ -61,7 +61,7 @@ class ExtractServer:
         try:
             output = f(input_list)
         except Exception as e:
-            output = {"error": str(e)}
+            output = {"""error""": str(e)}
         self._flow_queue.put(f)
         return (index, output)
 
@@ -105,7 +105,7 @@ class ExtractServer:
     def async_run(self):
         """Run the flow asynchronously"""
         # TODO: Implement async server
-        print("Server running async")
+        print("""Server running async""")
 
 
 ###############################################################################
@@ -130,7 +130,7 @@ class TransformServer:
         self._num_thread = self._config.num_thread
         self._flow_queue = Queue(self._num_thread)
         for i in range(self._num_thread):
-            with OpScope(name="thread_" + str(i)):
+            with OpScope(name="""thread_""" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
                         self._config.prompt_template,
@@ -160,7 +160,7 @@ class TransformServer:
         except Exception as e:
             # Capture the full stack trace
             error_traceback = traceback.format_exc()
-            output = {"error": str(e), "traceback": error_traceback}
+            output = {"""error""": str(e), """traceback""": error_traceback}
         self._flow_queue.put(f)
         return (index, output)
 
@@ -192,10 +192,10 @@ class TransformServer:
         # currently only HuggingFace model support batch.
         # this will require some refactoring to support other models.
         batch_size = self._config.model_config.get(
-            "batch_size", 1
+            """batch_size""", 1
         )  # pylint: disable=no-member
         if batch_size <= 0:
-            raise ValueError("Batch size must be a positive integer.")
+            raise ValueError("""Batch size must be a positive integer.""")
         if not input_list:  # Check if the list is empty
             return []
 
@@ -233,7 +233,7 @@ class TransformServer:
     def async_run(self):
         """Run the flow asynchronously"""
         # TODO: Implement async server
-        print("Server running async")
+        print("""Server running async""")
 
 
 ###############################################################################
@@ -259,7 +259,7 @@ class RaterServer:
         self._flow_queue = Queue(self._num_thread)
         print(self._config)
         for i in range(self._num_thread):
-            with OpScope(name="thread_" + str(i)):
+            with OpScope(name="""thread_""" + str(i)):
                 self._flow_queue.put(
                     self._flow_cls(
                         self._config.prompt_template,
@@ -290,7 +290,7 @@ class RaterServer:
         except Exception as e:
             # Capture the full stack trace
             error_traceback = traceback.format_exc()
-            output = {"error": str(e), "traceback": error_traceback}
+            output = {"""error""": str(e), """traceback""": error_traceback}
         self._flow_queue.put(f)
         return (index, output)
 
@@ -322,10 +322,10 @@ class RaterServer:
         # currently only HuggingFace model support batch.
         # this will require some refactoring to support other models.
         batch_size = self._config.model_config.get(
-            "batch_size", 1
+            """batch_size""", 1
         )  # pylint: disable=no-member
         if batch_size <= 0:
-            raise ValueError("Batch size must be a positive integer.")
+            raise ValueError("""Batch size must be a positive integer.""")
         if not input_list:  # Check if the list is empty
             return []
 
@@ -363,4 +363,4 @@ class RaterServer:
     def async_run(self):
         """Run the flow asynchronously"""
         # TODO: Implement async server
-        print("Server running async")
+        print("""Server running async""")

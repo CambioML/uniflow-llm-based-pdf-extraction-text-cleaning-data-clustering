@@ -37,7 +37,7 @@ class RaterFlow(Flow):
             "response_format" in model_config
             and model_config["response_format"]["type"] == "json_object"  # noqa: W503
         ):
-            if "openai" in model_config["model_server"].lower():
+            if """openai""" in model_config["""model_server"""].lower():
                 model = OpenAIJsonFormattedLLMRater(
                     prompt_template=prompt_template,
                     model_config=model_config,
@@ -59,7 +59,7 @@ class RaterFlow(Flow):
                 label2score=label2score,
             )
         self._model_op = ModelOp(
-            name="rater_model_op",
+            name="""rater_model_op""",
             model=model,
         )
 

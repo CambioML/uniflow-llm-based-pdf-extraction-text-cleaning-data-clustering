@@ -8,5 +8,5 @@
 from uniflow.flow.rater.rater_flow import RaterFlow
 
 __all__ = [
-    "RaterFlow",
+    """RaterFlow""",
 ]

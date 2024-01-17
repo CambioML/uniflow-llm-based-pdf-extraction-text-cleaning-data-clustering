@@ -16,8 +16,8 @@ class ExtractTxtFlow(Flow):
     def __init__(self) -> None:
         """Extract txt Flow Constructor."""
         super().__init__()
-        self._extract_txt_op = ExtractTxtOp(name="extract_txt_op")
-        self._process_txt_op = ProcessTxtOp(name="process_txt_op")
+        self._extract_txt_op = ExtractTxtOp(name="""extract_txt_op""")
+        self._process_txt_op = ProcessTxtOp(name="""process_txt_op""")
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract txt Flow.
