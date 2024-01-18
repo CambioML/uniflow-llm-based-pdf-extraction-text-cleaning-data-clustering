@@ -1,6 +1,7 @@
 """S3 Op Class."""
 
 import copy
+import logging
 import os
 from typing import Sequence
 
@@ -8,6 +9,8 @@ import boto3
 
 from uniflow.node import Node
 from uniflow.op.op import Op
+
+logger = logging.getLogger(__name__)
 
 
 class ExtractS3Op(Op):
@@ -35,7 +38,7 @@ class ExtractS3Op(Op):
             if os.path.exists(self.LOCAL_FILE_PATH) is False:
                 os.makedirs(self.LOCAL_FILE_PATH)
             filename = os.path.join(self.LOCAL_FILE_PATH, value_dict["key"])
-            print(f"Downloading {value_dict['key']} to {filename}")
+            logger.info("Downloading %s to %s", value_dict["key"], filename)
             self._s3_client.download_file(
                 Bucket=value_dict["bucket"],
                 Key=value_dict["key"],
