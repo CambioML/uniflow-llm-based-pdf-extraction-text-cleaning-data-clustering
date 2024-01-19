@@ -16,8 +16,8 @@ class ExtractIpynbFlow(Flow):
     def __init__(self) -> None:
         """Extract ipynb Flow Constructor."""
         super().__init__()
-        self._extract_ipynb_op = ExtractIpynbOp(name="""extract_ipynb_op""")
-        self._process_ipynb_op = ProcessIpynbOp(name="""process_ipynb_op""")
+        self._extract_ipynb_op = ExtractIpynbOp(name="extract_ipynb_op")
+        self._process_ipynb_op = ProcessIpynbOp(name="process_ipynb_op")
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract ipynb Flow.

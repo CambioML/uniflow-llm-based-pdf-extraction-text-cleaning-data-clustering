@@ -70,7 +70,7 @@ class TransformClient:
     def async_run(self) -> None:
         """Run the flow asynchronously"""
         # TODO: Implement async client
-        print("""Client running async""")
+        print("Client running async")
 
 
 class RaterClient:
@@ -103,4 +103,4 @@ class RaterClient:
     def async_run(self) -> None:
         """Run the flow asynchronously"""
         # TODO: Implement async client
-        print("""Client running async""")
+        print("Client running async")

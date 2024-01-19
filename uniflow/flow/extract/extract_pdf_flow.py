@@ -34,7 +34,7 @@ class ExtractPDFFlow(Flow):
                 model_config=model_config,
             ),
         )
-        self._process_pdf_op = ProcessPDFOp(name="""process_pdf_op""")
+        self._process_pdf_op = ProcessPDFOp(name="process_pdf_op")
         self._split_op = SplitterOpsFactory.get(splitter)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:

@@ -9,8 +9,8 @@ class Node:
         self,
         name: str,
         value_dict: Mapping[str, Any],
-        prev_nodes: Optional[Sequence["""Node"""]] = None,
-        next_nodes: Optional[Sequence["""Node"""]] = None,
+        prev_nodes: Optional[Sequence["Node"]] = None,
+        next_nodes: Optional[Sequence["Node"]] = None,
         is_end: Optional[bool] = False,
     ) -> None:
         """Node class constructor for uniflow.
@@ -55,7 +55,7 @@ class Node:
         """Next nodes of the node."""
         return self._next_nodes
 
-    def add_next_node(self, node: """Node"""):
+    def add_next_node(self, node: "Node"):
         """Add next node to the node.
 
         Args:
@@ -63,7 +63,7 @@ class Node:
         """
         self._next_nodes.append(node)
 
-    def add_prev_node(self, node: """Node"""):
+    def add_prev_node(self, node: "Node"):
         """Add previous node to the node.
 
         Args:
@@ -73,8 +73,8 @@ class Node:
 
     def get_all(
         self,
-        visited: Optional[Sequence["""Node"""]] = None,
-    ) -> Sequence["""Node"""]:
+        visited: Optional[Sequence["Node"]] = None,
+    ) -> Sequence["Node"]:
         """Get all nodes connected to the node.
 
         Args:
@@ -101,11 +101,11 @@ class Node:
         """
         return [
             {
-                """name""": node.name,
-                """value_dict""": node.value_dict,
-                """prev_nodes""": [n.name for n in node.prev_nodes],
-                """next_nodes""": [n.name for n in node.next_nodes],
-                """is_end""": node.is_end,
+                "name": node.name,
+                "value_dict": node.value_dict,
+                "prev_nodes": [n.name for n in node.prev_nodes],
+                "next_nodes": [n.name for n in node.next_nodes],
+                "is_end": node.is_end,
             }
             for node in self.get_all()
         ]

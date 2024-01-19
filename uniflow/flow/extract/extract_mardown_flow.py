@@ -16,8 +16,8 @@ class ExtractMarkdownFlow(Flow):
     def __init__(self) -> None:
         """Extract markdown Flow Constructor."""
         super().__init__()
-        self._extract_md_op = ExtractMarkdownOp(name="""extract_md_op""")
-        self._process_md_op = ProcessMarkdownOp(name="""process_md_op""")
+        self._extract_md_op = ExtractMarkdownOp(name="extract_md_op")
+        self._process_md_op = ProcessMarkdownOp(name="process_md_op")
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract markdown Flow.

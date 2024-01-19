@@ -129,7 +129,7 @@ class TransformQAHuggingFaceConfig(TransformConfig):
     flow_name: str = """TransformHuggingFaceFlow"""
     model_config: ModelConfig = field(
         default_factory=lambda: HuggingfaceModelConfig(
-            response_start_key="""question""", response_format={"""type""": """text"""}
+            response_start_key="question", response_format={"type": "text"}
         )
     )
     num_thread: int = 1
@@ -163,7 +163,7 @@ class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
     # this is very important for the model to generate valid json response.
     model_config: ModelConfig = field(
         default_factory=lambda: HuggingfaceModelConfig(
-            response_start_key="""question""", response_format={"""type""": """json_object"""}
+            response_start_key="question", response_format={"type": "json_object"}
         )
     )
     num_thread: int = 1
@@ -214,11 +214,11 @@ class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
     flow_name: str = """TransformOpenAIFlow"""
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="""gpt-3.5-turbo-1106""",
-            model_server="""OpenAIModelServer""",
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"""type""": """text"""},
+            response_format={"type": "text"},
         )
     )
     prompt_template: PromptTemplate = field(
@@ -243,11 +243,11 @@ class TransformForClusteringOpenAIGPT4Config:
     flow_name: str = """TransformOpenAIFlow"""
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="""gpt-4""",
-            model_server="""OpenAIModelServer""",
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"""type""": """json_object"""},
+            response_format={"type": "json_object"},
         )
     )
     prompt_template: PromptTemplate = field(
@@ -327,8 +327,8 @@ class RaterConfig:
         )
 
         incompatible_labels = self.check_labels()
-        unexpected_labels = incompatible_labels["""unexpected_labels"""]
-        missing_labels = incompatible_labels["""missing_labels"""]
+        unexpected_labels = incompatible_labels["unexpected_labels"]
+        missing_labels = incompatible_labels["missing_labels"]
         if unexpected_labels:
             raise ValueError(
                 """Inconsistent labels found in prompt_template examples, """
@@ -367,8 +367,8 @@ class RaterConfig:
         missing_labels = label2score_labels - example_labels
         unexpected_labels = example_labels - label2score_labels
         return {
-            """missing_labels""": list(missing_labels),
-            """unexpected_labels""": list(unexpected_labels),
+            "missing_labels": list(missing_labels),
+            "unexpected_labels": list(unexpected_labels),
         }
 
 
@@ -391,15 +391,15 @@ class RaterForClassificationOpenAIGPT4Config(RaterConfig):
 
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="""gpt-4""",
-            model_server="""OpenAIModelServer""",
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"""type""": """text"""},
+            response_format={"type": "text"},
         )
     )
     label2score: Dict[str, float] = field(
-        default_factory=lambda: {"""Yes""": 1.0, """No""": 0.0}
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
@@ -445,15 +445,15 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
 
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="""gpt-3.5-turbo-1106""",
-            model_server="""OpenAIModelServer""",
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"""type""": """text"""},
+            response_format={"type": "text"},
         )
     )
     label2score: Dict[str, float] = field(
-        default_factory=lambda: {"""Yes""": 1.0, """No""": 0.0}
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
@@ -508,7 +508,7 @@ class RaterForClassificationBedrockClaudeConfig(RaterConfig):
 
     model_config: ModelConfig = field(default_factory=BedrockModelConfig)
     label2score: Dict[str, float] = field(
-        default_factory=lambda: {"""Yes""": 1.0, """No""": 0.0}
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
@@ -557,7 +557,7 @@ class RaterForClassificationSageMakerEndpointConfig(RaterConfig):
     flow_name: str = """RaterFlow"""
     model_config: ModelConfig = field(default_factory=SageMakerModelConfig)
     label2score: Dict[str, float] = field(
-        default_factory=lambda: {"""Yes""": 1.0, """No""": 0.0}
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
@@ -608,12 +608,12 @@ class RaterForClassificationHuggingfaceConfig(RaterConfig):
     model_config: ModelConfig = field(
         default_factory=HuggingfaceModelConfig(
             response_start_key="""explanation""",
-            response_format={"""type""": """text"""},
+            response_format={"type": "text"},
             batch_size=1,
         )
     )
     label2score: Dict[str, float] = field(
-        default_factory=lambda: {"""Yes""": 1.0, """No""": 0.0}
+        default_factory=lambda: {"Yes": 1.0, "No": 0.0}
     )
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(
@@ -659,18 +659,18 @@ class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
 
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="""gpt-4""",
-            model_server="""OpenAIModelServer""",
+            model_name="gpt-4",
+            model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"""type""": """text"""},
+            response_format={"type": "text"},
         )
     )
     label2score: Dict[str, float] = field(
         default_factory=lambda: {
-            """accept""": 1.0,
-            """equivalent""": 0.0,
-            """reject""": -1.0,
+            "accept": 1.0,
+            "equivalent": 0.0,
+            "reject": -1.0,
         }
     )
     prompt_template: PromptTemplate = field(
@@ -688,7 +688,7 @@ class RaterForGeneratedAnswerOpenAIGPT4Config(RaterConfig):
                     grounding_answer="""No. Early computers were used primarily for complex calculating.""",
                     generated_answer="""Yes. Early computers were built to perform a series of single tasks, similar to a calculator.""",
                     explanation="""The generated answer is better because it correctly figures out early computers was used to perform single tasks akin to calculators while grounding answer not. So we accept generated answer.""",
-                    label="""accept""",
+                    label="accept",
                 ),
             ],
         )
@@ -715,18 +715,18 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
 
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="""gpt-3.5-turbo-1106""",
-            model_server="""OpenAIModelServer""",
+            model_name="gpt-3.5-turbo-1106",
+            model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,
-            response_format={"""type""": """text"""},
+            response_format={"type": "text"},
         )
     )
     label2score: Dict[str, float] = field(
         default_factory=lambda: {
-            """accept""": 1.0,
-            """equivalent""": 0.0,
-            """reject""": -1.0,
+            "accept": 1.0,
+            "equivalent": 0.0,
+            "reject": -1.0,
         }
     )
     prompt_template: PromptTemplate = field(
@@ -752,7 +752,7 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
                     grounding_answer="""No. Early computers were used primarily for complex calculating.""",
                     generated_answer="""Yes. Early computers were built to perform a series of single tasks, similar to a calculator.""",
                     explanation="""The generated answer is better because it correctly figures out early computers was used to perform single tasks akin to calculators.""",
-                    label="""accept""",
+                    label="accept",
                 ),
                 Context(
                     context="""Operating systems(OS) did not exist in their modern and more complex forms until the early 1960s.""",
@@ -760,7 +760,7 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
                     grounding_answer="""Operating systems started to resemble their modern forms in the early 1960s.""",
                     generated_answer="""Modern and more complex forms of operating systems began to emerge in the early 1960s.""",
                     explanation="""The generated answer is as equally good as grounding answer because they both accurately pinpoint the early 1960s as the period when modern operating systems began to develop.""",
-                    label="""equivalent""",
+                    label="equivalent",
                 ),
                 Context(
                     context="""Hardware features were added, that enabled use of runtime libraries, interrupts, and parallel processing in the 1960s.""",
@@ -768,7 +768,7 @@ class RaterForGeneratedAnswerOpenAIGPT3p5Config(RaterConfig):
                     grounding_answer="""Hardware in the 1960s saw the addition of features like runtime libraries and parallel processing.""",
                     generated_answer="""The 1960s saw the addition of input output control and compatible timesharing capabilities in hardware.""",
                     explanation="""The generated answer is worse because it inaccurately suggests the addition of capabilities of hardware in 1960s which is not supported by the context.""",
-                    label="""reject""",
+                    label="reject",
                 ),
             ],
         )
