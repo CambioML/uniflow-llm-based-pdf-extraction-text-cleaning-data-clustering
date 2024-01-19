@@ -5,8 +5,6 @@ import logging
 import os
 from typing import Sequence
 
-import boto3
-
 from uniflow.node import Node
 from uniflow.op.op import Op
 
@@ -19,6 +17,11 @@ class ExtractS3Op(Op):
     LOCAL_FILE_PATH = "/tmp/aws/s3"
 
     def __init__(self, name: str = "extract_s3_op") -> None:
+        try:
+            import boto3  # pylint: disable=import-outside-toplevel
+        except ImportError as e:
+            raise ImportError("Please install boto3 to use S3Op.") from e
+
         self._s3_client = boto3.client("s3")
         super().__init__(name=name)
 
