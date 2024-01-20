@@ -57,6 +57,6 @@ class PromptTemplate(BaseModel):
 
     instruction: str = Field(..., min_length=0)
 
-    few_shot_prompt: conlist(Context, min_length=0) = Field([], min_items=0)
+    few_shot_prompt: conlist(Context) = Field([])
 
     model_config = ConfigDict(extra="forbid")

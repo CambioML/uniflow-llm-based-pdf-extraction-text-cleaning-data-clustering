@@ -107,7 +107,9 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
 
         for d in data:
             try:
-                output_list.append(json.loads(d))
+                # this is a quick and dirty fix because huggingface model server
+                # might already return the response in json format
+                output_list.append(d if isinstance(d, dict) else json.loads(d))
             except json.JSONDecodeError as e:
                 error_count += 1
                 error_list.append(str(e))
