@@ -2,8 +2,11 @@
 import copy
 from typing import Sequence
 
+import requests
+
 from uniflow.node import Node
 from uniflow.op.op import Op
+
 
 class ExtractHTMLOp(Op):
     """Extract HTML Op Class."""
@@ -21,10 +24,7 @@ class ExtractHTMLOp(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             if "url" in value_dict:
-                import requests
-                resp = requests.get(
-                    url=value_dict["url"]
-                )
+                resp = requests.get(url=value_dict["url"], timeout=300)
                 text = resp.text
             else:
                 with open(
@@ -42,17 +42,17 @@ class ExtractHTMLOp(Op):
                 )
             )
         return output_nodes
-    
+
     def parse_html(self, text):
+        """Function Parse Html."""
         try:
-            import bs4  # pylint: disable=import-outside-toplevel
             from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install bs4. You can use `pip install bs4` to install them."
             ) from exc
-        
-        soup = BeautifulSoup(text, 'html.parser')
+
+        soup = BeautifulSoup(text, "html.parser")
 
         if soup.title:
             title = str(soup.title.string)
@@ -60,6 +60,7 @@ class ExtractHTMLOp(Op):
             title = ""
 
         return title + "\n".join(soup.body.stripped_strings)
+
 
 class ProcessHTMLOp(Op):
     """Process HTML Op Class."""
