@@ -2,8 +2,6 @@
 import copy
 from typing import Sequence
 
-import requests
-
 from uniflow.node import Node
 from uniflow.op.op import Op
 
@@ -24,6 +22,8 @@ class ExtractHTMLOp(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             if "url" in value_dict:
+                import requests  # pylint: disable=import-outside-toplevel
+
                 resp = requests.get(url=value_dict["url"], timeout=300)
                 text = resp.text
             else:
