@@ -86,6 +86,7 @@ class ExtractHTMLConfig(ExtractConfig):
     """Extract HTML Config Class."""
 
     flow_name: str = "ExtractHTMLFlow"
+    splitter: str = PARAGRAPH_SPLITTER
 
 
 ###########################################################

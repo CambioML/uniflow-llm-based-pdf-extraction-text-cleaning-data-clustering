@@ -59,13 +59,7 @@ class ExtractHTMLOp(Op):
         else:
             title = ""
 
-        ret = []
-        for x in soup.body.descendants:
-            node = x.name
-            text = x.string
-            if node != None and text != None and text != "":
-                ret.append(f"{text.strip()}")
-        return (title + "\n".join(ret))
+        return title + "\n".join(soup.body.stripped_strings)
 
 class ProcessHTMLOp(Op):
     """Process HTML Op Class."""
