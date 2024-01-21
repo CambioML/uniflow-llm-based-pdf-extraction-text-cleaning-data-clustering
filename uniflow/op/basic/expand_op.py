@@ -1,6 +1,6 @@
-from typing import Sequence, Callable, tuple, Any, Mapping
+from typing import Sequence, Callable, Tuple, Any, Mapping
 from uniflow.node import Node
-from uniflow.op import Op
+from uniflow.op.op import Op
 
 class ExpandOp(Op):
     """Op class for expanding a node into two nodes."""
@@ -8,7 +8,7 @@ class ExpandOp(Op):
     def __init__(
         self,
         name: str,
-        split_func: Callable[[dict], tuple[dict, dict]] = None,
+        split_func: Callable[[dict], Tuple[dict, dict]] = None,
     ) -> None:
         """Constructor for ExpandOp.
 
@@ -20,7 +20,7 @@ class ExpandOp(Op):
         super().__init__(name)
         self.split_func = split_func or self._default_split_func
 
-    def _default_split_func(self, value_dict: Mapping[str, Any]) -> tuple[Mapping, Mapping]:
+    def _default_split_func(self, value_dict: Mapping[str, Any]) -> Tuple[Mapping, Mapping]:
         """Splits the value_dict into two halves based on indices."""
         n = len(value_dict)
         half = n // 2
