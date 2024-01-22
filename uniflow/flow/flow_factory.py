@@ -19,7 +19,6 @@ class FlowFactory:
         """
         if hasattr(flow_cls, "TAG") and flow_cls.TAG in cls._flows:
             cls._flows[flow_cls.TAG][name] = flow_cls
-            print(f"register: {name} {flow_cls.TAG}")
 
     @classmethod
     def get(cls, name: str, flow_type: str) -> "Flow":  # noqa: F821
@@ -37,7 +36,6 @@ class FlowFactory:
         flow_cls = cls._flows.get(flow_type).get(name)
         if not flow_cls:
             raise ValueError(f"No flow registered under '{name}'")
-        print(f"GET {name} {flow_cls}")
         return flow_cls
 
     @classmethod

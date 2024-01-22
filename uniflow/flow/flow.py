@@ -44,7 +44,7 @@ class Flow:
             Node: Root node.
         """
         return self._root
-
+    
     def _enter(self, value_dict: Mapping[str, Any]) -> Sequence[Node]:
         """Enter flow.
 

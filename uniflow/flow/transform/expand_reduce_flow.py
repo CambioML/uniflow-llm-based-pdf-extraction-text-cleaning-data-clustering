@@ -1,5 +1,8 @@
 from typing import Sequence, Dict, Any
+from sqlite3 import Error
+
 from uniflow.constants import TRANSFORM
+from uniflow.flow.database import Database
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.basic.expand_op import ExpandOp
@@ -7,15 +10,18 @@ from uniflow.op.basic.reduce_op import ReduceOp
 from uniflow.op.prompt import PromptTemplate
 
 
+
 class ExpandReduceFlow(Flow):
     """Flow that expands a node and then reduces the results."""
+
     TAG = TRANSFORM
 
     def __init__(
-            self, 
-            prompt_template: PromptTemplate,
-            model_config: Dict[str, Any],
+        self,
+        prompt_template: PromptTemplate,
+        model_config: Dict[str, Any],
     ) -> None:
+        """Initialize ExpandReduceFlow class."""
         super().__init__()
         # Instantiate ExpandOp and ReduceOp instances
         self._expand_op = ExpandOp("expand")
@@ -23,7 +29,7 @@ class ExpandReduceFlow(Flow):
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run ExpandReduceFlow
-        
+
         Args:
             nodes (Sequence[Node]): Nodes to run.
 
@@ -34,7 +40,15 @@ class ExpandReduceFlow(Flow):
         output_nodes = []
         for node in nodes:
             expanded_nodes = self._expand_op(node)  # Apply expand_op to the root node
-            reduced_node = self._reduce_op(*expanded_nodes)  # Apply reduce_op to the expanded nodes
+            reduced_node = self._reduce_op(
+                *expanded_nodes
+            )  # Apply reduce_op to the expanded nodes
             output_nodes.append(reduced_node)
-        print(output_nodes)
+            try:
+                self.db = Database()
+                self.db.insert_many(reduced_node.value_dict)    
+            except Error as e:
+                print(f"Error database insertion: {e}")
+                raise
+            
         return output_nodes

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uniflow-deployment
+  labels:
+    app: uniflow
+spec:
+  replicas: 3  # Number of desired pods
+  selector:
+    matchLabels:
+      app: uniflow
+  template:
+    metadata:
+      labels:
+        app: uniflow
+    spec:
+      containers:
+        - name: uniflow
+          image: my-uniflow-app  # Replace with your Docker image name
+          ports:
+            - containerPort: 5000  # Replace with your application's port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: uniflow-service
+spec:
+  selector:
+    app: uniflow
+  ports:
+    - port: 80  # External port
+      targetPort: 5000  # Container port
+  type: LoadBalancer  # Expose service externally (if applicable)
