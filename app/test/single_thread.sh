@@ -17,22 +17,19 @@ echo "Response: $RESPONSE"
 
 JOB_ID=$(echo "$RESPONSE" | jq -r '.job_id')
 
-# # Wait for the job to finish (replace sleep with actual logic)
-# sleep 5
+# Get job status
+RESPONSE=$(curl "$BASE_URL/flows/status/$JOB_ID")
 
-# # Get job status
-# RESPONSE=$(curl "$BASE_URL/flows/status/$JOB_ID")
+echo "Response: $RESPONSE"
 
-# echo "Response: $RESPONSE"
+STATUS=$(echo "$RESPONSE" | jq -r '.status')
 
-# STATUS=$(echo "$RESPONSE" | jq -r '.status')
+# Print the status
+echo "Job status: $STATUS"
 
-# # Print the status
-# echo "Job status: $STATUS"
+# Get results (page 2 with 15 results)
+RESPONSE=$(curl "$BASE_URL/flows/results?page=2&limit=15")
 
-# # Get results (page 2 with 15 results)
-# RESPONSE=$(curl "$BASE_URL/flows/results?page=2&limit=15")
+echo "Response: $RESPONSE"
 
-# echo "Response: $RESPONSE"
-
-# RESULTS=$(echo "$RESPONSE" | jq -r '.results')
+RESULTS=$(echo "$RESPONSE" | jq -r '.results')

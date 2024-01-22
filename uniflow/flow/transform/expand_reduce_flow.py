@@ -33,12 +33,8 @@ class ExpandReduceFlow(Flow):
         Args:
             node (Node): the node to persist
         """
-        try:
-            self.db = Database()
+        with Database() as db:
             self.db.insert_value_dicts(node.value_dict)
-        except Error as e:
-            print(f"Error database insertion: {e}")
-            raise
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run ExpandReduceFlow

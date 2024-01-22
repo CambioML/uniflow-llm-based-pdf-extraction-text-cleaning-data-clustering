@@ -8,7 +8,7 @@
 
 **1. Build the Docker Image:**
 
-1. Open a terminal in the directory containing the Dockerfile.
+1. Open a terminal in the [directory](../).
 2. Execute the following command to build the image:
 
    ```bash
