@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.flow.config - uniflow 0.0.17 documentation</title>
+        <title>uniflow.flow.config - uniflow 0.0.18 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">uniflow 0.0.17 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">uniflow 0.0.18 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -300,6 +300,16 @@
 
 
 
+<div class="viewcode-block" id="ExtractS3TxtConfig">
+<a class="viewcode-back" href="../../../uniflow.flow.html#uniflow.flow.config.ExtractS3TxtConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ExtractS3TxtConfig</span><span class="p">(</span><span class="n">ExtractConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract S3 Txt Config Class.&quot;&quot;&quot;</span>
+
+    <span class="n">flow_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ExtractS3TxtFlow&quot;</span></div>
+
+
+
 <div class="viewcode-block" id="ExtractPDFConfig">
 <a class="viewcode-back" href="../../../uniflow.flow.html#uniflow.flow.config.ExtractPDFConfig">[docs]</a>
 <span class="nd">@dataclass</span>
@@ -342,6 +352,17 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract ipynb Config Class.&quot;&quot;&quot;</span>
 
     <span class="n">flow_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ExtractIpynbFlow&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ExtractHTMLConfig">
+<a class="viewcode-back" href="../../../uniflow.flow.html#uniflow.flow.config.ExtractHTMLConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ExtractHTMLConfig</span><span class="p">(</span><span class="n">ExtractConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract HTML Config Class.&quot;&quot;&quot;</span>
+
+    <span class="n">flow_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;ExtractHTMLFlow&quot;</span>
+    <span class="n">splitter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">PARAGRAPH_SPLITTER</span></div>
 
 
 
@@ -1164,7 +1185,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=63b572e7"></script>
+</div><script src="../../../_static/documentation_options.js?v=8bafd125"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.flow.rater package" href="uniflow.flow.rater.html" /><link rel="prev" title="uniflow.flow package" href="uniflow.flow.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.flow.extract package - uniflow 0.0.17 documentation</title>
+        <title>uniflow.flow.extract package - uniflow 0.0.18 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">uniflow 0.0.17 documentation</div></a>
+      <a href="index.html"><div class="brand">uniflow 0.0.18 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -426,6 +426,13 @@
 <span id="uniflow-flow-extract-extract-txt-flow-module"></span><h2>uniflow.flow.extract.extract_txt_flow module<a class="headerlink" href="#module-uniflow.flow.extract.extract_txt_flow" title="Link to this heading">#</a></h2>
 <p>Extract txt flow.</p>
 <dl class="py class">
+<dt class="sig sig-object py" id="uniflow.flow.extract.extract_txt_flow.ExtractS3TxtFlow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.extract.extract_txt_flow.</span></span><span class="sig-name descname"><span class="pre">ExtractS3TxtFlow</span></span><a class="reference internal" href="_modules/uniflow/flow/extract/extract_txt_flow.html#ExtractS3TxtFlow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.extract.extract_txt_flow.ExtractS3TxtFlow" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow" title="uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractTxtFlow</span></code></a></p>
+<p>Extract S3 txt Flow Class.</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.extract.extract_txt_flow.</span></span><span class="sig-name descname"><span class="pre">ExtractTxtFlow</span></span><a class="reference internal" href="_modules/uniflow/flow/extract/extract_txt_flow.html#ExtractTxtFlow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="uniflow.flow.html#uniflow.flow.flow.Flow" title="uniflow.flow.flow.Flow"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flow</span></code></a></p>
@@ -458,6 +465,35 @@
 <section id="module-uniflow.flow.extract">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-uniflow.flow.extract" title="Link to this heading">#</a></h2>
 <p>Model __init__ Module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.flow.extract.ExtractHTMLFlow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.extract.</span></span><span class="sig-name descname"><span class="pre">ExtractHTMLFlow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">splitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ParagraphSplitter'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/flow/extract/extract_html_flow.html#ExtractHTMLFlow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.extract.ExtractHTMLFlow" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.flow.html#uniflow.flow.flow.Flow" title="uniflow.flow.flow.Flow"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flow</span></code></a></p>
+<p>Extract HTML Flow Class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uniflow.flow.extract.ExtractHTMLFlow.TAG">
+<span class="sig-name descname"><span class="pre">TAG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'extract'</span></em><a class="headerlink" href="#uniflow.flow.extract.ExtractHTMLFlow.TAG" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.flow.extract.ExtractHTMLFlow.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="uniflow.html#uniflow.node.Node" title="uniflow.node.Node"><span class="pre">Node</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="uniflow.html#uniflow.node.Node" title="uniflow.node.Node"><span class="pre">Node</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/uniflow/flow/extract/extract_html_flow.html#ExtractHTMLFlow.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.extract.ExtractHTMLFlow.run" title="Link to this definition">#</a></dt>
+<dd><p>Run Extract HTML Flow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nodes</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="uniflow.html#uniflow.node.Node" title="uniflow.node.Node"><em>Node</em></a><em>]</em>) – Nodes to run.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Nodes after running.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Sequence[<a class="reference internal" href="uniflow.html#uniflow.node.Node" title="uniflow.node.Node">Node</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="uniflow.flow.extract.ExtractImageFlow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.extract.</span></span><span class="sig-name descname"><span class="pre">ExtractImageFlow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ParagraphSplitter'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/flow/extract/extract_image_flow.html#ExtractImageFlow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.extract.ExtractImageFlow" title="Link to this definition">#</a></dt>
@@ -712,6 +748,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-uniflow.flow.extract.extract_txt_flow">uniflow.flow.extract.extract_txt_flow module</a><ul>
+<li><a class="reference internal" href="#uniflow.flow.extract.extract_txt_flow.ExtractS3TxtFlow"><code class="docutils literal notranslate"><span class="pre">ExtractS3TxtFlow</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow"><code class="docutils literal notranslate"><span class="pre">ExtractTxtFlow</span></code></a><ul>
 <li><a class="reference internal" href="#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow.TAG"><code class="docutils literal notranslate"><span class="pre">ExtractTxtFlow.TAG</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow.run"><code class="docutils literal notranslate"><span class="pre">ExtractTxtFlow.run()</span></code></a></li>
@@ -720,6 +757,11 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#module-uniflow.flow.extract">Module contents</a><ul>
+<li><a class="reference internal" href="#uniflow.flow.extract.ExtractHTMLFlow"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLFlow</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.flow.extract.ExtractHTMLFlow.TAG"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLFlow.TAG</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.flow.extract.ExtractHTMLFlow.run"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLFlow.run()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#uniflow.flow.extract.ExtractImageFlow"><code class="docutils literal notranslate"><span class="pre">ExtractImageFlow</span></code></a><ul>
 <li><a class="reference internal" href="#uniflow.flow.extract.ExtractImageFlow.TAG"><code class="docutils literal notranslate"><span class="pre">ExtractImageFlow.TAG</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.flow.extract.ExtractImageFlow.run"><code class="docutils literal notranslate"><span class="pre">ExtractImageFlow.run()</span></code></a></li>
@@ -758,7 +800,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=63b572e7"></script>
+</div><script src="_static/documentation_options.js?v=8bafd125"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
