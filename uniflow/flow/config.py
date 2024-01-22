@@ -42,6 +42,13 @@ class ExtractTxtConfig(ExtractConfig):
 
 
 @dataclass
+class ExtractS3TxtConfig(ExtractConfig):
+    """Extract S3 Txt Config Class."""
+
+    flow_name: str = "ExtractS3TxtFlow"
+
+
+@dataclass
 class ExtractPDFConfig(ExtractConfig):
     """Nougat Config Class."""
 
@@ -72,6 +79,14 @@ class ExtractIpynbConfig(ExtractConfig):
     """Extract ipynb Config Class."""
 
     flow_name: str = "ExtractIpynbFlow"
+
+
+@dataclass
+class ExtractHTMLConfig(ExtractConfig):
+    """Extract HTML Config Class."""
+
+    flow_name: str = "ExtractHTMLFlow"
+    splitter: str = PARAGRAPH_SPLITTER
 
 
 ###########################################################
