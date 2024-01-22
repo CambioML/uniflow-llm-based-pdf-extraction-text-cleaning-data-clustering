@@ -30,4 +30,5 @@
     ```bash
     kubectl apply -f deployment.yaml
     ```
-
+## Part6
+![database schema](uniflow-db.png)
