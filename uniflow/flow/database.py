@@ -26,6 +26,7 @@ class Database:
 
     def __init__(self) -> None:
         """Create and connect to database."""
+        print("Initializing database")
         logging.basicConfig(format="%(levelname)s [%(module)s]: %(message)s")
         try:
             self._connection = sqlite3.connect("uniflow_data.db")
@@ -88,36 +89,40 @@ class Database:
             status (str): the status of the job
         """
         with self._lock:
-            self._cursor.execute("UPDATE job SET status = ? WHERE job_id = ?", (status, job_id))
+            self._cursor.execute("UPDATE jobs SET status = ? WHERE job_id = ?", (status, job_id))
             self._connection.commit()
     
     def get_job_status(self, job_id: int) -> str:
         with self._lock:
-            self._cursor.execute("SELECT status FROM jobs WHERE job_id = ?", (job_id))
-            return self._cursor.fetchone()
+            self._cursor.execute("SELECT status FROM jobs WHERE job_id = ?", (job_id,))
+            return self._cursor.fetchone()[0]
 
     def select_all(self, table_name: Optional[str]='output_data', limit: Optional[int]=0, offset: Optional[int]=0) -> Sequence[str]:
         """get all records in the database
         
         Args:
-            table_name (str): table name, including 'job' and 'output_data'. Default value is 'output_data'
+            table_name (str): table name, including 'jobs' and 'output_data'. Default value is 'output_data'
             limit (Optional[int]): query limit. Default value is 0
             offset (Optional[int]): query offset. Default value is 0
 
         Returns:
             Sequence[str]: all key value pairs in the database"""
         with self._lock:
-            self._cursor.execute("SELECT * FROM ? LIMIT ? OFFSET ?", (table_name, limit, offset))
-            return self._cursor.fetchall()
+            if table_name not in ['jobs', 'output_data']:
+                raise ValueError("Invalid table name")
+            self._cursor.execute(f"SELECT * FROM {table_name} LIMIT ? OFFSET ?", (limit, offset))
+            return self._cursor.fetchall()          
         
-    def count_all(self, table_name: Optional[str]='output_data') -> Sequence[str]:
+    def count_all(self, table_name: Optional[str]='output_data') -> int:
         """count all records in the database
         
         Args:
-            table_name (str): table name, including 'job' and 'output_data'. Default value is 'output_data'
+            table_name (str): table name, including 'jobs' and 'output_data'. Default value is 'output_data'
 
         Returns:
             Sequence[str]: all key value pairs in the database"""
         with self._lock:
-            self._cursor.execute("SELECT COUNT(*) FROM ?", (table_name))
-            return self._cursor.fetchone()
+            if table_name not in ['jobs', 'output_data']:
+                raise ValueError("Invalid table name")
+            self._cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
+            return self._cursor.fetchone()[0]
