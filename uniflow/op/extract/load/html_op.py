@@ -9,6 +9,19 @@ from uniflow.op.op import Op
 class ExtractHTMLOp(Op):
     """Extract HTML Op Class."""
 
+    def __init__(self, name: str) -> None:
+        try:
+            import requests  # pylint: disable=import-outside-toplevel
+            from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install bs4. You can use `pip install bs4` to install them."
+            ) from exc
+
+        super().__init__(name)
+        self._requests_client = requests
+        self._beautiful_soup_parser = BeautifulSoup
+
     def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Op.
 
@@ -22,9 +35,7 @@ class ExtractHTMLOp(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             if "url" in value_dict:
-                import requests  # pylint: disable=import-outside-toplevel
-
-                resp = requests.get(url=value_dict["url"], timeout=300)
+                resp = self._requests_client.get(url=value_dict["url"], timeout=300)
                 text = resp.text
             else:
                 with open(
@@ -43,16 +54,9 @@ class ExtractHTMLOp(Op):
             )
         return output_nodes
 
-    def parse_html(self, text):
+    def parse_html(self, text) -> str:
         """Function Parse Html."""
-        try:
-            from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
-        except ModuleNotFoundError as exc:
-            raise ModuleNotFoundError(
-                "Please install bs4. You can use `pip install bs4` to install them."
-            ) from exc
-
-        soup = BeautifulSoup(text, "html.parser")
+        soup = self._beautiful_soup_parser(text, "html.parser")
 
         if soup.title:
             title = str(soup.title.string)
