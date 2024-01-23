@@ -96,7 +96,8 @@ class AbsModelServer:
         """
         self._model_config = model_config
         self._example_keys = None
-        if prompt_template.few_shot_prompt:
+
+        if "few_shot_prompt" in prompt_template and prompt_template.few_shot_prompt:
             self._example_keys = list(
                 prompt_template.few_shot_prompt[0].model_dump().keys()
             )
