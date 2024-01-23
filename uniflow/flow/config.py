@@ -310,8 +310,16 @@ class TransformForClusteringOpenAIGPT4Config:
                             """bioinformatics""",
                             """mRNA therapy""",
                         ],
-                        """BLOCKCHAIN_TECH""": ["""blockchain""", """crypto mining""", """NFTs"""],
-                        """CRYPTOCURRENCY""": ["""Bitcoin""", """cryptocurrency""", """Ethereum"""],
+                        """BLOCKCHAIN_TECH""": [
+                            """blockchain""",
+                            """crypto mining""",
+                            """NFTs""",
+                        ],
+                        """CRYPTOCURRENCY""": [
+                            """Bitcoin""",
+                            """cryptocurrency""",
+                            """Ethereum""",
+                        ],
                     },
                 ),
             ],
