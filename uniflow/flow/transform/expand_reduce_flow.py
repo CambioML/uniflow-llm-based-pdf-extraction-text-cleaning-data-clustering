@@ -10,7 +10,6 @@ from uniflow.op.basic.reduce_op import ReduceOp
 from uniflow.op.prompt import PromptTemplate
 
 
-
 class ExpandReduceFlow(Flow):
     """Flow that expands a node and then reduces the results."""
 
@@ -26,15 +25,14 @@ class ExpandReduceFlow(Flow):
         # Instantiate ExpandOp and ReduceOp instances
         self._expand_op = ExpandOp("expand")
         self._reduce_op = ReduceOp("reduce")
-        
+
     def _insert_to_db(self, node: Node) -> None:
         """insert value_dict to the database
 
         Args:
             node (Node): the node to persist
         """
-        with Database() as db:
-            self.db.insert_value_dicts(node.value_dict)
+        Database().insert_value_dicts(node.value_dict)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run ExpandReduceFlow
@@ -54,5 +52,5 @@ class ExpandReduceFlow(Flow):
             )  # Apply reduce_op to the expanded nodes
             output_nodes.append(reduced_node)
             self._insert_to_db(reduced_node)
-            
+
         return output_nodes
