@@ -1,7 +1,7 @@
 """Queue-Based Pipeline for flow streaming with multiple threads."""
 
 from queue import Empty, Queue
-from threading import Thread
+from threading import Lock, Thread
 from typing import Any, List, Mapping
 
 from uniflow.flow.client import ExtractClient, TransformClient
@@ -31,6 +31,7 @@ class MultiFlowsPipeline:
         Args:
             config (Dict[str, Any]): Config for the pipeline
         """
+        self._lock = Lock()
         self._queue = Queue()
         self._config = config
         self._extract_client = ExtractClient(self._config.extract_config)
@@ -70,14 +71,15 @@ class MultiFlowsPipeline:
         Returns:
             List[Mapping[str, Any]]: List of outputs from the pipeline
         """
-        output_list = []
-        producer_thread = Thread(target=self._producer, args=(input_list,))
-        consumer_thread = Thread(target=self._consumer, args=(output_list,))
+        with self._lock:
+            output_list = []
+            producer_thread = Thread(target=self._producer, args=(input_list,))
+            consumer_thread = Thread(target=self._consumer, args=(output_list,))
 
-        producer_thread.start()
-        consumer_thread.start()
+            producer_thread.start()
+            consumer_thread.start()
 
-        producer_thread.join()
-        consumer_thread.join()
+            producer_thread.join()
+            consumer_thread.join()
 
-        return output_list
+            return output_list
