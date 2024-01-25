@@ -172,14 +172,14 @@ class OpenAIModelServer(AbsModelServer):
         """
         return [c.message.content for d in data for c in d.choices]
 
-    def _make_api_call(self, data: List[str]) -> List[str]:
+    def _make_api_call(self, data: str) -> str:
         """Helper method to make API call.
 
         Args:
-            data (List[str]): Data to run.
+            data (str): Data to run.
 
         Returns:
-            List[str]: Output data.
+            str: Output data.
         """
         return self._client.chat.completions.create(
             model=self._model_config.model_name,
