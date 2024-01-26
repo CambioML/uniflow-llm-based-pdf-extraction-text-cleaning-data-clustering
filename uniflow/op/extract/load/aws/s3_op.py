@@ -115,7 +115,11 @@ class ExtractS3HTMLOp(ExtractS3Op):
                 encoding=value_dict.get("encoding", "utf-8"),
             ) as f:
                 text = f.read()
+
+            print("Before:", text)
             text = self.parse_html(text)
+            print("After:", text)
+
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
