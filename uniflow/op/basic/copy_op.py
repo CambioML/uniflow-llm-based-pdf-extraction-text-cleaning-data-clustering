@@ -1,4 +1,5 @@
 """Linear operation."""
+
 import copy
 from typing import Any, Mapping, Sequence
 
