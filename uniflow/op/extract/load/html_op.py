@@ -80,9 +80,6 @@ class ProcessHTMLOp(Op):
             value_dict = copy.deepcopy(node.value_dict)
             text = value_dict["text"]
             text = text.strip()
-
-            print("stripped:", text)
-
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
