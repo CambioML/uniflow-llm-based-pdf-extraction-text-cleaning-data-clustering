@@ -1,4 +1,5 @@
 """Layout Module."""
+
 from typing import List
 
 import cv2

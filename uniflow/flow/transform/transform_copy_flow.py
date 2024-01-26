@@ -1,4 +1,5 @@
 """Flow class."""
+
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM

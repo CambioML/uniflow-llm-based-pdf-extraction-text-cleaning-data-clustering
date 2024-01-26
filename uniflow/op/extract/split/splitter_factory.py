@@ -1,4 +1,5 @@
 """Splitter Factory Module."""
+
 from typing import Dict, List
 
 from uniflow.op.extract.split.constants import (
