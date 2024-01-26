@@ -89,6 +89,14 @@ class ExtractHTMLConfig(ExtractConfig):
     splitter: str = PARAGRAPH_SPLITTER
 
 
+@dataclass
+class ExtractS3HTMLConfig(ExtractConfig):
+    """Extract HTML Config Class."""
+
+    flow_name: str = "ExtractS3HTMLFlow"
+    splitter: str = PARAGRAPH_SPLITTER
+
+
 ###########################################################
 #                   All Transform Configs                 #
 ###########################################################
