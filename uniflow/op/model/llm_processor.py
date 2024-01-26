@@ -77,6 +77,7 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
         Returns:
             List[str]: Serialized data.
         """
+        output = []
         for d in data:
             if not isinstance(d, Context):
                 raise ValueError("Input data must be a Context object.")
@@ -86,10 +87,9 @@ class JsonFormattedDataProcessor(AbsLLMProcessor):
                 f"{prompt_template.instruction}\n\n{OUTPUT_SCHEMA_GUIDE}"
             )
 
-            input_data = []
             prompt_template.few_shot_prompt.append(d)
-            input_data.append(prompt_template.model_dump())
-        return [json.dumps(d) for d in input_data]
+            output.append(prompt_template.model_dump())
+        return [json.dumps(d) for d in output]
 
     def _deserialize(self, data: List[str]) -> List[Dict[str, Any]]:
         """Deserialize data.
