@@ -34,7 +34,8 @@ class PatternSplitter(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             text = value_dict["text"]
-            text = text.split(self._splitter)
+            # TODO: Make len(p) configurable
+            text = [p for p in text.split(self._splitter) if len(p) > 20]
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
