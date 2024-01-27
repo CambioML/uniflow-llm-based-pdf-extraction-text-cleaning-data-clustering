@@ -1,4 +1,5 @@
 """Flow Factory Module."""
+
 from typing import Dict, List
 
 from uniflow.constants import EXTRACT, RATER, TRANSFORM

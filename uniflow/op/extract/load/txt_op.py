@@ -1,4 +1,5 @@
 """Extract txt op."""
+
 import copy
 import re
 from typing import Sequence

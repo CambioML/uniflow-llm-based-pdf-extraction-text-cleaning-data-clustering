@@ -1,0 +1,18 @@
+.social-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #FFFFFF;
+    border: 2px solid;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+.social-logo {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
