@@ -7,6 +7,8 @@ from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.extract.load.aws.s3_op import ExtractS3Op
 from uniflow.op.extract.load.txt_op import ExtractTxtOp, ProcessTxtOp
+from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
+from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
 
 
 class ExtractTxtFlow(Flow):
@@ -14,11 +16,12 @@ class ExtractTxtFlow(Flow):
 
     TAG = EXTRACT
 
-    def __init__(self) -> None:
+    def __init__(self, splitter: str = PARAGRAPH_SPLITTER) -> None:
         """Extract txt Flow Constructor."""
         super().__init__()
         self._extract_txt_op = ExtractTxtOp(name="extract_txt_op")
         self._process_txt_op = ProcessTxtOp(name="process_txt_op")
+        self._split_op = SplitterOpsFactory.get(splitter)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract txt Flow.
@@ -31,6 +34,7 @@ class ExtractTxtFlow(Flow):
         """
         nodes = self._extract_txt_op(nodes)
         nodes = self._process_txt_op(nodes)
+        nodes = self._split_op(nodes)
         return nodes
 
 

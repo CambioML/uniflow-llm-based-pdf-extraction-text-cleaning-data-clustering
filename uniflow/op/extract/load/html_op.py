@@ -45,7 +45,7 @@ class ExtractHTMLOp(Op):
                     encoding=value_dict.get("encoding", "utf-8"),
                 ) as f:
                     text = f.read()
-            text = self.parse_html(text)
+            text = self._parse_html(text)
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
@@ -55,8 +55,15 @@ class ExtractHTMLOp(Op):
             )
         return output_nodes
 
-    def parse_html(self, text) -> str:
-        """Function Parse Html."""
+    def _parse_html(self, text: str) -> str:
+        """Function Parse Html.
+
+        Args:
+            text (str): Raw html text.
+
+        Returns:
+            str: Parsed html text.
+        """
         soup = self._beautiful_soup_parser(text, "html.parser")
 
         if soup.title:
