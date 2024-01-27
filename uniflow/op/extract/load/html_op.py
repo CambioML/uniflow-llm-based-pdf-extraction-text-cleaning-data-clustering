@@ -1,4 +1,5 @@
 """Extract HTML op."""
+
 import copy
 from typing import Sequence
 
