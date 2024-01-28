@@ -1,6 +1,5 @@
 """LLM processor for pre-processing data with a LLM model server."""
 
-
 import logging
 from typing import Any, Dict, List
 
