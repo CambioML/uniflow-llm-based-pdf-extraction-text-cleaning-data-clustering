@@ -22,7 +22,7 @@ class Flow:
     def __init__(self) -> None:
         """Initialize Flow class."""
         self._root = None
-        logging.basicConfig(format="""%(levelname)s [%(module)s]: %(message)s""")
+        logging.basicConfig(format="%(levelname)s [%(module)s]: %(message)s")
 
     def __call__(self, value_dict: Mapping[str, Any]) -> Mapping[str, Any]:
         """Run flow.

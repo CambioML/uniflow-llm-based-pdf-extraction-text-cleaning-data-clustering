@@ -1119,6 +1119,7 @@ class LayoutModelServer(AbsModelServer):
         """
         import cv2  # pylint: disable=import-outside-toplevel
         import numpy as np  # pylint: disable=import-outside-toplevel
+
         from uniflow.op.model.layout_utils import \
             XYCut  # pylint: disable=import-outside-toplevel
 
