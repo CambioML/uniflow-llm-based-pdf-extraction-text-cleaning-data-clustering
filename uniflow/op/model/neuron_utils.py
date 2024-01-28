@@ -11,7 +11,8 @@ from transformers import AutoConfig, AutoModelForCausalLM, AutoTokenizer
 try:
     from transformers_neuronx import constants
     from transformers_neuronx.config import NeuronConfig
-    from transformers_neuronx.generation_utils import HuggingFaceGenerationModelAdapter
+    from transformers_neuronx.generation_utils import \
+        HuggingFaceGenerationModelAdapter
     from transformers_neuronx.mistral.model import MistralForSampling
     from transformers_neuronx.module import save_pretrained_split
 except ModuleNotFoundError as exc:

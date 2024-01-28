@@ -21,9 +21,8 @@ class ExtractIpynbOp(Op):
         """
         try:
             import nbformat  # pylint: disable=import-outside-toplevel
-            from nbconvert import (  # pylint: disable=import-outside-toplevel
-                MarkdownExporter,
-            )
+            from nbconvert import \
+                MarkdownExporter  # pylint: disable=import-outside-toplevel
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nbformat and nbconvert to load ipynb file. You can use `pip install nbformat nbconvert` to install them."

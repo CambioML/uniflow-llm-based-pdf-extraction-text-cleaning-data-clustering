@@ -47,7 +47,8 @@ class ExtractHTMLOp(Op):
     def parse_html(self, text):
         """Function Parse Html."""
         try:
-            from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
+            from bs4 import \
+                BeautifulSoup  # pylint: disable=import-outside-toplevel
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install bs4. You can use `pip install bs4` to install them."

@@ -4,15 +4,10 @@ import re
 from collections import Counter
 from typing import Any, Dict, List
 
-from uniflow.op.model.constants import (
-    AVERAGE_SCORE,
-    MAJORITY_VOTE,
-    RESPONSE,
-    SAMPLES,
-    SCORES,
-    VOTES,
-)
-from uniflow.op.model.llm_processor import JsonFormattedDataProcessor, LLMDataProcessor
+from uniflow.op.model.constants import (AVERAGE_SCORE, MAJORITY_VOTE, RESPONSE,
+                                        SAMPLES, SCORES, VOTES)
+from uniflow.op.model.llm_processor import (JsonFormattedDataProcessor,
+                                            LLMDataProcessor)
 from uniflow.op.prompt import PromptTemplate
 
 

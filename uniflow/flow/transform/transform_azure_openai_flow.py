@@ -5,7 +5,8 @@ from typing import Any, Dict, Sequence
 from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
-from uniflow.op.model.llm_processor import JsonFormattedDataProcessor, LLMDataProcessor
+from uniflow.op.model.llm_processor import (JsonFormattedDataProcessor,
+                                            LLMDataProcessor)
 from uniflow.op.model.model_op import ModelOp
 from uniflow.op.prompt import PromptTemplate
 

@@ -6,7 +6,6 @@ from queue import Queue
 from typing import Any, Dict, List, Mapping, Tuple
 
 from tqdm.auto import tqdm
-
 from uniflow.constants import EXTRACT, RATER, TRANSFORM
 from uniflow.flow.config import ExtractConfig, RaterConfig, TransformConfig
 from uniflow.flow.flow_factory import FlowFactory
