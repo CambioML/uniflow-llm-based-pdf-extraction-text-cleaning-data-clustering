@@ -144,9 +144,11 @@ class OpenAIJsonFormattedLLMRater(JsonFormattedDataProcessor):
             samples = response[i : i + self._num_samples]  # noqa: E203
             if self._rater_key:
                 labels = [
-                    re.sub(self._pattern, "", r[self._rater_key]).lower()
-                    if self._rater_key in r
-                    else None
+                    (
+                        re.sub(self._pattern, "", r[self._rater_key]).lower()
+                        if self._rater_key in r
+                        else None
+                    )
                     for r in samples
                 ]
             else:
@@ -221,9 +223,11 @@ class HuggingfaceJsonFormattedLLMRater(LLMDataProcessor):
             samples = response[i : i + self._num_samples]  # noqa: E203
             if self._rater_key:
                 labels = [
-                    re.sub(self._pattern, "", r[self._rater_key]).lower()
-                    if self._rater_key in r
-                    else None
+                    (
+                        re.sub(self._pattern, "", r[self._rater_key]).lower()
+                        if self._rater_key in r
+                        else None
+                    )
                     for r in samples
                 ]
             else:
