@@ -5,8 +5,7 @@ import json
 from typing import Any, Dict, List
 
 from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
-from uniflow.op.model.constants import (ERROR, ERROR_CONTEXT, ERROR_LIST,
-                                        RESPONSE)
+from uniflow.op.model.constants import ERROR, ERROR_CONTEXT, ERROR_LIST, RESPONSE
 from uniflow.op.prompt import Context
 
 OUTPUT_SCHEMA_GUIDE = "Ensure the response is in json."

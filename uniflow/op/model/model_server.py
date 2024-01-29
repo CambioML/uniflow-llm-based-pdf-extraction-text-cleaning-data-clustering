@@ -11,13 +11,16 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
 
-from uniflow.op.model.model_config import (AzureOpenAIModelConfig,
-                                           BedrockModelConfig,
-                                           HuggingfaceModelConfig,
-                                           LayoutModelConfig, LMQGModelConfig,
-                                           NougatModelConfig,
-                                           OpenAIModelConfig,
-                                           SageMakerModelConfig)
+from uniflow.op.model.model_config import (
+    AzureOpenAIModelConfig,
+    BedrockModelConfig,
+    HuggingfaceModelConfig,
+    LayoutModelConfig,
+    LMQGModelConfig,
+    NougatModelConfig,
+    OpenAIModelConfig,
+    SageMakerModelConfig,
+)
 from uniflow.op.prompt import PromptTemplate
 
 logger = logging.getLogger(__name__)
@@ -215,8 +218,7 @@ class AzureOpenAIModelServer(AbsModelServer):
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
     ) -> None:
         # import in class level to avoid installing openai package
-        from openai import \
-            AzureOpenAI  # pylint: disable=import-outside-toplevel
+        from openai import AzureOpenAI  # pylint: disable=import-outside-toplevel
 
         super().__init__(prompt_template, model_config)
         self._model_config = AzureOpenAIModelConfig(**self._model_config)
@@ -290,8 +292,9 @@ class HuggingfaceModelServer(AbsModelServer):
         self._model_config = HuggingfaceModelConfig(**self._model_config)
         if self._model_config.neuron is False:
             try:
-                from transformers import \
-                    pipeline  # pylint: disable=import-outside-toplevel
+                from transformers import (
+                    pipeline,  # pylint: disable=import-outside-toplevel
+                )
             except ModuleNotFoundError as exc:
                 raise ModuleNotFoundError(
                     "Please install transformers to use HuggingfaceModelServer. You can use `pip install transformers` to install it."
@@ -321,8 +324,9 @@ class HuggingfaceModelServer(AbsModelServer):
                 print(
                     "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
                 )
-            from uniflow.op.model.neuron_utils import \
-                Neuron  # pylint: disable=import-outside-toplevel
+            from uniflow.op.model.neuron_utils import (
+                Neuron,  # pylint: disable=import-outside-toplevel
+            )
 
             model, tokenizer = Neuron.get_neuron_model(
                 self._model_config.model_name, self._model_config.batch_size
@@ -335,7 +339,9 @@ class HuggingfaceModelServer(AbsModelServer):
     def _get_model(self):
         """Get model."""
         from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM, AutoTokenizer)
+            AutoModelForCausalLM,
+            AutoTokenizer,
+        )
 
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
@@ -459,8 +465,7 @@ class LMQGModelServer(AbsModelServer):
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
     ) -> None:
         # import in class level to avoid installing transformers package
-        from lmqg import \
-            TransformersQG  # pylint: disable=import-outside-toplevel
+        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
 
         super().__init__(prompt_template, model_config)
         self._model_config = LMQGModelConfig(**self._model_config)
@@ -514,12 +519,13 @@ class NougatModelServer(AbsModelServer):
     ) -> None:
         # import in class level to avoid installing nougat package
         try:
-            from nougat import \
-                NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import \
-                get_checkpoint  # pylint: disable=import-outside-toplevel
-            from nougat.utils.device import \
-                move_to_device  # pylint: disable=import-outside-toplevel
+            from nougat import NougatModel  # pylint: disable=import-outside-toplevel
+            from nougat.utils.checkpoint import (
+                get_checkpoint,  # pylint: disable=import-outside-toplevel
+            )
+            from nougat.utils.device import (
+                move_to_device,  # pylint: disable=import-outside-toplevel
+            )
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
@@ -565,12 +571,16 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        from nougat.postprocessing import \
-            markdown_compatible  # pylint: disable=import-outside-toplevel
-        from nougat.utils.dataset import \
-            LazyDataset  # pylint: disable=import-outside-toplevel
+        from nougat.postprocessing import (
+            markdown_compatible,  # pylint: disable=import-outside-toplevel
+        )
+        from nougat.utils.dataset import (
+            LazyDataset,  # pylint: disable=import-outside-toplevel
+        )
         from torch.utils.data import (  # pylint: disable=import-outside-toplevel
-            ConcatDataset, DataLoader)
+            ConcatDataset,
+            DataLoader,
+        )
 
         outs = []
         for pdf in data:
@@ -1079,8 +1089,9 @@ class LayoutModelServer(AbsModelServer):
             raise ModuleNotFoundError(
                 "Please install easyocr to use LayoutModelServer. You can use `pip install easyocr` to install it."
             ) from exc
-        from .layout_utils import \
-            LayoutPredictor  # pylint: disable=import-outside-toplevel
+        from .layout_utils import (
+            LayoutPredictor,  # pylint: disable=import-outside-toplevel
+        )
 
         self.layout_predictor = LayoutPredictor(
             self._model_config.model_name, self._model_config.model_file
@@ -1120,8 +1131,9 @@ class LayoutModelServer(AbsModelServer):
         import cv2  # pylint: disable=import-outside-toplevel
         import numpy as np  # pylint: disable=import-outside-toplevel
 
-        from uniflow.op.model.layout_utils import \
-            XYCut  # pylint: disable=import-outside-toplevel
+        from uniflow.op.model.layout_utils import (
+            XYCut,  # pylint: disable=import-outside-toplevel
+        )
 
         outs = []
         for img in data:

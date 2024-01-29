@@ -2,10 +2,11 @@
 
 from typing import Dict, List
 
-from uniflow.op.extract.split.constants import (MARKDOWN_HEADER_SPLITTER,
-                                                PARAGRAPH_SPLITTER)
-from uniflow.op.extract.split.markdown_header_splitter import \
-    MarkdownHeaderSplitter
+from uniflow.op.extract.split.constants import (
+    MARKDOWN_HEADER_SPLITTER,
+    PARAGRAPH_SPLITTER,
+)
+from uniflow.op.extract.split.markdown_header_splitter import MarkdownHeaderSplitter
 from uniflow.op.extract.split.pattern_splitter_op import PatternSplitter
 
 
