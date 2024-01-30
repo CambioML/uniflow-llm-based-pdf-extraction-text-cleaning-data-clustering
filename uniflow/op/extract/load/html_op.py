@@ -23,7 +23,7 @@ class ExtractHTMLOp(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             if "url" in value_dict:
-                import requests  # pylint: disable=import-outside-toplevel
+                import requests
 
                 resp = requests.get(url=value_dict["url"], timeout=300)
                 text = resp.text
@@ -47,7 +47,7 @@ class ExtractHTMLOp(Op):
     def parse_html(self, text):
         """Function Parse Html."""
         try:
-            from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
+            from bs4 import BeautifulSoup
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install bs4. You can use `pip install bs4` to install them."

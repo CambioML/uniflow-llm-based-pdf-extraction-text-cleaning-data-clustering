@@ -458,7 +458,7 @@ class RaterForClassificationOpenAIGPT3p5Config(RaterConfig):
     Attributes:
         flow_name (str): Name of the rating flow, default is "RaterFlow".
         model_config (ModelConfig): Configuration for the GPT-3.5 model. Includes model name ("gpt-3.5-turbo-1106"),
-                                    the server (""OpenAIModelServer"), number of calls (1), temperature (0),
+                                    the server ("OpenAIModelServer"), number of calls (1), temperature (0),
                                     and the response format (plain text).
         label2score (Dict[str, float]): Mapping of labels to scores, default is {"Yes": 1.0, "No": 0.0}.
         prompt_template (PromptTemplate): Template for guided prompts used in rating. Includes instructions

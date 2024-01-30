@@ -20,10 +20,8 @@ class ExtractIpynbOp(Op):
             Sequence[Node]: Nodes after running.
         """
         try:
-            import nbformat  # pylint: disable=import-outside-toplevel
-            from nbconvert import (
-                MarkdownExporter,  # pylint: disable=import-outside-toplevel
-            )
+            import nbformat
+            from nbconvert import MarkdownExporter
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nbformat and nbconvert to load ipynb file. You can use `pip install nbformat nbconvert` to install them."
