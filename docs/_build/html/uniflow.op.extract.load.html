@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.op.model package" href="uniflow.op.model.html" /><link rel="prev" title="uniflow.op.extract package" href="uniflow.op.extract.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.op.extract.load.aws package" href="uniflow.op.extract.load.aws.html" /><link rel="prev" title="uniflow.op.extract package" href="uniflow.op.extract.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.op.extract.load package - uniflow 0.0.18 documentation</title>
+        <title>uniflow.op.extract.load package - uniflow 0.0.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">uniflow 0.0.18 documentation</div></a>
+      <a href="index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,10 @@
 <li class="toctree-l3 current has-children"><a class="reference internal" href="uniflow.op.html">uniflow.op package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of uniflow.op package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html">uniflow.op.basic package</a></li>
 <li class="toctree-l4 current has-children"><a class="reference internal" href="uniflow.op.extract.html">uniflow.op.extract package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of uniflow.op.extract package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">uniflow.op.extract.load package</a></li>
+<li class="toctree-l5 current has-children current-page"><a class="current reference internal" href="#">uniflow.op.extract.load package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of uniflow.op.extract.load package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="uniflow.op.extract.load.aws.html">uniflow.op.extract.load.aws package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a></li>
@@ -254,8 +257,51 @@
         <article role="main">
           <section id="uniflow-op-extract-load-package">
 <h1>uniflow.op.extract.load package<a class="headerlink" href="#uniflow-op-extract-load-package" title="Link to this heading">#</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="uniflow.op.extract.load.aws.html">uniflow.op.extract.load.aws package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="uniflow.op.extract.load.aws.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uniflow.op.extract.load.aws.html#module-uniflow.op.extract.load.aws.s3_op">uniflow.op.extract.load.aws.s3_op module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.op.extract.load.aws.html#uniflow.op.extract.load.aws.s3_op.ExtractS3Op"><code class="docutils literal notranslate"><span class="pre">ExtractS3Op</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.extract.load.aws.html#uniflow.op.extract.load.aws.s3_op.ExtractS3Op.LOCAL_FILE_PATH"><code class="docutils literal notranslate"><span class="pre">ExtractS3Op.LOCAL_FILE_PATH</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="uniflow.op.extract.load.aws.html#module-uniflow.op.extract.load.aws">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-uniflow.op.extract.load.html_op">
+<span id="uniflow-op-extract-load-html-op-module"></span><h2>uniflow.op.extract.load.html_op module<a class="headerlink" href="#module-uniflow.op.extract.load.html_op" title="Link to this heading">#</a></h2>
+<p>Extract HTML op.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.extract.load.html_op.ExtractHTMLOp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.html_op.</span></span><span class="sig-name descname"><span class="pre">ExtractHTMLOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/html_op.html#ExtractHTMLOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.html#uniflow.op.op.Op" title="uniflow.op.op.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
+<p>Extract HTML Op Class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html">
+<span class="sig-name descname"><span class="pre">parse_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/html_op.html#ExtractHTMLOp.parse_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html" title="Link to this definition">#</a></dt>
+<dd><p>Function Parse Html.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.extract.load.html_op.ProcessHTMLOp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.html_op.</span></span><span class="sig-name descname"><span class="pre">ProcessHTMLOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/html_op.html#ProcessHTMLOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.html_op.ProcessHTMLOp" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.html#uniflow.op.op.Op" title="uniflow.op.op.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
+<p>Process HTML Op Class.</p>
+</dd></dl>
+
 </section>
 <section id="module-uniflow.op.extract.load.image_op">
 <span id="uniflow-op-extract-load-image-op-module"></span><h2>uniflow.op.extract.load.image_op module<a class="headerlink" href="#module-uniflow.op.extract.load.image_op" title="Link to this heading">#</a></h2>
@@ -357,12 +403,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="uniflow.op.model.html">
+          <a class="next-page" href="uniflow.op.extract.load.aws.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">uniflow.op.model package</div>
+                <div class="title">uniflow.op.extract.load.aws package</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -416,7 +462,16 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">uniflow.op.extract.load package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-uniflow.op.extract.load.html_op">uniflow.op.extract.load.html_op module</a><ul>
+<li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLOp</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLOp.parse_html()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ProcessHTMLOp"><code class="docutils literal notranslate"><span class="pre">ProcessHTMLOp</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-uniflow.op.extract.load.image_op">uniflow.op.extract.load.image_op module</a><ul>
 <li><a class="reference internal" href="#uniflow.op.extract.load.image_op.ExtractImageOp"><code class="docutils literal notranslate"><span class="pre">ExtractImageOp</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.op.extract.load.image_op.ProcessImageOp"><code class="docutils literal notranslate"><span class="pre">ProcessImageOp</span></code></a></li>
@@ -454,7 +509,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=8bafd125"></script>
+</div><script src="_static/documentation_options.js?v=a11416ff"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

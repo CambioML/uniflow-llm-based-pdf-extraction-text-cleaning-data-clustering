@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.pipeline - uniflow 0.0.18 documentation</title>
+        <title>uniflow.pipeline - uniflow 0.0.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">uniflow 0.0.18 documentation</div></a>
+      <a href="../../index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -202,7 +202,10 @@
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../uniflow.op.html">uniflow.op package</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of uniflow.op package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../uniflow.op.basic.html">uniflow.op.basic package</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="../../uniflow.op.extract.html">uniflow.op.extract package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of uniflow.op.extract package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="../../uniflow.op.extract.load.html">uniflow.op.extract.load package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="../../uniflow.op.extract.load.html">uniflow.op.extract.load package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of uniflow.op.extract.load package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="../../uniflow.op.extract.load.aws.html">uniflow.op.extract.load.aws package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="../../uniflow.op.model.html">uniflow.op.model package</a></li>
@@ -254,7 +257,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Queue-Based Pipeline for flow streaming with multiple threads.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">queue</span> <span class="kn">import</span> <span class="n">Empty</span><span class="p">,</span> <span class="n">Queue</span>
-<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">Thread</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span>
 
 <span class="kn">from</span> <span class="nn">uniflow.flow.client</span> <span class="kn">import</span> <span class="n">ExtractClient</span><span class="p">,</span> <span class="n">TransformClient</span>
@@ -286,6 +289,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            config (Dict[str, Any]): Config for the pipeline</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">Queue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extract_client</span> <span class="o">=</span> <span class="n">ExtractClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">extract_config</span><span class="p">)</span>
@@ -327,17 +331,18 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            List[Mapping[str, Any]]: List of outputs from the pipeline</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">output_list</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">producer_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">input_list</span><span class="p">,))</span>
-        <span class="n">consumer_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">output_list</span><span class="p">,))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">output_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">producer_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_producer</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">input_list</span><span class="p">,))</span>
+            <span class="n">consumer_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">output_list</span><span class="p">,))</span>
 
-        <span class="n">producer_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="n">consumer_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">producer_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">consumer_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
-        <span class="n">producer_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
-        <span class="n">consumer_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="n">producer_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="n">consumer_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">output_list</span></div>
+            <span class="k">return</span> <span class="n">output_list</span></div>
 </div>
 
 </pre></div>
@@ -380,7 +385,7 @@
       
     </aside>
   </div>
-</div><script src="../../_static/documentation_options.js?v=8bafd125"></script>
+</div><script src="../../_static/documentation_options.js?v=a11416ff"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
