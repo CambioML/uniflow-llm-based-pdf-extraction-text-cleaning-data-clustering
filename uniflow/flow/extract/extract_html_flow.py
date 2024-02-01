@@ -5,7 +5,6 @@ from typing import Sequence
 from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
-from uniflow.op.extract.load.aws.s3_op import ExtractS3HTMLOp
 from uniflow.op.extract.load.html_op import ExtractHTMLOp, ProcessHTMLOp
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
@@ -36,14 +35,3 @@ class ExtractHTMLFlow(Flow):
         nodes = self._process_html_op(nodes)
         nodes = self._split_op(nodes)
         return nodes
-
-
-class ExtractS3HTMLFlow(ExtractHTMLFlow):
-    """Extract HTML Flow Class."""
-
-    def __init__(self, splitter: str = PARAGRAPH_SPLITTER) -> None:
-        """Extract HTML Flow Constructor."""
-        super().__init__()
-        self._extract_html_op = ExtractS3HTMLOp(name="extract_s3_html_op")
-        self._process_html_op = ProcessHTMLOp(name="process_html_op")
-        self._split_op = SplitterOpsFactory.get(splitter)
