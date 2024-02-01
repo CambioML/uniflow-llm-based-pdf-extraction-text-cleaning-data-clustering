@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html" /><link rel="search" title="Search" href="../../../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.op.extract.load.pdf_op - uniflow 0.0.21 documentation</title>
+        <title>uniflow.op.extract.load.html_op - uniflow 0.0.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -253,32 +253,20 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for uniflow.op.extract.load.pdf_op</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Model Op Module.&quot;&quot;&quot;</span>
+          <h1>Source code for uniflow.op.extract.load.html_op</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Extract HTML op.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
 
 <span class="kn">from</span> <span class="nn">uniflow.node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">uniflow.op.model.abs_llm_processor</span> <span class="kn">import</span> <span class="n">AbsLLMProcessor</span>
 <span class="kn">from</span> <span class="nn">uniflow.op.op</span> <span class="kn">import</span> <span class="n">Op</span>
 
 
-<div class="viewcode-block" id="ExtractPDFOp">
-<a class="viewcode-back" href="../../../../../uniflow.op.extract.load.html#uniflow.op.extract.load.pdf_op.ExtractPDFOp">[docs]</a>
-<span class="k">class</span> <span class="nc">ExtractPDFOp</span><span class="p">(</span><span class="n">Op</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process PDF Op Class.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">AbsLLMProcessor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process PDF Op Constructor.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            name (str): Name of the op.</span>
-<span class="sd">            model (AbsLLMProcessor): Model to run.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+<div class="viewcode-block" id="ExtractHTMLOp">
+<a class="viewcode-back" href="../../../../../uniflow.op.extract.load.html#uniflow.op.extract.load.html_op.ExtractHTMLOp">[docs]</a>
+<span class="k">class</span> <span class="nc">ExtractHTMLOp</span><span class="p">(</span><span class="n">Op</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract HTML Op Class.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Model Op.</span>
@@ -292,8 +280,19 @@
         <span class="n">output_nodes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
             <span class="n">value_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value_dict</span><span class="p">)</span>
-            <span class="n">value_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">value_dict</span><span class="p">)</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">value_dict</span><span class="p">[</span><span class="s2">&quot;response&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s2">&quot;url&quot;</span> <span class="ow">in</span> <span class="n">value_dict</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">requests</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+
+                <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">value_dict</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">],</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+                    <span class="n">value_dict</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+                    <span class="n">encoding</span><span class="o">=</span><span class="n">value_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;encoding&quot;</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+                <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_html</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
             <span class="n">output_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Node</span><span class="p">(</span>
                     <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_name</span><span class="p">(),</span>
@@ -301,17 +300,38 @@
                     <span class="n">prev_nodes</span><span class="o">=</span><span class="p">[</span><span class="n">node</span><span class="p">],</span>
                 <span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">output_nodes</span></div>
+        <span class="k">return</span> <span class="n">output_nodes</span>
+
+<div class="viewcode-block" id="ExtractHTMLOp.parse_html">
+<a class="viewcode-back" href="../../../../../uniflow.op.extract.load.html#uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html">[docs]</a>
+    <span class="k">def</span> <span class="nf">parse_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function Parse Html.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
+                <span class="s2">&quot;Please install bs4. You can use `pip install bs4` to install them.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="s2">&quot;html.parser&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">soup</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">soup</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">title</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">soup</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">stripped_strings</span><span class="p">)</span></div>
+</div>
 
 
 
-<div class="viewcode-block" id="ProcessPDFOp">
-<a class="viewcode-back" href="../../../../../uniflow.op.extract.load.html#uniflow.op.extract.load.pdf_op.ProcessPDFOp">[docs]</a>
-<span class="k">class</span> <span class="nc">ProcessPDFOp</span><span class="p">(</span><span class="n">Op</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process PDF Op Class.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ProcessHTMLOp">
+<a class="viewcode-back" href="../../../../../uniflow.op.extract.load.html#uniflow.op.extract.load.html_op.ProcessHTMLOp">[docs]</a>
+<span class="k">class</span> <span class="nc">ProcessHTMLOp</span><span class="p">(</span><span class="n">Op</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process HTML Op Class.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run markdown Op .</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Model Op.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            nodes (Sequence[Node]): Nodes to run.</span>
@@ -323,7 +343,7 @@
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
             <span class="n">value_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value_dict</span><span class="p">)</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">value_dict</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">{3,}&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="n">output_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Node</span><span class="p">(</span>
                     <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_name</span><span class="p">(),</span>
