@@ -274,7 +274,7 @@ class TransformForClusteringOpenAIGPT4Config:
     flow_name: str = "TransformOpenAIFlow"
     model_config: ModelConfig = field(
         default_factory=lambda: OpenAIModelConfig(
-            model_name="gpt-4",
+            model_name="gpt-4-1106-preview",
             model_server="OpenAIModelServer",
             num_call=1,
             temperature=0,

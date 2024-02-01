@@ -4,6 +4,14 @@ uniflow.flow.extract package
 Submodules
 ----------
 
+uniflow.flow.extract.extract\_html\_flow module
+-----------------------------------------------
+
+.. automodule:: uniflow.flow.extract.extract_html_flow
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 uniflow.flow.extract.extract\_image\_flow module
 ------------------------------------------------
 
