@@ -81,8 +81,8 @@ class ExtractS3PDFOp(ExtractS3Op):
             Sequence[Node]: Nodes after running.
         """
         output_nodes = []
-        for node in nodes:
 
+        for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             # create local file path if not exists
             if os.path.exists(self.LOCAL_FILE_PATH) is False:
@@ -96,6 +96,7 @@ class ExtractS3PDFOp(ExtractS3Op):
                 Filename=filename,
             )
 
+            filename = {"pdf": filename}
             value_dict = self._model.run(filename)
             text = value_dict["response"][0]
 
