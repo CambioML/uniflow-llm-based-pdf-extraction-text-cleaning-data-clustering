@@ -10,6 +10,19 @@ from uniflow.op.op import Op
 class ExtractHTMLOp(Op):
     """Extract HTML Op Class."""
 
+    def __init__(self, name: str) -> None:
+        try:
+            import requests  # pylint: disable=import-outside-toplevel
+            from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install bs4. You can use `pip install bs4` to install them."
+            ) from exc
+
+        super().__init__(name)
+        self._requests_client = requests
+        self._beautiful_soup_parser = BeautifulSoup
+
     def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Op.
 
@@ -22,19 +35,32 @@ class ExtractHTMLOp(Op):
         output_nodes = []
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
-            if "url" in value_dict:
-                import requests  # pylint: disable=import-outside-toplevel
 
-                resp = requests.get(url=value_dict["url"], timeout=300)
+            if "url" in value_dict:
+                resp = self._requests_client.get(url=value_dict["url"], timeout=300)
+                if not resp.ok:
+                    raise ValueError(f"URL return an error: {resp.status_code}")
+
+                content_type = resp.headers.get("Content-Type", "")
+                if not content_type.startswith("text/html"):
+                    raise ValueError(
+                        f"Expected content type text/html. Got {content_type}."
+                    )
+
                 text = resp.text
-            else:
+
+            elif "filename" in value_dict:
                 with open(
                     value_dict["filename"],
                     "r",
                     encoding=value_dict.get("encoding", "utf-8"),
                 ) as f:
                     text = f.read()
-            text = self.parse_html(text)
+
+            else:
+                raise ValueError("Expected url or filename param.")
+
+            text = self._parse_html(text)
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
@@ -44,23 +70,23 @@ class ExtractHTMLOp(Op):
             )
         return output_nodes
 
-    def parse_html(self, text):
-        """Function Parse Html."""
-        try:
-            from bs4 import BeautifulSoup  # pylint: disable=import-outside-toplevel
-        except ModuleNotFoundError as exc:
-            raise ModuleNotFoundError(
-                "Please install bs4. You can use `pip install bs4` to install them."
-            ) from exc
+    def _parse_html(self, text: str) -> str:
+        """Function Parse Html.
 
-        soup = BeautifulSoup(text, "html.parser")
+        Args:
+            text (str): Raw html text.
+
+        Returns:
+            str: Parsed html text.
+        """
+        soup = self._beautiful_soup_parser(text, "html.parser")
 
         if soup.title:
-            title = str(soup.title.string)
+            title = str(soup.title.string) + "\n\n"
         else:
             title = ""
 
-        return title + "\n".join(soup.body.stripped_strings)
+        return title + "\n\n".join(soup.body.stripped_strings)
 
 
 class ProcessHTMLOp(Op):
