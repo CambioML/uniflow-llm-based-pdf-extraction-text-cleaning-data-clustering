@@ -144,7 +144,7 @@ class OpenAIModelServer(AbsModelServer):
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
     ) -> None:
         # import in class level to avoid installing openai package
-        from openai import OpenAI  # pylint: disable=import-outside-toplevel
+        from openai import OpenAI
 
         super().__init__(prompt_template, model_config)
         self._model_config = OpenAIModelConfig(**self._model_config)
@@ -218,7 +218,7 @@ class AzureOpenAIModelServer(AbsModelServer):
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
     ) -> None:
         # import in class level to avoid installing openai package
-        from openai import AzureOpenAI  # pylint: disable=import-outside-toplevel
+        from openai import AzureOpenAI
 
         super().__init__(prompt_template, model_config)
         self._model_config = AzureOpenAIModelConfig(**self._model_config)
@@ -292,9 +292,7 @@ class HuggingfaceModelServer(AbsModelServer):
         self._model_config = HuggingfaceModelConfig(**self._model_config)
         if self._model_config.neuron is False:
             try:
-                from transformers import (  # pylint: disable=import-outside-toplevel
-                    pipeline,
-                )
+                from transformers import pipeline
             except ModuleNotFoundError as exc:
                 raise ModuleNotFoundError(
                     "Please install transformers to use HuggingfaceModelServer. You can use `pip install transformers` to install it."
@@ -324,9 +322,7 @@ class HuggingfaceModelServer(AbsModelServer):
                 print(
                     "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
                 )
-            from uniflow.op.model.neuron_utils import (  # pylint: disable=import-outside-toplevel
-                Neuron,
-            )
+            from uniflow.op.model.neuron_utils import Neuron
 
             model, tokenizer = Neuron.get_neuron_model(
                 self._model_config.model_name, self._model_config.batch_size
@@ -338,10 +334,7 @@ class HuggingfaceModelServer(AbsModelServer):
 
     def _get_model(self):
         """Get model."""
-        from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM,
-            AutoTokenizer,
-        )
+        from transformers import AutoModelForCausalLM, AutoTokenizer
 
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
@@ -465,7 +458,7 @@ class LMQGModelServer(AbsModelServer):
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
     ) -> None:
         # import in class level to avoid installing transformers package
-        from lmqg import TransformersQG  # pylint: disable=import-outside-toplevel
+        from lmqg import TransformersQG
 
         super().__init__(prompt_template, model_config)
         self._model_config = LMQGModelConfig(**self._model_config)
@@ -519,13 +512,9 @@ class NougatModelServer(AbsModelServer):
     ) -> None:
         # import in class level to avoid installing nougat package
         try:
-            from nougat import NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import (  # pylint: disable=import-outside-toplevel
-                get_checkpoint,
-            )
-            from nougat.utils.device import (  # pylint: disable=import-outside-toplevel
-                move_to_device,
-            )
+            from nougat import NougatModel
+            from nougat.utils.checkpoint import get_checkpoint
+            from nougat.utils.device import move_to_device
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
@@ -571,16 +560,9 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        from nougat.postprocessing import (  # pylint: disable=import-outside-toplevel
-            markdown_compatible,
-        )
-        from nougat.utils.dataset import (  # pylint: disable=import-outside-toplevel
-            LazyDataset,
-        )
-        from torch.utils.data import (  # pylint: disable=import-outside-toplevel
-            ConcatDataset,
-            DataLoader,
-        )
+        from nougat.postprocessing import markdown_compatible
+        from nougat.utils.dataset import LazyDataset
+        from torch.utils.data import ConcatDataset, DataLoader
 
         outs = []
         for pdf in data:
@@ -1082,16 +1064,14 @@ class LayoutModelServer(AbsModelServer):
         super().__init__(prompt_template, model_config)
         self._model_config = LayoutModelConfig(**self._model_config)
         try:
-            import easyocr  # pylint: disable=import-outside-toplevel
+            import easyocr
 
             self.reader = easyocr.Reader(self._model_config.ocr_lang)
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install easyocr to use LayoutModelServer. You can use `pip install easyocr` to install it."
             ) from exc
-        from .layout_utils import (  # pylint: disable=import-outside-toplevel
-            LayoutPredictor,
-        )
+        from .layout_utils import LayoutPredictor
 
         self.layout_predictor = LayoutPredictor(
             self._model_config.model_name, self._model_config.model_file
@@ -1128,12 +1108,10 @@ class LayoutModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        import cv2  # pylint: disable=import-outside-toplevel
-        import numpy as np  # pylint: disable=import-outside-toplevel
+        import cv2
+        import numpy as np
 
-        from uniflow.op.model.layout_utils import (  # pylint: disable=import-outside-toplevel
-            XYCut,
-        )
+        from uniflow.op.model.layout_utils import XYCut
 
         outs = []
         for img in data:
