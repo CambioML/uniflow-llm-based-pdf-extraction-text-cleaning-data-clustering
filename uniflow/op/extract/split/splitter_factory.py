@@ -5,9 +5,13 @@ from typing import Dict, List
 from uniflow.op.extract.split.constants import (
     MARKDOWN_HEADER_SPLITTER,
     PARAGRAPH_SPLITTER,
+    RECURSIVE_CHARACTER_SPLITTER,
 )
 from uniflow.op.extract.split.markdown_header_splitter import MarkdownHeaderSplitter
 from uniflow.op.extract.split.pattern_splitter_op import PatternSplitter
+from uniflow.op.extract.split.recursive_character_splitter import (
+    RecursiveCharacterSplitter,
+)
 
 
 class SplitterOpsFactory:
@@ -17,6 +21,9 @@ class SplitterOpsFactory:
         PARAGRAPH_SPLITTER: PatternSplitter(name="paragraph_split_op", splitter="\n\n"),
         MARKDOWN_HEADER_SPLITTER: MarkdownHeaderSplitter(
             name="markdown_header_split_op"
+        ),
+        RECURSIVE_CHARACTER_SPLITTER: RecursiveCharacterSplitter(
+            name="recursive_character_split_op"
         ),
     }
 
