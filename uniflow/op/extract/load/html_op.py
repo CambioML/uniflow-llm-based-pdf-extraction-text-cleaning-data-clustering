@@ -35,16 +35,31 @@ class ExtractHTMLOp(Op):
         output_nodes = []
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
+
             if "url" in value_dict:
                 resp = self._requests_client.get(url=value_dict["url"], timeout=300)
+                if not resp.ok:
+                    raise ValueError(f"URL return an error: {resp.status_code}")
+
+                content_type = resp.headers.get("Content-Type", "")
+                if not content_type.startswith("text/html"):
+                    raise ValueError(
+                        f"Expected content type text/html. Got {content_type}."
+                    )
+
                 text = resp.text
-            else:
+
+            elif "filename" in value_dict:
                 with open(
                     value_dict["filename"],
                     "r",
                     encoding=value_dict.get("encoding", "utf-8"),
                 ) as f:
                     text = f.read()
+
+            else:
+                raise ValueError("Expected url or filename param.")
+
             text = self._parse_html(text)
             output_nodes.append(
                 Node(
@@ -71,7 +86,7 @@ class ExtractHTMLOp(Op):
         else:
             title = ""
 
-        return title + "\n".join(soup.body.stripped_strings)
+        return "\n\n".join([title] + soup.body.stripped_strings)
 
 
 class ProcessHTMLOp(Op):
