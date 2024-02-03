@@ -82,11 +82,11 @@ class ExtractHTMLOp(Op):
         soup = self._beautiful_soup_parser(text, "html.parser")
 
         if soup.title:
-            title = str(soup.title.string)
+            title = str(soup.title.string) + "\n\n"
         else:
             title = ""
 
-        return "\n\n".join([title] + soup.body.stripped_strings)
+        return title + "\n\n".join(soup.body.stripped_strings)
 
 
 class ProcessHTMLOp(Op):
