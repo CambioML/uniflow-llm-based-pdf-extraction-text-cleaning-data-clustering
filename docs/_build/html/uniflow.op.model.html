@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.op.preprocess package" href="uniflow.op.preprocess.html" /><link rel="prev" title="uniflow.op.extract.load package" href="uniflow.op.extract.load.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.op.preprocess package" href="uniflow.op.preprocess.html" /><link rel="prev" title="uniflow.op.extract.load.aws package" href="uniflow.op.extract.load.aws.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.op.model package - uniflow 0.0.18 documentation</title>
+        <title>uniflow.op.model package - uniflow 0.0.21 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">uniflow 0.0.18 documentation</div></a>
+      <a href="index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -203,7 +203,10 @@
 <li class="toctree-l3 current has-children"><a class="reference internal" href="uniflow.op.html">uniflow.op package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of uniflow.op package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html">uniflow.op.basic package</a></li>
 <li class="toctree-l4 has-children"><a class="reference internal" href="uniflow.op.extract.html">uniflow.op.extract package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of uniflow.op.extract package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l5"><a class="reference internal" href="uniflow.op.extract.load.html">uniflow.op.extract.load package</a></li>
+<li class="toctree-l5 has-children"><a class="reference internal" href="uniflow.op.extract.load.html">uniflow.op.extract.load package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of uniflow.op.extract.load package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="uniflow.op.extract.load.aws.html">uniflow.op.extract.load.aws package</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">uniflow.op.model package</a></li>
@@ -618,9 +621,14 @@ a guided prompt template to the data.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="uniflow.op.model.model_config.OpenAIModelConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.model_config.</span></span><span class="sig-name descname"><span class="pre">OpenAIModelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'gpt-3.5-turbo-1106'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_server:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'OpenAIModelServer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_call:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_format:</span> <span class="pre">~typing.Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/model_config.html#OpenAIModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.model_config.OpenAIModelConfig" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.model_config.</span></span><span class="sig-name descname"><span class="pre">OpenAIModelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'gpt-3.5-turbo-1106'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_server:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'OpenAIModelServer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_call:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_format:</span> <span class="pre">~typing.Dict[str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_thread:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/model_config.html#OpenAIModelConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.model_config.OpenAIModelConfig" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#uniflow.op.model.model_config.ModelConfig" title="uniflow.op.model.model_config.ModelConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelConfig</span></code></a></p>
 <p>OpenAI Model Config Class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uniflow.op.model.model_config.OpenAIModelConfig.batch_size">
+<span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#uniflow.op.model.model_config.OpenAIModelConfig.batch_size" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="uniflow.op.model.model_config.OpenAIModelConfig.model_server">
 <span class="sig-name descname"><span class="pre">model_server</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'OpenAIModelServer'</span></em><a class="headerlink" href="#uniflow.op.model.model_config.OpenAIModelConfig.model_server" title="Link to this definition">#</a></dt>
@@ -629,6 +637,11 @@ a guided prompt template to the data.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="uniflow.op.model.model_config.OpenAIModelConfig.num_call">
 <span class="sig-name descname"><span class="pre">num_call</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#uniflow.op.model.model_config.OpenAIModelConfig.num_call" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uniflow.op.model.model_config.OpenAIModelConfig.num_thread">
+<span class="sig-name descname"><span class="pre">num_thread</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#uniflow.op.model.model_config.OpenAIModelConfig.num_thread" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -1027,14 +1040,14 @@ a guided prompt template to the data.</p>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="uniflow.op.extract.load.html">
+          <a class="prev-page" href="uniflow.op.extract.load.aws.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">uniflow.op.extract.load package</div>
+                <div class="title">uniflow.op.extract.load.aws package</div>
                 
               </div>
             </a>
@@ -1168,8 +1181,10 @@ a guided prompt template to the data.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig.batch_size"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig.batch_size</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig.model_server"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig.model_server</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig.num_call"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig.num_call</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig.num_thread"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig.num_thread</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig.response_format"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig.response_format</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.op.model.model_config.OpenAIModelConfig.temperature"><code class="docutils literal notranslate"><span class="pre">OpenAIModelConfig.temperature</span></code></a></li>
 </ul>
@@ -1242,7 +1257,7 @@ a guided prompt template to the data.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=8bafd125"></script>
+</div><script src="_static/documentation_options.js?v=a11416ff"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
