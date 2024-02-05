@@ -1,21 +1,21 @@
 """Extract HTML op."""
 
 import copy
-from typing import Sequence
+from typing import List, Sequence
 
 from uniflow.node import Node
 from uniflow.op.op import Op
 
-TEXT_TAGS: list[str] = ["p", "a", "td", "span", "font"]
-LIST_ITEM_TAGS: list[str] = ["li", "dd"]
-LIST_TAGS: list[str] = ["ul", "ol", "dl"]
-HEADING_TAGS: list[str] = ["h1", "h2", "h3", "h4", "h5", "h6"]
-TABLE_TAGS: list[str] = ["table", "tbody", "td", "tr"]
-TEXTBREAK_TAGS: list[str] = ["br"]
-PAGEBREAK_TAGS: list[str] = ["hr"]
-EMPTY_TAGS: list[str] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
-HEADER_OR_FOOTER_TAGS: list[str] = ["header", "footer"]
-SECTION_TAGS: list[str] = ["div", "pre"]
+TEXT_TAGS: List[str] = ["p", "a", "td", "span", "font"]
+LIST_ITEM_TAGS: List[str] = ["li", "dd"]
+LIST_TAGS: List[str] = ["ul", "ol", "dl"]
+HEADING_TAGS: List[str] = ["h1", "h2", "h3", "h4", "h5", "h6"]
+TABLE_TAGS: List[str] = ["table", "tbody", "td", "tr"]
+TEXTBREAK_TAGS: List[str] = ["br"]
+PAGEBREAK_TAGS: List[str] = ["hr"]
+EMPTY_TAGS: List[str] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
+HEADER_OR_FOOTER_TAGS: List[str] = ["header", "footer"]
+SECTION_TAGS: List[str] = ["div", "pre"]
 
 
 class ExtractHTMLOp(Op):
