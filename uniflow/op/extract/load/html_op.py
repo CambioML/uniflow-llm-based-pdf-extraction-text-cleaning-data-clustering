@@ -6,6 +6,17 @@ from typing import Sequence
 from uniflow.node import Node
 from uniflow.op.op import Op
 
+TEXT_TAGS: list[str] = ["p", "a", "td", "span", "font"]
+LIST_ITEM_TAGS: list[str] = ["li", "dd"]
+LIST_TAGS: list[str] = ["ul", "ol", "dl"]
+HEADING_TAGS: list[str] = ["h1", "h2", "h3", "h4", "h5", "h6"]
+TABLE_TAGS: list[str] = ["table", "tbody", "td", "tr"]
+TEXTBREAK_TAGS: list[str] = ["br"]
+PAGEBREAK_TAGS: list[str] = ["hr"]
+EMPTY_TAGS: list[str] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
+HEADER_OR_FOOTER_TAGS: list[str] = ["header", "footer"]
+SECTION_TAGS: list[str] = ["div", "pre"]
+
 
 class ExtractHTMLOp(Op):
     """Extract HTML Op Class."""
@@ -60,7 +71,7 @@ class ExtractHTMLOp(Op):
             else:
                 raise ValueError("Expected url or filename param.")
 
-            text = self._parse_html(text)
+            text = self._parse_html_from_element(text)
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
@@ -69,6 +80,76 @@ class ExtractHTMLOp(Op):
                 )
             )
         return output_nodes
+
+    def _is_container(self, tag_elem):
+        """Checks if a tag is a container that also happens to contain text.
+
+        Example
+        -------
+        <div>Hi, this is a container
+            <span>This is a text span in container</span>
+        </div>
+        """
+        if tag_elem.name not in (SECTION_TAGS + ["body"]) or len(tag_elem) == 0:
+            return False
+
+        return True
+
+    def _parse_html_from_element(self, text: str) -> str:
+        """Parse html from element by rules.
+
+        Args:
+            text (str): Raw html text.
+
+        Returns:
+            str: Parsed html text.
+        """
+        soup = self._beautiful_soup_parser(text, "html.parser")
+
+        ret, descendanttag_elems = [], []
+        for tag_elem in soup.body.descendants:
+            tmp = ""
+
+            # Prevent repeat tag
+            if tag_elem in descendanttag_elems:
+                continue
+
+            # Text tag
+            if tag_elem.name in (TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS):
+                if not tag_elem.string:
+                    continue
+
+                tmp = (" ").join(tag_elem.stripped_strings)
+
+            # Container
+            elif self._is_container(tag_elem):
+                # Container without text
+                # E.g. <div><span>aaa</span<div>
+                if (tag_elem.string is None or tag_elem.string.strip() == "") and len(
+                    list(tag_elem.children)
+                ) > 0:
+                    # descendanttag_elems = list(tag_elem.children)
+                    continue
+
+                # Container with text
+                # E.g. <div>aaa<span>bbb</div>
+                else:
+                    descendanttag_elems = list(tag_elem.descendants)
+
+                    tmp = ("\n").join(
+                        [p for p in tag_elem.stripped_strings if p.strip() != ""]
+                    )
+
+            # Merge table and list text
+            elif tag_elem.name in (TABLE_TAGS + LIST_TAGS):
+                tmp = ("\n").join(tag_elem.stripped_strings)
+                descendanttag_elems = list(tag_elem.descendants)
+
+            # Filter short content
+            if tmp and tmp.strip() != "" and len(tmp.split(" ")) > 1:
+                ret.append(tmp)
+
+        return ("\n\n").join(ret)
 
     def _parse_html(self, text: str) -> str:
         """Function Parse Html.
