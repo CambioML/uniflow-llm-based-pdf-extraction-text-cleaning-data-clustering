@@ -97,9 +97,9 @@ class AbsModelServer:
         """
         self._model_config = model_config
         self._example_keys = None
-
         if (
-            "few_shot_prompt" in prompt_template.model_fields
+            prompt_template is not None
+            and "few_shot_prompt" in prompt_template.model_fields  # noqa: W503
             and prompt_template.few_shot_prompt  # noqa: W503
         ):
             self._example_keys = list(
