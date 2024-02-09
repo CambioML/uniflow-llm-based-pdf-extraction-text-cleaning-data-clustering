@@ -74,6 +74,14 @@ class Neuron:
             response = requests.get(url, timeout=1)
             if response.status_code == 200:
                 return response.text
+            elif response.status_code == 401:
+                # If status_code is 401, then we need to use header to retrive metadata.
+                # Source: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html
+                response = requests.put("http://169.254.169.254/latest/api/token", headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"})
+                token = response.text
+                headers = {"X-aws-ec2-metadata-token": token}
+                response = requests.get("http://169.254.169.254/latest/meta-data/instance-type", headers=headers)
+                return response.text
             else:
                 return "Error: Unable to access metadata service"
         except Exception as e:
