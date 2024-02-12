@@ -49,8 +49,13 @@ def read_file(source: str, mode: str = "r"):
         return data.decode() if mode == "r" else data
     elif source.startswith("http://") or source.startswith("https://"):
         # Read file from URL
-        response = requests.get(source)
+        response = requests.get(source, timeout=300)
         response.raise_for_status()
+
+        content_type = response.headers.get("Content-Type", "")
+        if not content_type.startswith("text/html"):
+            raise ValueError(f"Expected content type text/html. Got {content_type}.")
+
         return response.text if mode == "r" else response.content
     else:
         # Read file from local filesystem
