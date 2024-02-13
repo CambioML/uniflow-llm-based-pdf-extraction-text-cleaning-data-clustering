@@ -18,7 +18,7 @@ class ExtractS3Op(Op):
 
     def __init__(self, name: str = "extract_s3_op") -> None:
         try:
-            import boto3  # pylint: disable=import-outside-toplevel
+            import boto3
         except ImportError as e:
             raise ImportError("Please install boto3 to use S3Op.") from e
 
