@@ -73,6 +73,11 @@ class TransformClient:
         print("Client running async")
 
 
+class ExpandReduceClient:
+    def __init__(self, config: TransformConfig) -> None:
+        self._config = config
+        self._server = ExpandReduceServer(asdict(self._config))
+
 class RaterClient:
     """Uniflow Rater Client"""
 
