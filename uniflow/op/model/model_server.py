@@ -253,10 +253,27 @@ class AzureOpenAIModelServer(AbsModelServer):
         """
         return [c.message.content for d in data for c in d.choices]
 
-    def __call__(self, data: List[str]) -> List[str]:
-        """Run model.
+    def _make_api_call(self, data: str) -> str:
+        """Helper method to make API call.
 
-        Azure OpenAI completions API does not support batch inference.
+        Args:
+            data (str): Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        return self._client.chat.completions.create(
+            model=self._model_config.model_name,
+            messages=[
+                {"role": "user", "content": data},
+            ],
+            n=self._model_config.num_call,
+            temperature=self._model_config.temperature,
+            response_format=self._model_config.response_format,
+        )
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model with ThreadPoolExecutor.
 
         Args:
             data (str): Data to run.
@@ -265,19 +282,12 @@ class AzureOpenAIModelServer(AbsModelServer):
             str: Output data.
         """
         data = self._preprocess(data)
-        inference_data = []
-        for d in data:
-            inference_data.append(
-                self._client.chat.completions.create(
-                    model=self._model_config.model_name,
-                    messages=[
-                        {"role": "user", "content": d},
-                    ],
-                    n=self._model_config.num_call,
-                    temperature=self._model_config.temperature,
-                    response_format=self._model_config.response_format,
-                )
-            )
+
+        # Using ThreadPoolExecutor to parallelize API calls
+        with ThreadPoolExecutor(max_workers=self._model_config.num_thread) as executor:
+            futures = [executor.submit(self._make_api_call, d) for d in data]
+            inference_data = [future.result() for future in futures]
+
         data = self._postprocess(inference_data)
         return data
 

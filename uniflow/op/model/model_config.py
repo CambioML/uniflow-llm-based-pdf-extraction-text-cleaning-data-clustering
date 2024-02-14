@@ -37,6 +37,9 @@ class AzureOpenAIModelConfig:
     num_call: int = 1
     temperature: float = 0.9
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
+    num_thread: int = 1
+    # this is not real batch inference, but size to group for thread pool executor.
+    batch_size: int = 1
 
 
 @dataclass
