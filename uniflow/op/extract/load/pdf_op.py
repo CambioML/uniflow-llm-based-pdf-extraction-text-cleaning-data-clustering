@@ -5,6 +5,7 @@ import re
 from typing import Sequence
 
 from uniflow.node import Node
+from uniflow.op.extract.load.utils import read_file
 from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
 from uniflow.op.op import Op
 
@@ -34,6 +35,11 @@ class ExtractPDFOp(Op):
         output_nodes = []
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
+
+            # If the file is in S3, download it to local and pass the path to
+            if value_dict["pdf"].startswith("s3://"):
+                value_dict = read_file(value_dict["pdf"])
+
             value_dict = self._model.run(value_dict)
             text = value_dict["response"][0]
             output_nodes.append(

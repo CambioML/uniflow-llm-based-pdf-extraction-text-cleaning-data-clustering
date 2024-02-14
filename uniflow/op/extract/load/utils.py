@@ -1,5 +1,9 @@
 """Defines a function to read files from Amazon S3, URLs, or local paths in text or binary mode."""
 
+import os
+
+LOCAL_FILE_PATH = "/tmp/aws/s3"
+
 
 def read_file(source: str, mode: str = "r"):
     """
@@ -43,9 +47,18 @@ def read_file(source: str, mode: str = "r"):
 
         bucket_name, file_path = source[5:].split("/", 1)
         s3 = boto3.client("s3")
-        obj = s3.get_object(Bucket=bucket_name, Key=file_path)
-        data = obj["Body"].read()
-        return data.decode() if mode == "r" else data
+
+        file_type = os.path.splitext(file_path)[1][1:]
+
+        # TODO: Right now, our default for PDF Processing is to use local NougetModel, so we need to download the file to local and pass the path to the model
+        if file_type == "pdf":
+            file_name = os.path.join(LOCAL_FILE_PATH, file_path)
+            s3.download_file(Bucket=bucket_name, Key=file_path, Filename=file_name)
+            return {"pdf": file_name}
+        else:
+            obj = s3.get_object(Bucket=bucket_name, Key=file_path)
+            data = obj["Body"].read()
+            return data.decode() if mode == "r" else data
 
     # Read file from URL
     if source.startswith("http://") or source.startswith("https://"):
