@@ -1,7 +1,5 @@
 """Defines a function to read files from Amazon S3, URLs, or local paths in text or binary mode."""
 
-import requests
-
 
 def read_file(source: str, mode: str = "r"):
     """
@@ -34,6 +32,7 @@ def read_file(source: str, mode: str = "r"):
             "Unsupported mode. Use 'r' for text mode or 'rb' for binary mode."
         )
 
+    # Read file from S3
     if source.startswith("s3://"):
         try:
             import boto3  # pylint: disable=import-outside-toplevel
@@ -41,18 +40,26 @@ def read_file(source: str, mode: str = "r"):
             raise ModuleNotFoundError(
                 "Please install boto3. You can use `pip install boto3` to install it."
             ) from exc
-        # Read file from S3
+
         bucket_name, file_path = source[5:].split("/", 1)
         s3 = boto3.client("s3")
         obj = s3.get_object(Bucket=bucket_name, Key=file_path)
         data = obj["Body"].read()
         return data.decode() if mode == "r" else data
-    elif source.startswith("http://") or source.startswith("https://"):
-        # Read file from URL
-        response = requests.get(source)
+
+    # Read file from URL
+    if source.startswith("http://") or source.startswith("https://"):
+        import requests  # pylint: disable=import-outside-toplevel
+
+        response = requests.get(source, timeout=300)
         response.raise_for_status()
+
+        content_type = response.headers.get("Content-Type", "")
+        if not content_type.startswith("text/html"):
+            raise ValueError(f"Expected content type text/html. Got {content_type}.")
+
         return response.text if mode == "r" else response.content
-    else:
-        # Read file from local filesystem
-        with open(source, mode) as file:
-            return file.read()
+
+    # Read file from local filesystem
+    with open(source, mode, encoding="utf-8") as file:
+        return file.read()
