@@ -198,10 +198,10 @@ class OpenAIModelServer(AbsModelServer):
         """Run model with ThreadPoolExecutor.
 
         Args:
-            data (str): Data to run.
+            data (List[str]): Data to run.
 
         Returns:
-            str: Output data.
+            List[str]: Output data.
         """
         data = self._preprocess(data)
 
@@ -276,10 +276,10 @@ class AzureOpenAIModelServer(AbsModelServer):
         """Run model with ThreadPoolExecutor.
 
         Args:
-            data (str): Data to run.
+            data (List[str]): Data to run.
 
         Returns:
-            str: Output data.
+            List[str]: Output data.
         """
         data = self._preprocess(data)
 
