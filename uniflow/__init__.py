@@ -4,4 +4,4 @@ from uniflow.op.prompt import Context, PromptTemplate
 
 __all__ = ["PromptTemplate", "Context"]
 
-__version__ = "0.0.21"
+__version__ = "0.0.23"
