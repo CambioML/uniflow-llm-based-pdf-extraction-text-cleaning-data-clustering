@@ -532,26 +532,23 @@ class NougatModelServer(AbsModelServer):
     ) -> None:
         # import in class level to avoid installing nougat package
         try:
-            from nougat import NougatModel  # pylint: disable=import-outside-toplevel
-            from nougat.utils.checkpoint import (  # pylint: disable=import-outside-toplevel
-                get_checkpoint,
-            )
-            from nougat.utils.device import (  # pylint: disable=import-outside-toplevel
-                move_to_device,
-            )
+            from transformers import NougatProcessor, VisionEncoderDecoderModel
+            import torch
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
-                "Please install nougat to use NougatModelServer. You can use `pip install nougat-ocr` to install it."
+                "Please install nougat to use NougatModelServer. You can use `pip install transformers` to install it."
             ) from exc
 
         super().__init__(prompt_template, model_config)
         self._model_config = NougatModelConfig(**self._model_config)
-        checkpoint = get_checkpoint(None, model_tag=self._model_config.model_name)
-        self.model = NougatModel.from_pretrained(checkpoint)
-        self.model = move_to_device(
-            self.model, bf16=False, cuda=self._model_config.batch_size > 0
-        )
-        self.model.eval()
+        self.dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+        self.processor = NougatProcessor.from_pretrained(self._model_config.model_name,
+                                                         torch_dtype=self.dtype)
+        self.model = VisionEncoderDecoderModel.from_pretrained(self._model_config.model_name,
+                                                               torch_dtype=self.dtype)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model.to(self.device)
+        self.model = self.model.eval()
 
     def _preprocess(self, data: str) -> List[str]:
         """Preprocess data.
@@ -584,48 +581,41 @@ class NougatModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        from nougat.postprocessing import (  # pylint: disable=import-outside-toplevel
-            markdown_compatible,
-        )
-        from nougat.utils.dataset import (  # pylint: disable=import-outside-toplevel
-            LazyDataset,
-        )
-        from torch.utils.data import (  # pylint: disable=import-outside-toplevel
-            ConcatDataset,
-            DataLoader,
-        )
+
+        from PIL import Image
+        import pypdfium2
 
         outs = []
         for pdf in data:
-            dataset = LazyDataset(
-                pdf,
-                partial(self.model.encoder.prepare_input, random_padding=False),
-                None,
+            pdf = pypdfium2.PdfDocument(pdf)
+            pages = range(len(pdf))
+            renderer = pdf.render(
+                pypdfium2.PdfBitmap.to_pil,
+                page_indices=pages,
+                scale=96 / 72,
             )
-            dataloader = DataLoader(
-                ConcatDataset([dataset]),
-                batch_size=1,
-                shuffle=False,
-                collate_fn=LazyDataset.ignore_none_collate,
-            )
+            images = []
+            for i, image in zip(pages, renderer):
+                images.append(image)
             predictions = []
-            page_num = 0
-            for sample, is_last_page in dataloader:
-                model_output = self.model.inference(
-                    image_tensors=sample, early_stopping=False
+            for start_idx in range(0, len(images), self._model_config.batch_size):
+                batch = images[start_idx: start_idx+self._model_config.batch_size]
+                pixel_values = self.processor(batch, return_tensors="pt").to(self.dtype).pixel_values
+                outputs = self.model.generate(
+                    pixel_values.to(self.device),
+                    min_length=1,
+                    max_new_tokens=3584,
+                    use_cache=True,
+                    pad_token_id=self.processor.tokenizer.pad_token_id,
+                    eos_token_id=self.processor.tokenizer.eos_token_id,
+                    do_sample=False,
+                    bad_words_ids=[[self.processor.tokenizer.unk_token_id]],
                 )
-                # check if model output is faulty
-                for j, output in enumerate(model_output["predictions"]):
-                    page_num += 1
-                    if output.strip() == "[MISSING_PAGE_POST]":
-                        # uncaught repetitions -- most likely empty page
-                        predictions.append(f"\n\n[MISSING_PAGE_EMPTY:{page_num}]\n\n")
-                    else:
-                        output = markdown_compatible(output)
-                        predictions.append(output)
-                    if is_last_page[j]:
-                        out = "".join(predictions).strip()
-                        out = re.sub(r"\n{3,}", "\n\n", out).strip()
+                sequence = self.processor.batch_decode(outputs, skip_special_tokens=True)#[0]
+                sequence = self.processor.post_process_generation(sequence, fix_markdown=False)
+                predictions.extend(sequence)
+            out = "\n\n".join(predictions).strip()
+            out = re.sub(r"\n{3,}", "\n\n", out).strip()
             outs.append(out)
         return outs
 
