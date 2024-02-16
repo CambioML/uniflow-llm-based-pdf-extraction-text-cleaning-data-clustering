@@ -69,9 +69,19 @@ class Neuron:
         References:
             - AWS EC2 User Guide: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
         """
-        url = "http://169.254.169.254/latest/meta-data/instance-type"
         try:
-            response = requests.get(url, timeout=1)
+            response = requests.put(
+                "http://169.254.169.254/latest/api/token",
+                headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
+                timeout=1,
+            )
+            token = response.text
+            headers = {"X-aws-ec2-metadata-token": token}
+            response = requests.get(
+                "http://169.254.169.254/latest/meta-data/instance-type",
+                headers=headers,
+                timeout=1,
+            )
             if response.status_code == 200:
                 return response.text
             else:
