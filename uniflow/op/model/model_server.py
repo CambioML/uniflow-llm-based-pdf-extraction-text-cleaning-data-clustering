@@ -532,8 +532,8 @@ class NougatModelServer(AbsModelServer):
     ) -> None:
         # import in class level to avoid installing nougat package
         try:
-            from transformers import NougatProcessor, VisionEncoderDecoderModel
             import torch
+            from transformers import NougatProcessor, VisionEncoderDecoderModel
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install nougat to use NougatModelServer. You can use `pip install transformers` to install it."
@@ -542,10 +542,12 @@ class NougatModelServer(AbsModelServer):
         super().__init__(prompt_template, model_config)
         self._model_config = NougatModelConfig(**self._model_config)
         self.dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
-        self.processor = NougatProcessor.from_pretrained(self._model_config.model_name,
-                                                         torch_dtype=self.dtype)
-        self.model = VisionEncoderDecoderModel.from_pretrained(self._model_config.model_name,
-                                                               torch_dtype=self.dtype)
+        self.processor = NougatProcessor.from_pretrained(
+            self._model_config.model_name, torch_dtype=self.dtype
+        )
+        self.model = VisionEncoderDecoderModel.from_pretrained(
+            self._model_config.model_name, torch_dtype=self.dtype
+        )
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.model.to(self.device)
         self.model = self.model.eval()
@@ -582,8 +584,8 @@ class NougatModelServer(AbsModelServer):
             List[str]: Output data.
         """
 
-        from PIL import Image
         import pypdfium2
+        from PIL import Image
 
         outs = []
         for pdf in data:
@@ -599,8 +601,12 @@ class NougatModelServer(AbsModelServer):
                 images.append(image)
             predictions = []
             for start_idx in range(0, len(images), self._model_config.batch_size):
-                batch = images[start_idx: start_idx+self._model_config.batch_size]
-                pixel_values = self.processor(batch, return_tensors="pt").to(self.dtype).pixel_values
+                batch = images[start_idx : start_idx + self._model_config.batch_size]
+                pixel_values = (
+                    self.processor(batch, return_tensors="pt")
+                    .to(self.dtype)
+                    .pixel_values
+                )
                 outputs = self.model.generate(
                     pixel_values.to(self.device),
                     min_length=1,
@@ -611,8 +617,12 @@ class NougatModelServer(AbsModelServer):
                     do_sample=False,
                     bad_words_ids=[[self.processor.tokenizer.unk_token_id]],
                 )
-                sequence = self.processor.batch_decode(outputs, skip_special_tokens=True)#[0]
-                sequence = self.processor.post_process_generation(sequence, fix_markdown=False)
+                sequence = self.processor.batch_decode(
+                    outputs, skip_special_tokens=True
+                )  # [0]
+                sequence = self.processor.post_process_generation(
+                    sequence, fix_markdown=False
+                )
                 predictions.extend(sequence)
             out = "\n\n".join(predictions).strip()
             out = re.sub(r"\n{3,}", "\n\n", out).strip()
