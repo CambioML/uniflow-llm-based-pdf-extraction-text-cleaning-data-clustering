@@ -37,6 +37,9 @@ class AzureOpenAIModelConfig:
     num_call: int = 1
     temperature: float = 0.9
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
+    num_thread: int = 1
+    # this is not real batch inference, but size to group for thread pool executor.
+    batch_size: int = 1
 
 
 @dataclass
@@ -72,8 +75,8 @@ class LMQGModelConfig(ModelConfig):
 class NougatModelConfig(ModelConfig):
     """Nougat Model Config Class."""
 
-    model_name: str = "0.1.0-small"
-    batch_size: int = 1
+    model_name: str = "facebook/nougat-small"
+    batch_size: int = 2
     model_server: str = "NougatModelServer"
 
 

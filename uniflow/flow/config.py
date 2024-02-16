@@ -42,13 +42,6 @@ class ExtractTxtConfig(ExtractConfig):
 
 
 @dataclass
-class ExtractS3TxtConfig(ExtractConfig):
-    """Extract S3 Txt Config Class."""
-
-    flow_name: str = "ExtractS3TxtFlow"
-
-
-@dataclass
 class ExtractPDFConfig(ExtractConfig):
     """Nougat Config Class."""
 

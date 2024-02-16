@@ -2,7 +2,7 @@
 
 import copy
 import logging
-import os
+import tempfile
 from typing import Sequence
 
 from uniflow.node import Node
@@ -39,21 +39,26 @@ class ExtractS3Op(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             # create local file path if not exists
-            if os.path.exists(self.LOCAL_FILE_PATH) is False:
-                os.makedirs(self.LOCAL_FILE_PATH)
-            filename = os.path.join(self.LOCAL_FILE_PATH, value_dict["key"])
-            logger.info("Downloading %s to %s", value_dict["key"], filename)
-            self._s3_client.download_file(
-                Bucket=value_dict["bucket"],
-                Key=value_dict["key"],
-                Filename=filename,
+            logger.info(
+                "Downloading file from s3://%s/%s to %s",
+                value_dict["bucket"],
+                value_dict["key"],
+                self.LOCAL_FILE_PATH,
             )
-            with open(
-                filename,
-                "r",
-                encoding=value_dict.get("encoding", "utf-8"),
-            ) as f:
-                text = f.read()
+            with tempfile.NamedTemporaryFile(
+                dir=self.LOCAL_FILE_PATH, delete=False
+            ) as temp_file:
+                self._s3_client.download_file(
+                    Bucket=value_dict["bucket"],
+                    Key=value_dict["key"],
+                    Filename=temp_file.name,
+                )
+                with open(
+                    temp_file.name,
+                    "r",
+                    encoding=value_dict.get("encoding", "utf-8"),
+                ) as f:
+                    text = f.read()
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
