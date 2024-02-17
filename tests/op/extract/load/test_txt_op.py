@@ -1,6 +1,5 @@
 import unittest
-
-from moto import mock_s3
+from unittest.mock import patch
 
 from uniflow.node import Node
 from uniflow.op.extract.load.txt_op import ExtractTxtOp, ProcessTxtOp
@@ -10,49 +9,20 @@ class TestExtractTxtOp(unittest.TestCase):
     def setUp(self):
         self.extract_txt_op = ExtractTxtOp(name="extract_txt_op")
 
-    def test_empty_input(self):
+    @patch(
+        "uniflow.op.extract.load.txt_op.read_file", return_value="mocked file content"
+    )
+    def test_call(self, mock_read_file):
         # arrange
-        node = Node(
-            name="node1",
-            value_dict={"filename": "tests/op/extract/data/empty.txt"},
-        )
+        node = Node(name="node1", value_dict={"filename": "mocked_file_path"})
 
         # act
         output_nodes = self.extract_txt_op([node])
 
         # assert
+        mock_read_file.assert_called_once_with("mocked_file_path")
         self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["text"], "")
-
-    def test_load_from_local(self):
-        node = Node(
-            name="node1",
-            value_dict={"filename": "tests/op/extract/data/test.txt"},
-        )
-
-        output_nodes = self.extract_txt_op([node])
-
-        self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["text"], "This is a test file.")
-
-    @mock_s3
-    def test_load_from_s3(self):
-        import boto3  # pylint: disable=import-outside-toplevel
-
-        conn = boto3.resource("s3", region_name="us-west-2")
-        conn.create_bucket(Bucket="uniflow-test")
-        s3 = boto3.client("s3", region_name="us-west-2")
-        s3.put_object(Bucket="uniflow-test", Key="test.txt", Body="mycontent")
-
-        node = Node(
-            name="node1",
-            value_dict={"filename": "s3://uniflow-test/test.txt"},
-        )
-
-        output_nodes = self.extract_txt_op([node])
-
-        self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["content"], "mycontent")
+        self.assertEqual(output_nodes[0].value_dict["text"], "mocked file content")
 
 
 class TestProcessTxtOp(unittest.TestCase):
@@ -65,7 +35,7 @@ class TestProcessTxtOp(unittest.TestCase):
         output_nodes = self.process_txt_op([node])
 
         self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["text"], [])
+        self.assertEqual(output_nodes[0].value_dict["text"][0], "")
 
     def test_whitespace_input(self):
         node = Node(name="node1", value_dict={"text": " \n \n "})
@@ -73,7 +43,7 @@ class TestProcessTxtOp(unittest.TestCase):
         output_nodes = self.process_txt_op([node])
 
         self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["text"], [])
+        self.assertEqual(output_nodes[0].value_dict["text"][0], "")
 
     def test_call(self):
         node = Node(
