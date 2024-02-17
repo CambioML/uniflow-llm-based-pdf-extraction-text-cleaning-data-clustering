@@ -75,8 +75,8 @@ class LMQGModelConfig(ModelConfig):
 class NougatModelConfig(ModelConfig):
     """Nougat Model Config Class."""
 
-    model_name: str = "0.1.0-small"
-    batch_size: int = 1
+    model_name: str = "facebook/nougat-small"
+    batch_size: int = 2
     model_server: str = "NougatModelServer"
 
 
