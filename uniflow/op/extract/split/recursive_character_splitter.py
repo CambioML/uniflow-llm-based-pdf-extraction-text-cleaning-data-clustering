@@ -11,7 +11,7 @@ from uniflow.op.op import Op
 class RecursiveCharacterSplitter(Op):
     """Recursive character splitter class."""
 
-    default_separators = ["\n\n", "\n", " ", ""]
+    default_separators = ["\n\n", "\n", ".", " ", ""]
 
     def __init__(
         self,
