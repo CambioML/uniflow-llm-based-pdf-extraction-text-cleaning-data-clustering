@@ -4,6 +4,7 @@ import copy
 from typing import List, Sequence
 
 from uniflow.node import Node
+from uniflow.op.extract.load.utils import read_file
 from uniflow.op.op import Op
 
 TEXT_TAGS: List[str] = ["p", "a", "td", "span", "font"]
@@ -48,26 +49,9 @@ class ExtractHTMLOp(Op):
             value_dict = copy.deepcopy(node.value_dict)
 
             if "url" in value_dict:
-                resp = self._requests_client.get(url=value_dict["url"], timeout=300)
-                if not resp.ok:
-                    raise ValueError(f"URL return an error: {resp.status_code}")
-
-                content_type = resp.headers.get("Content-Type", "")
-                if not content_type.startswith("text/html"):
-                    raise ValueError(
-                        f"Expected content type text/html. Got {content_type}."
-                    )
-
-                text = resp.text
-
+                text = read_file(value_dict["url"])
             elif "filename" in value_dict:
-                with open(
-                    value_dict["filename"],
-                    "r",
-                    encoding=value_dict.get("encoding", "utf-8"),
-                ) as f:
-                    text = f.read()
-
+                text = read_file(value_dict["filename"])
             else:
                 raise ValueError("Expected url or filename param.")
 
