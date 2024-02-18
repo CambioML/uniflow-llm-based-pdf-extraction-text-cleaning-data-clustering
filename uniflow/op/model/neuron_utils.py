@@ -259,7 +259,9 @@ class Neuron:
         return batches
 
     @staticmethod
-    def neuron_infer(text_list: List[str], model, tokenizer) -> List[Dict[str, str]]:
+    def neuron_infer(
+        text_list: List[str], model, tokenizer, max_new_tokens, batch_size
+    ) -> List[Dict[str, str]]:
         """
         Run neuron inference on a list of texts.
 
@@ -271,7 +273,7 @@ class Neuron:
         Returns:
             list: A list of dictionaries containing the generated text for each input text.
         """
-        batches = Neuron.batch_list(text_list, 4)
+        batches = Neuron.batch_list(text_list, batch_size)
         results = []
         for batch in batches:
             encoded_input = tokenizer(
@@ -284,7 +286,7 @@ class Neuron:
                     input_ids=encoded_input.input_ids,
                     attention_mask=encoded_input.attention_mask,
                     do_sample=True,
-                    max_length=1024,
+                    max_new_tokens=max_new_tokens,
                     eos_token_id=tokenizer.eos_token_id,
                     pad_token_id=tokenizer.pad_token_id,
                     temperature=0.7,

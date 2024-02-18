@@ -345,7 +345,11 @@ class HuggingfaceModelServer(AbsModelServer):
                 self._model_config.model_name, self._model_config.batch_size
             )
             self._pipeline = partial(
-                Neuron.neuron_infer, model=model, tokenizer=tokenizer
+                Neuron.neuron_infer,
+                model=model,
+                tokenizer=tokenizer,
+                max_new_tokens=self._model_config.max_new_tokens,
+                batch_size=self._model_config.batch_size,
             )
         self._tokenizer = tokenizer
 
@@ -584,8 +588,7 @@ class NougatModelServer(AbsModelServer):
             List[str]: Output data.
         """
 
-        import pypdfium2
-        from PIL import Image
+        import pypdfium2  # pylint: disable=import-outside-toplevel
 
         outs = []
         for pdf in data:
@@ -601,7 +604,7 @@ class NougatModelServer(AbsModelServer):
                 images.append(image)
             predictions = []
             for start_idx in range(0, len(images), self._model_config.batch_size):
-                batch = images[start_idx : start_idx + self._model_config.batch_size]
+                batch = images[start_idx: start_idx + self._model_config.batch_size]
                 pixel_values = (
                     self.processor(batch, return_tensors="pt")
                     .to(self.dtype)
