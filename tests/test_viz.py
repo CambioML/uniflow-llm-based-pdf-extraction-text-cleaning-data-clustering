@@ -22,6 +22,6 @@ class TestNode(unittest.TestCase):
 
         # Test to_digraph method
         graph = Viz.to_digraph(node1)
-        print(str(graph))
+        # print(str(graph))
         expected_output = "digraph {\n\tnode1\n\tnode1 -> node2\n\tnode2\n\tnode2 -> node3\n\tnode2 -> node4\n\tnode3\n\tnode4\n}\n"
         self.assertEqual(str(graph), expected_output)
