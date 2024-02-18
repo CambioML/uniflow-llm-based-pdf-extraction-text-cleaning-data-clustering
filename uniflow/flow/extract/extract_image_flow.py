@@ -8,7 +8,7 @@ from uniflow.node import Node
 from uniflow.op.extract.load.image_op import ExtractImageOp, ProcessImageOp
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
-from uniflow.op.model.llm_preprocessor import LLMDataPreprocessor
+from uniflow.op.model.CV.cv_model import CvModel
 
 
 class ExtractImageFlow(Flow):
@@ -30,7 +30,7 @@ class ExtractImageFlow(Flow):
         super().__init__()
         self._extract_image_op = ExtractImageOp(
             name="extract_image_op",
-            model=LLMDataPreprocessor(
+            model=CvModel(
                 model_config=model_config,
             ),
         )

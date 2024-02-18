@@ -5,7 +5,7 @@ import logging
 from typing import Sequence
 
 from uniflow.node import Node
-from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
+from uniflow.op.model.abs_model import AbsModel
 from uniflow.op.op import Op
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 class ModelOp(Op):
     """Model Op Class."""
 
-    def __init__(self, name: str, model: AbsLLMProcessor) -> None:
+    def __init__(self, name: str, model: AbsModel) -> None:
         """Model Op Constructor.
 
         Args:
