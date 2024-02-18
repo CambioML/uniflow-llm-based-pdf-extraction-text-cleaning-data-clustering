@@ -51,6 +51,15 @@ class ExtractPDFConfig(ExtractConfig):
 
 
 @dataclass
+class ExtractS3PDFConfig(ExtractConfig):
+    """Extract S3 PDF Config Class."""
+
+    flow_name: str = "ExtractS3PDFFlow"
+    model_config: ModelConfig = field(default_factory=NougatModelConfig)
+    splitter: str = PARAGRAPH_SPLITTER
+
+
+@dataclass
 class ExtractImageConfig(ExtractConfig):
     """Extract Image Config Class"""
 
