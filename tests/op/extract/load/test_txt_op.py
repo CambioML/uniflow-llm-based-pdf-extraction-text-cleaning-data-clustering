@@ -1,8 +1,8 @@
 import unittest
-from unittest.mock import patch
+from unittest.mock import call, patch
 
 from uniflow.node import Node
-from uniflow.op.extract.load.txt_op import ExtractTxtOp, ProcessTxtOp
+from uniflow.op.extract.load.txt_op import ExtractTxtOp
 
 
 class TestExtractTxtOp(unittest.TestCase):
@@ -12,7 +12,35 @@ class TestExtractTxtOp(unittest.TestCase):
     @patch(
         "uniflow.op.extract.load.txt_op.read_file", return_value="mocked file content"
     )
-    def test_call(self, mock_read_file):
+    def test_call_with_empty_node(self, mock_read_file):
+        # arrange
+        nodes = []
+
+        # act
+        output_nodes = self.extract_txt_op(nodes)
+
+        # assert
+        mock_read_file.assert_not_called()
+        self.assertEqual(len(output_nodes), 0)
+
+    @patch(
+        "uniflow.op.extract.load.txt_op.read_file", return_value="mocked file content"
+    )
+    def test_call_with_node_without_filename(self, mock_read_file):
+        # arrange
+        node = Node(name="node1", value_dict={})
+
+        # act
+        with self.assertRaises(KeyError):
+            self.extract_txt_op([node])
+
+        # assert
+        mock_read_file.assert_not_called()
+
+    @patch(
+        "uniflow.op.extract.load.txt_op.read_file", return_value="mocked file content"
+    )
+    def test_call_with_node(self, mock_read_file):
         # arrange
         node = Node(name="node1", value_dict={"filename": "mocked_file_path"})
 
@@ -24,36 +52,22 @@ class TestExtractTxtOp(unittest.TestCase):
         self.assertEqual(len(output_nodes), 1)
         self.assertEqual(output_nodes[0].value_dict["text"], "mocked file content")
 
+    @patch(
+        "uniflow.op.extract.load.txt_op.read_file", return_value="mocked file content"
+    )
+    def test_call_with_multiple_nodes(self, mock_read_file):
+        # arrange
+        node1 = Node(name="node1", value_dict={"filename": "mocked_file_path1"})
+        node2 = Node(name="node2", value_dict={"filename": "mocked_file_path2"})
+        nodes = [node1, node2]
 
-class TestProcessTxtOp(unittest.TestCase):
-    def setUp(self):
-        self.process_txt_op = ProcessTxtOp(name="process_txt_op")
+        # act
+        output_nodes = self.extract_txt_op(nodes)
 
-    def test_empty_input(self):
-        node = Node(name="node1", value_dict={"text": ""})
-
-        output_nodes = self.process_txt_op([node])
-
-        self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["text"][0], "")
-
-    def test_whitespace_input(self):
-        node = Node(name="node1", value_dict={"text": " \n \n "})
-
-        output_nodes = self.process_txt_op([node])
-
-        self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(output_nodes[0].value_dict["text"][0], "")
-
-    def test_call(self):
-        node = Node(
-            name="node1", value_dict={"text": "This is a test\nThis is another test"}
+        # assert
+        mock_read_file.assert_has_calls(
+            [call("mocked_file_path1"), call("mocked_file_path2")], any_order=True
         )
-
-        output_nodes = self.process_txt_op([node])
-
-        self.assertEqual(len(output_nodes), 1)
-        self.assertEqual(
-            output_nodes[0].value_dict["text"],
-            ["This is a test", "This is another test"],
-        )
+        self.assertEqual(len(output_nodes), 2)
+        self.assertEqual(output_nodes[0].value_dict["text"], "mocked file content")
+        self.assertEqual(output_nodes[1].value_dict["text"], "mocked file content")
