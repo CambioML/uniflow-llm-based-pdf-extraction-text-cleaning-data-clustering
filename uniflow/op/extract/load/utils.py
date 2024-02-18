@@ -51,7 +51,20 @@ def read_file(source: str, mode: str = "r"):
     if source.startswith("http://") or source.startswith("https://"):
         import requests  # pylint: disable=import-outside-toplevel
 
-        response = requests.get(source, timeout=300)
+        # Create a session object
+        session = requests.Session()
+
+        # Optionally set headers to mimic a browser request
+        session.headers.update(
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+            }
+        )
+
+        # Use the session to make a request
+        response = session.get(source, timeout=300)
+
+        # Check if the request was successful
         response.raise_for_status()
 
         content_type = response.headers.get("Content-Type", "")
