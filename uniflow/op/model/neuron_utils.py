@@ -252,7 +252,7 @@ class Neuron:
         """
         batches = []
         for i in range(0, len(lst), batch_size):
-            batch = lst[i : i + batch_size]
+            batch = lst[i : (i + batch_size)]
             while len(batch) < batch_size:
                 batch.append(lst[-1])
             batches.append(batch)
