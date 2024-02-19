@@ -10,6 +10,7 @@ from uniflow.op.extract.split.constants import (
 )
 from uniflow.op.model.model_config import (
     BedrockModelConfig,
+    GoogleModelConfig,
     HuggingfaceModelConfig,
     LayoutModelConfig,
     LMQGModelConfig,
@@ -114,6 +115,14 @@ class TransformConfig:
             ],
         )
     )
+
+
+@dataclass
+class TransformGoogleConfig(TransformConfig):
+    """Transform Google Config Class."""
+
+    flow_name: str = "TransformGoogleFlow"
+    model_config: ModelConfig = field(default_factory=GoogleModelConfig)
 
 
 @dataclass
