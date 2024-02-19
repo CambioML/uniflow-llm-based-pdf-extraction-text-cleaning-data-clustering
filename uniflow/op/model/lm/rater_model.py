@@ -1,4 +1,4 @@
-"""LLM rater for tasks with a LLM model server."""
+"""Language model (LM) rater model class."""
 
 import re
 from collections import Counter
@@ -17,7 +17,7 @@ from uniflow.op.prompt import PromptTemplate
 
 
 class LmRaterModel(LmModel):
-    """LLM Rater"""
+    """Language model (LM) rater model class."""
 
     def __init__(
         self,

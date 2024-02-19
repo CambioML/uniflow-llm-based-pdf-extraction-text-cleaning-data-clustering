@@ -1,4 +1,4 @@
-"""LLM processor for processing data with a LLM model server."""
+"""Language model (LM) model class."""
 
 import copy
 import json
@@ -12,8 +12,8 @@ OUTPUT_SCHEMA_GUIDE = "Ensure the response is in json."
 
 
 class LmModel(AbsModel):
-    """
-    Data processor for processing data with a LLM model server.
+    """Language model (LM) model class.
+
     It handles serialization and deserialization of data,
     manages interactions with the LLM model server, and applies
     a guided prompt template to the data.

@@ -1,4 +1,4 @@
-"""LLM processor for pre-processing data with a LLM model server."""
+"""Computer vision (CV) model class."""
 
 import logging
 from typing import Any, Dict, List
@@ -11,7 +11,10 @@ logger.setLevel(logging.INFO)
 
 
 class CvModel(AbsModel):
-    """Preprocess Model Class."""
+    """Computer Vision (CV) Model Class.
+
+    It handles serialization and deserialization of data.
+    """
 
     def __init__(
         self,

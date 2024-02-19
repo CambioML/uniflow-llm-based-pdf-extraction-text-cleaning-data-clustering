@@ -1,6 +1,4 @@
-"""
-All CV Model Servers including NougatModelServer, SageMakerModelServer.
-"""
+"""All CV Model Servers including NougatModelServer, LayoutModelServer."""
 
 import logging
 import re

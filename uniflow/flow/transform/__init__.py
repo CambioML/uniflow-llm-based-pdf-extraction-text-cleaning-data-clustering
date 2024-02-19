@@ -14,6 +14,9 @@ from uniflow.flow.transform.transform_copy_flow import (  # noqa: F401, F403
 from uniflow.flow.transform.transform_google_flow import (  # noqa: F401, F403
     TransformGoogleFlow,
 )
+from uniflow.flow.transform.transform_google_multimodal_flow import (  # noqa: F401, F403
+    TransformGoogleMultiModalModelFlow,
+)
 from uniflow.flow.transform.transform_huggingface_flow import (  # noqa: F401, F403
     TransformHuggingFaceFlow,
 )
@@ -31,4 +34,5 @@ __all__ = [
     "TransformCopyFlow",
     "TransformAzureOpenAIFlow",
     "TransformGoogleFlow",
+    "TransformGoogleMultiModalModelFlow",
 ]

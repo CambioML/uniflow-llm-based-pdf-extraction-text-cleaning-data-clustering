@@ -29,6 +29,14 @@ class GoogleModelConfig(ModelConfig):
 
 
 @dataclass
+class GoogleMultiModalModelConfig(GoogleModelConfig):
+    """Google MultiModal Model Config Class."""
+
+    model_name: str = "gemini-pro-vision"
+    model_server: str = "GoogleMultiModalModelServer"
+
+
+@dataclass
 class OpenAIModelConfig(ModelConfig):
     """OpenAI Model Config Class."""
 
