@@ -1,6 +1,4 @@
-"""
-All LLM Model Servers including OpenAIModelServer and HuggingfaceModelServer.
-"""
+"""All LM Model Servers."""
 
 import abc
 import json
