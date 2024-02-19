@@ -226,7 +226,7 @@ class HuggingfaceModelServer(AbsModelServer):
                 print(
                     "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
                 )
-            from uniflow.op.model.neuron_utils import (  # pylint: disable=import-outside-toplevel
+            from uniflow.op.model.lm.neuron_utils import (  # pylint: disable=import-outside-toplevel
                 Neuron,
             )
 
@@ -234,7 +234,11 @@ class HuggingfaceModelServer(AbsModelServer):
                 self._model_config.model_name, self._model_config.batch_size
             )
             self._pipeline = partial(
-                Neuron.neuron_infer, model=model, tokenizer=tokenizer
+                Neuron.neuron_infer,
+                model=model,
+                tokenizer=tokenizer,
+                max_new_tokens=self._model_config.max_new_tokens,
+                batch_size=self._model_config.batch_size,
             )
         self._tokenizer = tokenizer
 

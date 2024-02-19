@@ -77,8 +77,7 @@ class NougatModelServer(AbsModelServer):
             List[str]: Output data.
         """
 
-        import pypdfium2
-        from PIL import Image
+        import pypdfium2  # pylint: disable=import-outside-toplevel
 
         outs = []
         for pdf in data:
@@ -105,10 +104,14 @@ class NougatModelServer(AbsModelServer):
                     min_length=1,
                     max_new_tokens=3584,
                     use_cache=True,
-                    pad_token_id=self.processor.tokenizer.pad_token_id,
-                    eos_token_id=self.processor.tokenizer.eos_token_id,
+                    pad_token_id=self.processor.tokenizer.pad_token_id,  # pylint: disable=no-member
+                    eos_token_id=self.processor.tokenizer.eos_token_id,  # pylint: disable=no-member
                     do_sample=False,
-                    bad_words_ids=[[self.processor.tokenizer.unk_token_id]],
+                    bad_words_ids=[
+                        [
+                            self.processor.tokenizer.unk_token_id  # pylint: disable=no-member
+                        ]
+                    ],
                 )
                 sequence = self.processor.batch_decode(
                     outputs, skip_special_tokens=True
