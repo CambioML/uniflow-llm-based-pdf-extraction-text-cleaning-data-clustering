@@ -8,7 +8,7 @@ from uniflow.node import Node
 from uniflow.op.extract.load.image_op import ExtractImageOp, ProcessImageOp
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
-from uniflow.op.model.CV.cv_model import CvModel
+from uniflow.op.model.cv.model import CvModel
 
 
 class ExtractImageFlow(Flow):

@@ -5,7 +5,7 @@ from typing import Any, Dict, Sequence
 from uniflow.constants import RATER
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
-from uniflow.op.model.LM.lm_rater_model import (
+from uniflow.op.model.lm.rater_model import (
     HuggingfaceJsonFormattedLLMRater,
     LmRaterModel,
     OpenAIJsonFormattedLLMRater,

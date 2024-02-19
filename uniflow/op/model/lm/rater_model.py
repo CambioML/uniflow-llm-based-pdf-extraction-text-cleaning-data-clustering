@@ -12,7 +12,7 @@ from uniflow.op.model.constants import (
     SCORES,
     VOTES,
 )
-from uniflow.op.model.LM.lm_model import JsonLmModel, LmModel
+from uniflow.op.model.lm.model import JsonLmModel, LmModel
 from uniflow.op.prompt import PromptTemplate
 
 

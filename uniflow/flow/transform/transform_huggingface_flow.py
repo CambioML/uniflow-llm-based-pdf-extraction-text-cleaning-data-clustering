@@ -5,7 +5,7 @@ from typing import Any, Dict, Sequence
 from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
-from uniflow.op.model.LM.lm_model import LmModel
+from uniflow.op.model.lm.model import LmModel
 from uniflow.op.model.model_op import ModelOp
 from uniflow.op.prompt import PromptTemplate
 
