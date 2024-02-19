@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class AbsLLMProcessor:
-    """Abstract class for using LLM for data process."""
+class AbsModel:
+    """Abstract class for model."""
 
     def __init__(
         self,

@@ -3,14 +3,14 @@
 import logging
 from typing import Any, Dict, List
 
-from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
+from uniflow.op.model.abs_model import AbsModel
 from uniflow.op.model.constants import ERROR, RESPONSE
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class LLMDataPreprocessor(AbsLLMProcessor):
+class CvModel(AbsModel):
     """Preprocess Model Class."""
 
     def __init__(
