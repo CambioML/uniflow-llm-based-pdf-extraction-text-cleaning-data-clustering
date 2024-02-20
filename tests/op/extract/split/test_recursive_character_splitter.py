@@ -26,17 +26,23 @@ class TestRecursiveCharacterSplitter(unittest.TestCase):
 
         self.assertEqual(chunks, ["HelloWorld"])
 
-    def test_recursive_splitter_with_small_chunk(self):
-        splitter0 = RecursiveCharacterSplitter("test_splitter", chunk_size=0)
-        splitter1 = RecursiveCharacterSplitter("test_splitter", chunk_size=1)
+    def test_recursive_splitter_with_small_chunk_size(self):
+        splitter = RecursiveCharacterSplitter("test_splitter", chunk_size=1)
         text = "Hello\n\nWorld"
         expected_chunks = ["H", "e", "l", "l", "o", "W", "o", "r", "l", "d"]
 
-        chunks0 = splitter0._recursive_splitter(text, self.default_separators)
-        chunks1 = splitter1._recursive_splitter(text, self.default_separators)
+        chunks = splitter._recursive_splitter(text, self.default_separators)
 
-        self.assertEqual(chunks0, expected_chunks)
-        self.assertEqual(chunks1, expected_chunks)
+        self.assertEqual(chunks, expected_chunks)
+
+    def test_recursive_splitter_with_zero_chunk_size(self):
+        splitter = RecursiveCharacterSplitter("test_splitter", chunk_size=0)
+        text = "Hello\n\nWorld"
+        expected_chunks = ["H", "e", "l", "l", "o", "W", "o", "r", "l", "d"]
+
+        chunks = splitter._recursive_splitter(text, self.default_separators)
+
+        self.assertEqual(chunks, expected_chunks)
 
     def test_recursive_splitter_with_no_separators(self):
         text = "Hello\n\nWorld"
@@ -61,28 +67,30 @@ class TestRecursiveCharacterSplitter(unittest.TestCase):
 
         self.assertEqual(chunks, ["Hello", "World."])
 
-    def test_recursive_splitter_with_large_text(self):
-        splitter0 = RecursiveCharacterSplitter("test_splitter", chunk_size=1)
-        splitter1 = RecursiveCharacterSplitter("test_splitter", chunk_size=9999)
+    def test_recursive_splitter_with_large_text_default_chunk(self):
         text = "Hello\n\nWorld\n\n" * 100
 
         chunks = self.splitter._recursive_splitter(text, self.default_separators)
-        chunks0 = splitter0._recursive_splitter(text, self.default_separators)
-        chunks1 = splitter1._recursive_splitter(text, self.default_separators)
 
         self.assertEqual(len(chunks), 100)
-        self.assertEqual(len(chunks0), 10 * 100)
-        self.assertEqual(len(chunks1), 1)
-        self.assertEqual(chunks1, ['HelloWorld' * 100])
 
-    def test_call(self):
+    def test_recursive_splitter_with_large_text_large_chunk(self):
+        splitter = RecursiveCharacterSplitter("test_splitter", chunk_size=9999)
+        text = "Hello\n\nWorld\n\n" * 100
+
+        chunks = splitter._recursive_splitter(text, self.default_separators)
+
+        self.assertEqual(len(chunks), 1)
+        self.assertEqual(chunks, ["HelloWorld" * 100])
+
+    def test_special_function_call(self):
         node = Node(name="node1", value_dict={"text": "Hello\n\nWorld"})
         output_nodes = self.splitter([node])
 
         self.assertEqual(len(output_nodes), 1)
         self.assertEqual(output_nodes[0].value_dict["text"], ["HelloWorld"])
 
-    def test_call_with_multiple_nodes(self):
+    def test_special_function_call_with_multiple_nodes(self):
         node0 = Node(name="node1", value_dict={"text": "Hello\n\nWorld"})
         expected0 = ["HelloWorld"]
         node1 = Node(name="node1", value_dict={"text": "Hello\n\nWorld."})

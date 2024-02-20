@@ -8,7 +8,7 @@ class TestMarkdownHeaderSplitter(unittest.TestCase):
     def setUp(self):
         self.splitter = MarkdownHeaderSplitter("test_splitter")
 
-    def test_call(self):
+    def test_special_function_call(self):
         node0 = Node(name="node1", value_dict={"text": "# Header ## Content"})
         node1 = Node(name="node1", value_dict={"text": "# Header\n## Content"})
 
@@ -18,35 +18,47 @@ class TestMarkdownHeaderSplitter(unittest.TestCase):
         self.assertEqual(output_nodes[0].value_dict["text"], ["# Header ## Content"])
         self.assertEqual(output_nodes[1].value_dict["text"], ["# Header", "## Content"])
 
-    def test_header_splitter(self):
-        markdown_str0 = "# Header\n## Content"
-        markdown_str1 = "# Header\n## Content\n# Header 2 ## Content 2"
+    def test_header_splitter_basic(self):
+        markdown_str = "# Header\n## Content"
 
-        result0 = self.splitter.header_splitter(markdown_str0)
-        result1 = self.splitter.header_splitter(markdown_str1)
+        result = self.splitter.header_splitter(markdown_str)
 
-        self.assertEqual(result0, ["# Header", "## Content"])
-        self.assertEqual(result1, ["# Header", "## Content", "# Header 2 ## Content 2"])
+        self.assertEqual(result, ["# Header", "## Content"])
 
-    def test_header_splitter_with_custom_headers(self):
+    def test_header_splitter_multilevel_header(self):
+        markdown_str = "# Header\n## Content\n# Header 2 ## Content 2"
+
+        result = self.splitter.header_splitter(markdown_str)
+
+        self.assertEqual(result, ["# Header", "## Content", "# Header 2 ## Content 2"])
+
+    def test_header_splitter_with_empty_custom_headers(self):
+        markdown_str = "# Header \n Content"
+        custom_header = []
+
+        result = self.splitter.header_splitter(markdown_str, custom_header)
+
+        self.assertEqual(result, [])
+
+    def test_header_splitter_with_invalid_custom_headers(self):
+        markdown_str = "# Header</h1> \n Content"
+        custom_header = [("\n", "h2")]
+
+        result = self.splitter.header_splitter(markdown_str, custom_header)
+
+        self.assertEqual(result, [])
+
+    def test_header_splitter_with_htmlstyle_custom_headers(self):
         markdown_str = " <h1># Header</h1> \n Content"
-        headers_to_split_on_list0 = []
-        headers_to_split_on_list1 = [("\n", "h2")]
-        headers_to_split_on_list2 = [("<h1>", "h1")]
+        custom_header = [("<h1>", "h1")]
 
-        result = self.splitter.header_splitter(markdown_str, None)
-        result0 = self.splitter.header_splitter(markdown_str, headers_to_split_on_list0)
-        result1 = self.splitter.header_splitter(markdown_str, headers_to_split_on_list1)
-        result2 = self.splitter.header_splitter(markdown_str, headers_to_split_on_list2)
+        result = self.splitter.header_splitter(markdown_str, custom_header)
 
-        self.assertEqual(result, ['<h1># Header</h1>\nContent'])  
-        self.assertEqual(result0, [])  
-        self.assertEqual(result1, [])  
-        # self.assertEqual(result2, ['<h1># Header</h1>\nContent'])  
+        self.assertEqual(result, ["<h1># Header</h1>\nContent"])
 
     def test_header_splitter_with_no_headers(self):
         markdown_str = "\nContent with no headers"
 
         result = self.splitter.header_splitter(markdown_str)
 
-        self.assertEqual(result, ['Content with no headers'])  # No split should occur
+        self.assertEqual(result, ["Content with no headers"])  # No split should occur
