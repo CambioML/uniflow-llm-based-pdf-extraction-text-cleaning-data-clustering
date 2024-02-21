@@ -100,8 +100,10 @@ class ExtractHTMLOp(Op):
 
             # Text tag
             if tag_elem.name in (TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS):
-                if len(list(tag_elem.stripped_strings)) == 0:
+                if len(list(tag_elem.children)) == 0:
                     continue
+
+                descendanttag_elems = list(tag_elem.descendants)
 
                 tmp = (" ").join(
                     [
