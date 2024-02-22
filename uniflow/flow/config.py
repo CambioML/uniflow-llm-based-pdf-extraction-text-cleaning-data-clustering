@@ -1,7 +1,7 @@
 """Extract, Transform and Pipeline config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 
 from uniflow import Context, PromptTemplate
 from uniflow.op.extract.split.constants import (
@@ -33,6 +33,7 @@ class ExtractConfig:
     num_thread: int = 1
     model_config: Optional[ModelConfig] = None
     splitter: Optional[str] = None
+    post_extract_fn: Optional[Callable] = None
 
 
 @dataclass
