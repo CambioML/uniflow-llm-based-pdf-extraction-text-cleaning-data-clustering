@@ -38,6 +38,8 @@ class ExtractServer:
             kwargs["model_config"] = self._config.model_config
         if self._config.splitter:
             kwargs["splitter"] = self._config.splitter
+        if self._config.post_extract_fn:
+            kwargs["post_extract_fn"] = self._config.post_extract_fn
         for i in range(self._num_thread):
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(self._flow_cls(**kwargs))
