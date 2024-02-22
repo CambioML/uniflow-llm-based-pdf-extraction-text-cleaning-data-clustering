@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.flow.extract.extract_txt_flow - uniflow 0.0.21 documentation</title>
+        <title>uniflow.flow.extract.extract_txt_flow - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -208,7 +208,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../../uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -261,8 +266,9 @@
 <span class="kn">from</span> <span class="nn">uniflow.constants</span> <span class="kn">import</span> <span class="n">EXTRACT</span>
 <span class="kn">from</span> <span class="nn">uniflow.flow.flow</span> <span class="kn">import</span> <span class="n">Flow</span>
 <span class="kn">from</span> <span class="nn">uniflow.node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">uniflow.op.extract.load.aws.s3_op</span> <span class="kn">import</span> <span class="n">ExtractS3Op</span>
-<span class="kn">from</span> <span class="nn">uniflow.op.extract.load.txt_op</span> <span class="kn">import</span> <span class="n">ExtractTxtOp</span><span class="p">,</span> <span class="n">ProcessTxtOp</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.extract.load.txt_op</span> <span class="kn">import</span> <span class="n">ExtractTxtOp</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.extract.split.constants</span> <span class="kn">import</span> <span class="n">PARAGRAPH_SPLITTER</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.extract.split.splitter_factory</span> <span class="kn">import</span> <span class="n">SplitterOpsFactory</span>
 
 
 <div class="viewcode-block" id="ExtractTxtFlow">
@@ -272,11 +278,11 @@
 
     <span class="n">TAG</span> <span class="o">=</span> <span class="n">EXTRACT</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">splitter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">PARAGRAPH_SPLITTER</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract txt Flow Constructor.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extract_txt_op</span> <span class="o">=</span> <span class="n">ExtractTxtOp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;extract_txt_op&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_txt_op</span> <span class="o">=</span> <span class="n">ProcessTxtOp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;process_txt_op&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_split_op</span> <span class="o">=</span> <span class="n">SplitterOpsFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">splitter</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ExtractTxtFlow.run">
 <a class="viewcode-back" href="../../../../uniflow.flow.extract.html#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow.run">[docs]</a>
@@ -290,22 +296,9 @@
 <span class="sd">            Sequence[Node]: Nodes after running.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_txt_op</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
-        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_txt_op</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_op</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">nodes</span></div>
 </div>
-
-
-
-<div class="viewcode-block" id="ExtractS3TxtFlow">
-<a class="viewcode-back" href="../../../../uniflow.flow.extract.html#uniflow.flow.extract.extract_txt_flow.ExtractS3TxtFlow">[docs]</a>
-<span class="k">class</span> <span class="nc">ExtractS3TxtFlow</span><span class="p">(</span><span class="n">ExtractTxtFlow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract S3 txt Flow Class.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract S3 txt Flow Constructor.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_txt_op</span> <span class="o">=</span> <span class="n">ExtractS3Op</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;extract_s3_txt_op&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_txt_op</span> <span class="o">=</span> <span class="n">ProcessTxtOp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;process_txt_op&quot;</span><span class="p">)</span></div>
 
 </pre></div>
         </article>
@@ -347,7 +340,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="../../../../_static/documentation_options.js?v=f91d8841"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=32e29ea5"></script>

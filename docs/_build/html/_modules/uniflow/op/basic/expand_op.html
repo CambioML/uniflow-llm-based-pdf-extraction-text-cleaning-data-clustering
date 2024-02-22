@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.flow.extract.extract_mardown_flow - uniflow 0.0.21 documentation</title>
+        <title>uniflow.op.basic.expand_op - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -208,7 +208,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../../uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -253,45 +258,48 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for uniflow.flow.extract.extract_mardown_flow</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Extract txt flow.&quot;&quot;&quot;</span>
+          <h1>Source code for uniflow.op.basic.expand_op</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Expand operation module.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span> <span class="nn">uniflow.constants</span> <span class="kn">import</span> <span class="n">EXTRACT</span>
-<span class="kn">from</span> <span class="nn">uniflow.flow.flow</span> <span class="kn">import</span> <span class="n">Flow</span>
 <span class="kn">from</span> <span class="nn">uniflow.node</span> <span class="kn">import</span> <span class="n">Node</span>
-<span class="kn">from</span> <span class="nn">uniflow.op.extract.load.md_op</span> <span class="kn">import</span> <span class="n">ExtractMarkdownOp</span><span class="p">,</span> <span class="n">ProcessMarkdownOp</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.op</span> <span class="kn">import</span> <span class="n">Op</span>
 
 
-<div class="viewcode-block" id="ExtractMarkdownFlow">
-<a class="viewcode-back" href="../../../../uniflow.flow.extract.html#uniflow.flow.extract.extract_mardown_flow.ExtractMarkdownFlow">[docs]</a>
-<span class="k">class</span> <span class="nc">ExtractMarkdownFlow</span><span class="p">(</span><span class="n">Flow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract markdown Flow Class.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ExpandOp">
+<a class="viewcode-back" href="../../../../uniflow.op.basic.html#uniflow.op.basic.expand_op.ExpandOp">[docs]</a>
+<span class="k">class</span> <span class="nc">ExpandOp</span><span class="p">(</span><span class="n">Op</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expand Operation.&quot;&quot;&quot;</span>
 
-    <span class="n">TAG</span> <span class="o">=</span> <span class="n">EXTRACT</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract markdown Flow Constructor.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extract_md_op</span> <span class="o">=</span> <span class="n">ExtractMarkdownOp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;extract_md_op&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_md_op</span> <span class="o">=</span> <span class="n">ProcessMarkdownOp</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;process_md_op&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ExtractMarkdownFlow.run">
-<a class="viewcode-back" href="../../../../uniflow.flow.extract.html#uniflow.flow.extract.extract_mardown_flow.ExtractMarkdownFlow.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Extract markdown Flow.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes expand operation.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            nodes (Sequence[Node]): Nodes to run.</span>
+<span class="sd">            name (str): Name of the expand operation.</span>
+<span class="sd">            fn (callable): Function to expand.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span> <span class="o">=</span> <span class="n">fn</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">Node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls expand operation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node (Node): Input node.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            Sequence[Node]: Nodes after running.</span>
+<span class="sd">            Sequence[Node]: Output nodes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_md_op</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
-        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_md_op</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">nodes</span></div>
-</div>
+        <span class="n">output_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">value_dicts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value_dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">value_dict</span> <span class="ow">in</span> <span class="n">value_dicts</span><span class="p">:</span>
+            <span class="n">output_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">Node</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_name</span><span class="p">(),</span> <span class="n">value_dict</span><span class="o">=</span><span class="n">value_dict</span><span class="p">,</span> <span class="n">prev_nodes</span><span class="o">=</span><span class="p">[</span><span class="n">node</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">output_nodes</span></div>
 
 </pre></div>
         </article>
@@ -333,7 +341,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="../../../../_static/documentation_options.js?v=f91d8841"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=32e29ea5"></script>

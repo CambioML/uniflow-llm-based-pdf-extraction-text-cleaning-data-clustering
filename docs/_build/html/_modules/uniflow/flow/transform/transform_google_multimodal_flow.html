@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.op.model.abs_llm_processor - uniflow 0.0.21 documentation</title>
+        <title>uniflow.flow.transform.transform_google_multimodal_flow - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -208,7 +208,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../../uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -253,90 +258,66 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for uniflow.op.model.abs_llm_processor</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Abstract class for processors.&quot;&quot;&quot;</span>
+          <h1>Source code for uniflow.flow.transform.transform_google_multimodal_flow</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Model Flow Module.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span> <span class="nn">uniflow.op.model.constants</span> <span class="kn">import</span> <span class="n">ERROR_LIST</span><span class="p">,</span> <span class="n">MAX_ATTEMPTS</span>
-<span class="kn">from</span> <span class="nn">uniflow.op.model.model_server</span> <span class="kn">import</span> <span class="n">ModelServerFactory</span>
-<span class="kn">from</span> <span class="nn">uniflow.op.prompt</span> <span class="kn">import</span> <span class="n">Context</span><span class="p">,</span> <span class="n">PromptTemplate</span>
+<span class="kn">from</span> <span class="nn">uniflow.constants</span> <span class="kn">import</span> <span class="n">TRANSFORM</span>
+<span class="kn">from</span> <span class="nn">uniflow.flow.flow</span> <span class="kn">import</span> <span class="n">Flow</span>
+<span class="kn">from</span> <span class="nn">uniflow.node</span> <span class="kn">import</span> <span class="n">Node</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.model.mm.model</span> <span class="kn">import</span> <span class="n">MmModel</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.model.model_op</span> <span class="kn">import</span> <span class="n">ModelOp</span>
+<span class="kn">from</span> <span class="nn">uniflow.op.prompt</span> <span class="kn">import</span> <span class="n">PromptTemplate</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-<span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="AbsLLMProcessor">
-<a class="viewcode-back" href="../../../../uniflow.op.model.html#uniflow.op.model.abs_llm_processor.AbsLLMProcessor">[docs]</a>
-<span class="k">class</span> <span class="nc">AbsLLMProcessor</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class for using LLM for data process.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="GoogleMultiModalModelFlow">
+<a class="viewcode-back" href="../../../../uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.GoogleMultiModalModelFlow">[docs]</a>
+<span class="k">class</span> <span class="nc">GoogleMultiModalModelFlow</span><span class="p">(</span><span class="n">Flow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Google MultiModal Model Flow Class.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prompt_template</span><span class="p">:</span> <span class="n">PromptTemplate</span><span class="p">,</span>
         <span class="n">model_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize Model class.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Google Model Flow Constructor.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            prompt_template (PromptTemplate): Guided prompt template.</span>
 <span class="sd">            model_config (Dict[str, Any]): Model config.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model_server_cls</span> <span class="o">=</span> <span class="n">ModelServerFactory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_config</span><span class="p">[</span><span class="s2">&quot;model_server&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model_server</span> <span class="o">=</span> <span class="n">model_server_cls</span><span class="p">(</span><span class="n">prompt_template</span><span class="p">,</span> <span class="n">model_config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prompt_template</span> <span class="o">=</span> <span class="n">prompt_template</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="c1"># for Huggingface model</span>
-        <span class="k">if</span> <span class="s2">&quot;num_return_sequences&quot;</span> <span class="ow">in</span> <span class="n">model_config</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="n">model_config</span><span class="p">[</span><span class="s2">&quot;num_return_sequences&quot;</span><span class="p">]</span>
-        <span class="c1"># for OpenAI model</span>
-        <span class="k">elif</span> <span class="s2">&quot;num_call&quot;</span> <span class="ow">in</span> <span class="n">model_config</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_num_samples</span> <span class="o">=</span> <span class="n">model_config</span><span class="p">[</span><span class="s2">&quot;num_call&quot;</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_op</span> <span class="o">=</span> <span class="n">ModelOp</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;google_mm_model_op&quot;</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">MmModel</span><span class="p">(</span>
+                <span class="n">prompt_template</span><span class="o">=</span><span class="n">prompt_template</span><span class="p">,</span>
+                <span class="n">model_config</span><span class="o">=</span><span class="n">model_config</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Context</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize data.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data (List[Context]): Data to serialize.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            List[str]: Serialized data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Serialize method not implemented.&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_deserialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deserialize data.</span>
+<div class="viewcode-block" id="GoogleMultiModalModelFlow.run">
+<a class="viewcode-back" href="../../../../uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.GoogleMultiModalModelFlow.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Model Flow.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            data (List[str]): Data to deserialize.</span>
+<span class="sd">            nodes (Sequence[Node]): Nodes to run.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            List[Dict[str, Any]]: Deserialized data.</span>
+<span class="sd">            Sequence[Node]: Nodes after running.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Deserialize method not implemented.&quot;</span><span class="p">)</span>
-
-<div class="viewcode-block" id="AbsLLMProcessor.run">
-<a class="viewcode-back" href="../../../../uniflow.op.model.html#uniflow.op.model.abs_llm_processor.AbsLLMProcessor.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            data (List[Dict[str, Any]]): Data to run.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            List[Dict[str, Any]]: Output data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">serialized_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">MAX_ATTEMPTS</span><span class="p">):</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_server</span><span class="p">(</span><span class="n">serialized_data</span><span class="p">)</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">ERROR_LIST</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-                <span class="k">break</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Attempt </span><span class="si">%s</span><span class="s2"> failed, retrying...&quot;</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">data</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_op</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="TransformGoogleMultiModalModelFlow">
+<a class="viewcode-back" href="../../../../uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.TransformGoogleMultiModalModelFlow">[docs]</a>
+<span class="k">class</span> <span class="nc">TransformGoogleMultiModalModelFlow</span><span class="p">(</span><span class="n">GoogleMultiModalModelFlow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transform Google Flow Class.&quot;&quot;&quot;</span>
+
+    <span class="n">TAG</span> <span class="o">=</span> <span class="n">TRANSFORM</span></div>
 
 </pre></div>
         </article>
@@ -378,7 +359,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="../../../../_static/documentation_options.js?v=f91d8841"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=32e29ea5"></script>

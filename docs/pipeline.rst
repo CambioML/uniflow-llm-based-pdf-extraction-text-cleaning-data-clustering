@@ -28,7 +28,6 @@ To do this, we'll have to link up our :code:`ExtractPDFFlow` and :code:`Transfor
 
     extract_config = ExtractPDFConfig(
         model_config=NougatModelConfig(
-            model_name = "0.1.0-small",
             batch_size = 1 # When batch_size>1, nougat will run on CUDA, otherwise it will run on CPU
         ),
         splitter="fads",
