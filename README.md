@@ -8,9 +8,9 @@
 
 `uniflow` provides a unified LLM interface to extract and transform and raw documents.
 - Document types: Uniflow enables data extraction from [PDFs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_pdf_with_recursive_splitter.ipynb), [HTMLs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_html.ipynb) and [TXTs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_txt.ipynb).
-- LLM agnostic: Uniflow supports most common-used LLMs for text tranformation, including OpenAI models ([GPT3.5 and GPT4](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/openai_pdf_source_10k_summary.ipynb)), Google Gemini models ([Gemini 1.5](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_model.ipynb), [MultiModal]https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_multimodal_model.ipynb), Huggingface's open source models including [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-v0.1), AWS [BedRock](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/rater/bedrock_classification.ipynb), Azure OpenAI models, etc.
+- LLM agnostic: Uniflow supports most common-used LLMs for text tranformation, including OpenAI models ([GPT3.5 and GPT4](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/openai_pdf_source_10k_summary.ipynb)), Google Gemini models ([Gemini 1.5](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_model.ipynb), [MultiModal](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_multimodal_model.ipynb), Huggingface's open source models including [Mistral-7B](https://huggingface.co/mistralai/Mistral-7B-v0.1), AWS [BedRock](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/rater/bedrock_classification.ipynb) models, Azure OpenAI models, etc.
 
-## The Problem to Tackle
+## The Problems to Tackle
 Uniflow aims to make training and finetuning LLMs more accessible to everyone by providing ready-to-use training datasets. Specifically, we address two key challenges: 
 - first, turning legacy documents like PDFs and Word files into clean text, which LLMs can learn from, is tricky due to complex PDF layouts and missing information during extraction; and 
 - second, the labor-intensive process of transforming extracted data into a format suitable for training LLMs, which involves creating datasets with both preferred and rejected answers for each question to support feedback-based learning techniques.
@@ -24,13 +24,13 @@ Check Uniflow hands-on solutions:
 - [Extract financial reports (PDFs) into summerrization](https://github.com/CambioML/cambio-cookbook/blob/main/examples/10K_Evaluator/10K_PDF_Summary.ipynb)
 - [Extract financial reports (PDFs) and finetune financial LLMs](https://github.com/CambioML/cambio-cookbook/blob/main/examples/10K_Evaluator/10K_PDF_Evaluator.ipynb)
 - [Extract PDFs into your question answer datasets](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/huggingface_model_5QAs.ipynb)
-- Build RLHF/RLAIF perference datasets for LLM finetuning.
+- Build RLHF/RLAIF perference datasets for LLM finetuning
 
 ---
 
 ## Installation
 
-`uniflow` installation takes about 5-10 minutes.
+Installing `uniflow` takes about 5-10 minutes if you follow the 3 steps below:
 
 1. Create a conda environment on your terminal using:
     ```
@@ -97,6 +97,8 @@ OPENAI_API_KEY=YOUR_API_KEY
 ```
 
 ---
+
+# Uniflow Manual
 
 ## Overview
 To use `uniflow`, follow of three main steps:
