@@ -100,10 +100,18 @@ class ExtractHTMLOp(Op):
 
             # Text tag
             if tag_elem.name in (TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS):
-                if not tag_elem.string:
+                if len(list(tag_elem.children)) == 0:
                     continue
 
-                tmp = (" ").join(tag_elem.stripped_strings)
+                descendanttag_elems = list(tag_elem.descendants)
+
+                tmp = (" ").join(
+                    [
+                        p.replace("\n", " ")
+                        for p in tag_elem.stripped_strings
+                        if p.strip() != ""
+                    ]
+                )
 
             # Container
             elif self._is_container(tag_elem):

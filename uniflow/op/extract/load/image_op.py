@@ -5,19 +5,19 @@ import re
 from typing import Sequence
 
 from uniflow.node import Node
-from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
+from uniflow.op.model.abs_model import AbsModel
 from uniflow.op.op import Op
 
 
 class ExtractImageOp(Op):
     """Process Image Op Class."""
 
-    def __init__(self, name: str, model: AbsLLMProcessor) -> None:
+    def __init__(self, name: str, model: AbsModel) -> None:
         """Process PDF Op Constructor.
 
         Args:
             name (str): Name of the op.
-            model (AbsLLMProcessor): Model to run.
+            model (AbsModel): Model to run.
         """
         super().__init__(name)
         self._model = model

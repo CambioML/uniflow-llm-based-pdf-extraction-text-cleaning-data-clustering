@@ -1,4 +1,4 @@
-"""LLM rater for tasks with a LLM model server."""
+"""Language model (LM) rater model class."""
 
 import re
 from collections import Counter
@@ -12,12 +12,12 @@ from uniflow.op.model.constants import (
     SCORES,
     VOTES,
 )
-from uniflow.op.model.llm_processor import JsonFormattedDataProcessor, LLMDataProcessor
+from uniflow.op.model.lm.model import JsonLmModel, LmModel
 from uniflow.op.prompt import PromptTemplate
 
 
-class LLMRater(LLMDataProcessor):
-    """LLM Rater"""
+class LmRaterModel(LmModel):
+    """Language model (LM) rater model class."""
 
     def __init__(
         self,
@@ -99,7 +99,7 @@ class LLMRater(LLMDataProcessor):
         return data
 
 
-class OpenAIJsonFormattedLLMRater(JsonFormattedDataProcessor):
+class OpenAIJsonFormattedLLMRater(JsonLmModel):
     """OpenAI formatted LLM Rater"""
 
     def __init__(
@@ -178,7 +178,7 @@ class OpenAIJsonFormattedLLMRater(JsonFormattedDataProcessor):
         return data
 
 
-class HuggingfaceJsonFormattedLLMRater(LLMDataProcessor):
+class HuggingfaceJsonFormattedLLMRater(LmModel):
     """Huggingface formatted Json Formatted LLM Rater"""
 
     def __init__(

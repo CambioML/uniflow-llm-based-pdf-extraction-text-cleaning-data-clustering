@@ -8,7 +8,7 @@ from uniflow.node import Node
 from uniflow.op.extract.load.pdf_op import ExtractPDFOp, ProcessPDFOp
 from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
-from uniflow.op.model.llm_preprocessor import LLMDataPreprocessor
+from uniflow.op.model.cv.model import CvModel
 
 
 class ExtractPDFFlow(Flow):
@@ -30,7 +30,7 @@ class ExtractPDFFlow(Flow):
         super().__init__()
         self._extract_pdf_op = ExtractPDFOp(
             name="extract_pdf_op",
-            model=LLMDataPreprocessor(
+            model=CvModel(
                 model_config=model_config,
             ),
         )

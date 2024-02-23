@@ -1,19 +1,19 @@
-"""LLM processor for processing data with a LLM model server."""
+"""Language model (LM) model class."""
 
 import copy
 import json
 from typing import Any, Dict, List
 
-from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
+from uniflow.op.model.abs_model import AbsModel
 from uniflow.op.model.constants import ERROR, ERROR_CONTEXT, ERROR_LIST, RESPONSE
 from uniflow.op.prompt import Context
 
 OUTPUT_SCHEMA_GUIDE = "Ensure the response is in json."
 
 
-class LLMDataProcessor(AbsLLMProcessor):
-    """
-    Data processor for processing data with a LLM model server.
+class LmModel(AbsModel):
+    """Language model (LM) model class.
+
     It handles serialization and deserialization of data,
     manages interactions with the LLM model server, and applies
     a guided prompt template to the data.
@@ -64,9 +64,9 @@ class LLMDataProcessor(AbsLLMProcessor):
         }
 
 
-class JsonFormattedDataProcessor(AbsLLMProcessor):
+class JsonLmModel(AbsModel):
     """
-    Extends the LLMDataProcessor Class to ensure the response is in json.
+    Extends the LmModel Class to ensure the response is in json.
     """
 
     def _serialize(self, data: List[Context]) -> List[str]:

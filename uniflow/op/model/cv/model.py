@@ -1,17 +1,20 @@
-"""LLM processor for pre-processing data with a LLM model server."""
+"""Computer vision (CV) model class."""
 
 import logging
 from typing import Any, Dict, List
 
-from uniflow.op.model.abs_llm_processor import AbsLLMProcessor
+from uniflow.op.model.abs_model import AbsModel
 from uniflow.op.model.constants import ERROR, RESPONSE
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class LLMDataPreprocessor(AbsLLMProcessor):
-    """Preprocess Model Class."""
+class CvModel(AbsModel):
+    """Computer Vision (CV) Model Class.
+
+    It handles serialization and deserialization of data.
+    """
 
     def __init__(
         self,

@@ -13,6 +13,30 @@ class ModelConfig:
 
 
 @dataclass
+class GoogleModelConfig(ModelConfig):
+    """Google Model Config Class."""
+
+    model_name: str = "models/gemini-1.0-pro-001"
+    model_server: str = "GoogleModelServer"
+    max_output_tokens: int = 2048
+    temperature: float = 0
+    top_k: int = 1
+    top_p: float = 1.0
+    candidate_count: int = 1
+    num_thread: int = 1
+    # this is not real batch inference, but size to group for thread pool executor.
+    batch_size: int = 1
+
+
+@dataclass
+class GoogleMultiModalModelConfig(GoogleModelConfig):
+    """Google MultiModal Model Config Class."""
+
+    model_name: str = "gemini-pro-vision"
+    model_server: str = "GoogleMultiModalModelServer"
+
+
+@dataclass
 class OpenAIModelConfig(ModelConfig):
     """OpenAI Model Config Class."""
 

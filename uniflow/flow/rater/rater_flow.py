@@ -5,9 +5,9 @@ from typing import Any, Dict, Sequence
 from uniflow.constants import RATER
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
-from uniflow.op.model.llm_rater import (
+from uniflow.op.model.lm.rater_model import (
     HuggingfaceJsonFormattedLLMRater,
-    LLMRater,
+    LmRaterModel,
     OpenAIJsonFormattedLLMRater,
 )
 from uniflow.op.model.model_op import ModelOp
@@ -53,7 +53,7 @@ class RaterFlow(Flow):
                     label2score=label2score,
                 )
         else:
-            model = LLMRater(
+            model = LmRaterModel(
                 prompt_template=prompt_template,
                 model_config=model_config,
                 label2score=label2score,
