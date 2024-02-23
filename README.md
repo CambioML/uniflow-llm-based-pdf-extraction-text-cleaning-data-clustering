@@ -16,7 +16,7 @@
     - Azure OpenAI models, etc.
 
 
-## The Problems to Tackle
+## :question: The Problems to Tackle
 
 Uniflow addresses two key challenges in preparing LLM training data for ML scientists: 
 - first, extracting legacy documents like PDFs and Word files into clean text, which LLMs can learn from, is tricky due to complex PDF layouts and missing information during extraction; and 
@@ -37,7 +37,7 @@ Check Uniflow hands-on solutions:
 
 ---
 
-## Installation
+## :computer: Installation
 
 Installing `uniflow` takes about 5-10 minutes if you follow the 3 steps below:
 
@@ -78,7 +78,7 @@ Installing `uniflow` takes about 5-10 minutes if you follow the 3 steps below:
 Congrats you have finished the installation!
 
 
-## Dev Setup
+## :man_technologist: Dev Setup
 If you are interested in contributing to us, here are the preliminary development setups.
 
 ```
@@ -107,7 +107,7 @@ OPENAI_API_KEY=YOUR_API_KEY
 
 ---
 
-# Uniflow Manual
+# :scroll: Uniflow Manual
 
 ## Overview
 To use `uniflow`, follow of three main steps:
