@@ -6,17 +6,109 @@
   <a href="https://join.slack.com/t/cambiomlworkspace/shared_invite/zt-1zes33rmt-20Rag043uvExUaUdvt5_xQ"><img src="https://badgen.net/badge/Join/Community/cyan?icon=slack" alt="Slack" /></a>
 </p>
 
-`uniflow` is a unified interface to solve data augmentation problem for LLM training. It enables use of different LLMs, including [OpenAI](https://openai.com/product), [Huggingface](https://huggingface.co/mistralai/Mistral-7B-v0.1), and [LMQG](https://huggingface.co/lmqg) with a single interface. Using `uniflow`, you can easily run different LLMs to generate questions and answers, chunk text, summarize text, and more.
+`uniflow` provides a unified LLM interface to extract and transform and raw documents.
+- Document types: Uniflow enables data extraction from [PDFs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_pdf_with_recursive_splitter.ipynb), [HTMLs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_html.ipynb) and [TXTs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_txt.ipynb).
+- LLM agnostic: Uniflow supports most common-used LLMs for text tranformation, including
+    - OpenAI models ([GPT3.5 and GPT4](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/openai_pdf_source_10k_summary.ipynb)), 
+    - Google Gemini models ([Gemini 1.5](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_model.ipynb), [MultiModal](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_multimodal_model.ipynb)), 
+    - AWS [BedRock](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/rater/bedrock_classification.ipynb) models, 
+    - Huggingface open source models including [Mistral-7B](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/0222/example/transform/huggingface_model_5QAs.ipynb), 
+    - Azure OpenAI models, etc.
 
-Built by [CambioML](https://www.cambioml.com/).
 
-## Quick Install
+## :question: The Problems to Tackle
+
+Uniflow addresses two key challenges in preparing LLM training data for ML scientists: 
+- first, extracting legacy documents like PDFs and Word files into clean text, which LLMs can learn from, is tricky due to complex PDF layouts and missing information during extraction; and 
+- second, the labor-intensive process of transforming extracted data into a format suitable for training LLMs, which involves creating datasets with both preferred and rejected answers for each question to support feedback-based learning techniques.
+
+Hence, we built Uniflow, a unified LLM interface to extract and transform and raw documents.
+
+## :seedling: Use Cases
+
+Uniflow aims to help every data scientist generate their own privacy-perserved, ready-to-use training datasets for LLM finetuning, and hence make finetuning LLMs more accessible to everyone:rocket:. 
+
+Check Uniflow hands-on solutions:
+
+- [Extract financial reports (PDFs) into summerrization](https://github.com/CambioML/cambio-cookbook/blob/main/examples/10K_Evaluator/10K_PDF_Summary.ipynb)
+- [Extract financial reports (PDFs) and finetune financial LLMs](https://github.com/CambioML/cambio-cookbook/blob/main/examples/10K_Evaluator/10K_PDF_Evaluator.ipynb)
+- [Extract A Math Book (HTMLs) into your question answer dataset](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/self_instruct_custom_html_source.ipynb)
+- [Extract PDFs into your question answer dataset](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/huggingface_model_5QAs.ipynb)
+- Build RLHF/RLAIF perference datasets for LLM finetuning
+
+---
+
+## :computer: Installation
+
+Installing `uniflow` takes about 5-10 minutes if you follow the 3 steps below:
+
+1. Create a conda environment on your terminal using:
+    ```
+    conda create -n uniflow python=3.10 -y
+    conda activate uniflow  # some OS requires `source activate uniflow`
+    ```
+
+2. Install the compatible pytorch based on your OS.
+    - If you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
+        ```
+        pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
+        ```
+    - If you are on a CPU instance,
+        ```
+        pip3 install torch
+        ```
+
+3. Install `uniflow`:
+    ```
+    pip3 install uniflow
+    ```
+    - (Optional) If you are running one of the following `OpenAI` flows, you will have to set up your OpenAI API key. To do so, create a `.env` file in your root uniflow folder. Then add the following line to the `.env` file:
+        ```
+        OPENAI_API_KEY=YOUR_API_KEY
+        ```
+
+    - (Optional) If you are running the `HuggingfaceModelFlow`, you will also need to install the `transformers`, `accelerate`, `bitsandbytes`, `scipy` libraries:
+        ```
+        pip3 install transformers accelerate bitsandbytes scipy
+        ```
+    - (Optional) If you are running the `LMQGModelFlow`, you will also need to install the `lmqg` and `spacy` libraries:
+        ```
+        pip3 install lmqg spacy
+        ```
+
+Congrats you have finished the installation!
+
+
+## :man_technologist: Dev Setup
+If you are interested in contributing to us, here are the preliminary development setups.
 
 ```
-pip3 install uniflow
+conda create -n uniflow python=3.10 -y
+conda activate uniflow
+cd uniflow
+pip3 install poetry
+poetry install --no-root
 ```
 
-See more details at the [full installation](#installation).
+### AWS EC2 Dev Setup
+If you are on EC2, you can launch a GPU instance with the following config:
+- EC2 `g4dn.xlarge` (if you want to run a pretrained LLM with 7B parameters)
+- Deep Learning AMI PyTorch GPU 2.0.1 (Ubuntu 20.04)
+    <img src="example/image/readme_ec2_ami.jpg" alt="Alt text" width="50%" height="50%"/>
+- EBS: at least 100G
+    <img src="example/image/readme_ec2_storage.png" alt="Alt text" width="50%" height="50%"/>
+
+### API keys
+If you are running one of the following `OpenAI` flows, you will have to set up your OpenAI API key.
+
+To do so, create a `.env` file in your root uniflow folder. Then add the following line to the `.env` file:
+```
+OPENAI_API_KEY=YOUR_API_KEY
+```
+
+---
+
+# :scroll: Uniflow Manual
 
 ## Overview
 To use `uniflow`, follow of three main steps:
@@ -238,67 +330,3 @@ output = client.run(data)
 ```
 
 As you can see, we are passing in a custom parameters to the `OpenAIModelConfig` to the `OpenAIConfig` configurations according to our needs.
-
-## Installation
-To get started with `uniflow`, you can install it using `pip` in a `conda` environment.
-
-First, create a conda environment on your terminal using:
-```
-conda create -n uniflow python=3.10 -y
-conda activate uniflow  # some OS requires `source activate uniflow`
-```
-
-Next, install the compatible pytorch based on your OS.
-- If you are on a GPU, install [pytorch based on your cuda version](https://pytorch.org/get-started/locally/). You can find your CUDA version via `nvcc -V`.
-    ```
-    pip3 install --pre torch --index-url https://download.pytorch.org/whl/nightly/cu121  # cu121 means cuda 12.1
-    ```
-- If you are on a CPU instance,
-    ```
-    pip3 install torch
-    ```
-
-Then, install `uniflow`:
-```
-pip3 install uniflow
-```
-
-If you are running the `HuggingfaceModelFlow`, you will also need to install the `transformers`, `accelerate`, `bitsandbytes`, `scipy` libraries:
-```
-pip3 install transformers accelerate bitsandbytes scipy
-```
-
-Finally, if you are running the `HuggingfaceModelFlow`, you will also need to install the `lmqg` and `spacy` libraries:
-```
-pip3 install lmqg spacy
-```
-
-Congrats you have finished the installation!
-
-## Dev Setup
-If you are interested in contributing to us, here are the preliminary development setups.
-
-### API keys
-If you are running one of the following `OpenAI` flows, you will have to set up your OpenAI API key.
-
-To do so, create a `.env` file in your root uniflow folder. Then add the following line to the `.env` file:
-```
-OPENAI_API_KEY=YOUR_API_KEY
-```
-### Backend Dev Setup
-
-```
-conda create -n uniflow python=3.10
-conda activate uniflow
-cd uniflow
-pip3 install poetry
-poetry install --no-root
-```
-
-### EC2 Dev Setup
-If you are on EC2, you can launch a GPU instance with the following config:
-- EC2 `g4dn.xlarge` (if you want to run a pretrained LLM with 7B parameters)
-- Deep Learning AMI PyTorch GPU 2.0.1 (Ubuntu 20.04)
-    <img src="example/image/readme_ec2_ami.jpg" alt="Alt text" width="50%" height="50%"/>
-- EBS: at least 100G
-    <img src="example/image/readme_ec2_storage.png" alt="Alt text" width="50%" height="50%"/>
