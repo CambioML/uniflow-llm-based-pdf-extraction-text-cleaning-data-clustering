@@ -8,16 +8,25 @@
 
 `uniflow` provides a unified LLM interface to extract and transform and raw documents.
 - Document types: Uniflow enables data extraction from [PDFs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_pdf_with_recursive_splitter.ipynb), [HTMLs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_html.ipynb) and [TXTs](https://github.com/CambioML/uniflow-llm-based-text-extraction-data-cleaning-clustering/blob/main/example/extract/extract_txt.ipynb).
-- LLM agnostic: Uniflow supports most common-used LLMs for text tranformation, including OpenAI models ([GPT3.5 and GPT4](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/openai_pdf_source_10k_summary.ipynb)), Google Gemini models ([Gemini 1.5](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_model.ipynb), [MultiModal](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_multimodal_model.ipynb)), Huggingface open source models including [Mistral-7B](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/0222/example/transform/huggingface_model_5QAs.ipynb), AWS [BedRock](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/rater/bedrock_classification.ipynb) models, Azure OpenAI models, etc.
+- LLM agnostic: Uniflow supports most common-used LLMs for text tranformation, including
+    - OpenAI models ([GPT3.5 and GPT4](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/openai_pdf_source_10k_summary.ipynb)), 
+    - Google Gemini models ([Gemini 1.5](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_model.ipynb), [MultiModal](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/google_multimodal_model.ipynb)), 
+    - AWS [BedRock](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/rater/bedrock_classification.ipynb) models, 
+    - Huggingface open source models including [Mistral-7B](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/0222/example/transform/huggingface_model_5QAs.ipynb), 
+    - Azure OpenAI models, etc.
+
 
 ## The Problems to Tackle
-Uniflow aims to make training and finetuning LLMs more accessible to everyone by providing ready-to-use training datasets. Specifically, we address two key challenges: 
-- first, turning legacy documents like PDFs and Word files into clean text, which LLMs can learn from, is tricky due to complex PDF layouts and missing information during extraction; and 
+
+Uniflow addresses two key challenges in preparing LLM training data for ML scientists: 
+- first, extracting legacy documents like PDFs and Word files into clean text, which LLMs can learn from, is tricky due to complex PDF layouts and missing information during extraction; and 
 - second, the labor-intensive process of transforming extracted data into a format suitable for training LLMs, which involves creating datasets with both preferred and rejected answers for each question to support feedback-based learning techniques.
 
 Hence, we built Uniflow, a unified LLM interface to extract and transform and raw documents.
 
-## Use Cases
+## :seedling: Use Cases
+
+Uniflow aims to help every data scientist generate their own privacy-perserved, ready-to-use training datasets for LLM finetuning, and hence make finetuning LLMs more accessible to everyone:rocket:. 
 
 Check Uniflow hands-on solutions:
 
