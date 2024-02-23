@@ -32,7 +32,7 @@ Check Uniflow hands-on solutions:
 
 - [Extract financial reports (PDFs) into summerrization](https://github.com/CambioML/cambio-cookbook/blob/main/examples/10K_Evaluator/10K_PDF_Summary.ipynb)
 - [Extract financial reports (PDFs) and finetune financial LLMs](https://github.com/CambioML/cambio-cookbook/blob/main/examples/10K_Evaluator/10K_PDF_Evaluator.ipynb)
-- [Extract A Math Book (HTMLs) into your question answer dataset](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/self_instruct_custom_html_source.ipynb)
+- [Extract a math book (HTMLs) into your question answer dataset](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/self_instruct_custom_html_source.ipynb)
 - [Extract PDFs into your question answer dataset](https://github.com/CambioML/uniflow-llm-based-pdf-extraction-text-cleaning-data-clustering/blob/main/example/transform/huggingface_model_5QAs.ipynb)
 - Build RLHF/RLAIF perference datasets for LLM finetuning
 
