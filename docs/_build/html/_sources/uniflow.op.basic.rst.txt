@@ -12,6 +12,22 @@ uniflow.op.basic.copy\_op module
    :undoc-members:
    :show-inheritance:
 
+uniflow.op.basic.expand\_op module
+----------------------------------
+
+.. automodule:: uniflow.op.basic.expand_op
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+uniflow.op.basic.reduce\_op module
+----------------------------------
+
+.. automodule:: uniflow.op.basic.reduce_op
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

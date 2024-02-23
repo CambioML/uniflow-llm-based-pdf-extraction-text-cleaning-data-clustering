@@ -1,13 +1,23 @@
 uniflow.op.model package
 ========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   uniflow.op.model.cv
+   uniflow.op.model.lm
+   uniflow.op.model.mm
+
 Submodules
 ----------
 
-uniflow.op.model.abs\_llm\_processor module
--------------------------------------------
+uniflow.op.model.abs\_model module
+----------------------------------
 
-.. automodule:: uniflow.op.model.abs_llm_processor
+.. automodule:: uniflow.op.model.abs_model
    :members:
    :undoc-members:
    :show-inheritance:
@@ -16,38 +26,6 @@ uniflow.op.model.constants module
 ---------------------------------
 
 .. automodule:: uniflow.op.model.constants
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-uniflow.op.model.layout\_utils module
--------------------------------------
-
-.. automodule:: uniflow.op.model.layout_utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-uniflow.op.model.llm\_preprocessor module
------------------------------------------
-
-.. automodule:: uniflow.op.model.llm_preprocessor
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-uniflow.op.model.llm\_processor module
---------------------------------------
-
-.. automodule:: uniflow.op.model.llm_processor
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-uniflow.op.model.llm\_rater module
-----------------------------------
-
-.. automodule:: uniflow.op.model.llm_rater
    :members:
    :undoc-members:
    :show-inheritance:
@@ -72,14 +50,6 @@ uniflow.op.model.model\_server module
 -------------------------------------
 
 .. automodule:: uniflow.op.model.model_server
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-uniflow.op.model.neuron\_utils module
--------------------------------------
-
-.. automodule:: uniflow.op.model.neuron_utils
    :members:
    :undoc-members:
    :show-inheritance:
