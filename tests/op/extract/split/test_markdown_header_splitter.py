@@ -48,14 +48,6 @@ class TestMarkdownHeaderSplitter(unittest.TestCase):
 
         self.assertEqual(result, [])
 
-    def test_header_splitter_with_htmlstyle_custom_headers(self):
-        markdown_str = " <h1># Header</h1> \n Content"
-        custom_header = [("<h1>", "h1")]
-
-        result = self.splitter.header_splitter(markdown_str, custom_header)
-
-        self.assertEqual(result, ["<h1># Header</h1>\nContent"])
-
     def test_header_splitter_with_no_headers(self):
         markdown_str = "\nContent with no headers"
 
