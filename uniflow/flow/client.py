@@ -87,7 +87,7 @@ class TransformClient:
                 # Compare context length with the token size limit
                 if context_length > token_size_limit:
                     # Log the need for splitting the context due to size exceeding the limit
-                    print("The current Context object needs splitting because it exceeds the token limitation.")
+                    # print("The current Context object needs splitting because it exceeds the token limitation.")
                     
                     # Set an adjusted chunk size for splitting
                     adjusted_chunk_size = token_size_limit  # This size may need adjustment based on tokenization characteristics
