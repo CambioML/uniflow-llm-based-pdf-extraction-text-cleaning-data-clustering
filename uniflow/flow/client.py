@@ -56,7 +56,7 @@ class TransformClient:
         self._config = config
         self._server = TransformServer(asdict(self._config))
 
-    def run(self, input_list: List[Context]) -> List[Mapping[str, Any]]:
+    def run(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
         Process and possibly split input contexts before running them through the server.
 
