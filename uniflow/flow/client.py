@@ -57,6 +57,21 @@ class TransformClient:
         self._server = TransformServer(asdict(self._config))
 
     def run(self, input_list: List[Context]) -> List[Mapping[str, Any]]:
+        """
+        Process and possibly split input contexts before running them through the server.
+
+        This method checks if auto-splitting of long text is enabled in the configuration. If so, it evaluates each input context. 
+        If a context exceeds a certain size, it is split into smaller chunks to meet the token size limitations. 
+        Each chunk is then processed separately. If auto-splitting is not enabled, or if the context is within the acceptable size limit, 
+        the input is processed as is.
+
+        Args:
+            input_list (List[Context]): List of context objects to be processed.
+
+        Returns:
+            List[Mapping[str, Any]]: List of outputs from the server after processing the input contexts.
+        """
+        
         processed_input = []
 
         # Check if auto-splitting of long text is enabled
@@ -66,40 +81,44 @@ class TransformClient:
 
             # Iterate over each input context
             for input_item in input_list:
-                # Directly use the character count as a proxy for size, though not perfectly accurate
+                # Calculate the length of the context in characters
                 context_length = len(input_item.context)
 
-                # If the context length is larger than a conservative estimate for the token size limit, split it
+                # Compare context length with the token size limit
                 if context_length > token_size_limit:
-                    # Initialize the splitter with an adjusted chunk size based on the need to stay under the token limit
-                    # This size should be adjusted based on empirical data about the average token size for the text in question
+                    # Log the need for splitting the context due to size exceeding the limit
                     print("The current Context object needs splitting because it exceeds the token limitation.")
-                    adjusted_chunk_size = token_size_limit  # Adjust based on empirical tokenization data
+                    
+                    # Set an adjusted chunk size for splitting
+                    adjusted_chunk_size = token_size_limit  # This size may need adjustment based on tokenization characteristics
+                    
+                    # Initialize the splitter with the calculated chunk size and overlap
                     splitter = RecursiveCharacterSplitter(name='text_splitter', chunk_size=adjusted_chunk_size, chunk_overlap_size=50)
+                    
+                    # Create a node from the current context for splitting
                     nodes = [Node(name='input_node', value_dict={'text': input_item.context})]
+                    
+                    # Split the context into smaller chunks
                     split_nodes = splitter(nodes)
 
-                    # Convert each chunk into a Context object and add to processed input
-                    # print(len(split_nodes))
+                    # Process each split chunk
                     for node in split_nodes:
                         chunk_text = node.value_dict['text']
-                        # print(chunk_text)
-                        # print(len(chunk_text[0]))
-                        # print(chunk_text[0])
                         for c_text in chunk_text:
-                            print(len(c_text))
+                            # Create a new Context object for each chunk and add it to the processed list
                             chunk_context = Context(context=c_text)
                             processed_input.append(chunk_context)
                 else:
-                    # If the context length is within the limit, use it as is
+                    # If the context is within the acceptable size limit, add it directly to the processed list
                     processed_input.append(input_item)
         else:
-            # If auto-splitting is not enabled, use the original input list
+            # If auto-splitting is not enabled, use the input list as is
             processed_input = input_list
 
-        # Pass the processed input to the server and return the output
+        # Pass the processed input to the server for further processing
         output = self._server.run(processed_input)
         return output
+
 
     def async_run(self) -> None:
         """Run the flow asynchronously"""
