@@ -1,5 +1,6 @@
 """Extract, Transform and Pipeline config module."""
 
+import os
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
@@ -123,6 +124,14 @@ class TransformOpenAIConfig(TransformConfig):
 
     flow_name: str = "TransformOpenAIFlow"
     model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
+
+
+@dataclass
+class TransformAzureOpenAIConfig(TransformConfig):
+    """Transform Azure OpenAI Config Class."""
+
+    flow_name: str = "TransformAzureOpenAIFlow"
+    model_config: ModelConfig = field(default_factory=AzureOpenAIModelConfig)
 
 
 @dataclass
@@ -328,11 +337,12 @@ class TransformForClusteringAzureOpenAIGPT4Config:
     flow_name: str = "TransformAzureOpenAIFlow"
     model_config: AzureOpenAIModelConfig = field(
         default_factory=lambda: AzureOpenAIModelConfig(
-            api_key="some_api_key",  # todo
-            api_version="some_version_date",  # todo
-            azure_endpoint="some_azure_endpoint",  # todo
-            # model_name="gpt-3.5-turbo", #todo
-            # model_name= "gpt-3.5-turbo-1106", # todo
+            api_key=os.getenv("api_key"),
+            api_version=os.getenv("model_version"),
+            azure_endpoint=os.getenv("endpoint"),
+            # model_name=os.getenv("model_name"),
+            deployment_id=os.getenv("deployment_id"),
+            # model_name="gpt-3.5-turbo-1106",  # todo
             model_name="gpt-4-1106-preview",
             model_server="AzureOpenAIModelServer",
             num_call=1,
