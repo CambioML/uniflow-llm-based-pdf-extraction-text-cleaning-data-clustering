@@ -2,6 +2,8 @@
 
 from dataclasses import asdict
 from typing import Any, List, Mapping
+from uniflow.op.extract.split.recursive_character_splitter import RecursiveCharacterSplitter
+from uniflow.node import Node
 
 from uniflow.flow.config import ExtractConfig, RaterConfig, TransformConfig
 from uniflow.flow.server import ExtractServer, RaterServer, TransformServer
@@ -21,17 +23,25 @@ class ExtractClient:
         self._server = ExtractServer(asdict(self._config))
 
     def run(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
-        """
-        Run the flow
+        # Initialize the splitter with the desired chunk size and overlap size
+        splitter = RecursiveCharacterSplitter(name='text_splitter', chunk_size=4000, chunk_overlap_size=50)
+        
+        output = []
 
-        Args:
-            input_list (List[Mapping[str, Any]]): List of inputs to the flow
+        # Iterate over each input context
+        for input_item in input_list:
+            # Use the splitter to split the text into chunks if necessary
+            text = input_item['context']
+            nodes = [Node(value_dict={'text': text})]
+            split_nodes = splitter(nodes)
 
-        Returns:
-            List[Mapping[str, Any]]: List of outputs from the flow
-        """
-        # convert config to dict for future remote calls
-        output = self._server.run(input_list)
+            # Process each chunk as a separate context
+            for node in split_nodes:
+                chunk_text = node.value_dict['text']
+                chunk_output = self._server.run([{'context': chunk_text}])
+                output.append(chunk_output)
+
+        # Assuming the outputs are already in the correct format, just return them
         return output
 
     def async_run(self) -> None:

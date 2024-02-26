@@ -262,6 +262,7 @@ class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = False
 
 
 @dataclass
