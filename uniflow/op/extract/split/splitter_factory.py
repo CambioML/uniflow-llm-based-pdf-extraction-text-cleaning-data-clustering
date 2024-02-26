@@ -18,21 +18,17 @@ class SplitterOpsFactory:
     """Splitter Ops Factory Class."""
 
     SPLITTERS = {
-        PARAGRAPH_SPLITTER: PatternSplitter(name="paragraph_split_op", splitter="\n\n"),
-        MARKDOWN_HEADER_SPLITTER: MarkdownHeaderSplitter(
-            name="markdown_header_split_op"
-        ),
-        RECURSIVE_CHARACTER_SPLITTER: RecursiveCharacterSplitter(
-            name="recursive_character_split_op"
-        ),
+        PARAGRAPH_SPLITTER: PatternSplitter,
+        MARKDOWN_HEADER_SPLITTER: MarkdownHeaderSplitter,
+        RECURSIVE_CHARACTER_SPLITTER: RecursiveCharacterSplitter,
     }
 
-    @staticmethod
-    def get(name: str) -> "Op":  # noqa: F821
+    @classmethod
+    def get(cls, config: dict[str, any]) -> "Op":  # noqa: F821
         """Get splitter.
 
         Args:
-            name (str): Splitter name.
+            config (dict): Splitter Config to use.
 
         Returns:
             Op: Splitter Class.
@@ -40,10 +36,12 @@ class SplitterOpsFactory:
         Raises:
             ValueError: If no splitter registered under the name.
         """
-        splitter_cls = SplitterOpsFactory.SPLITTERS.get(name)
+        splitter_cls = cls.SPLITTERS.get(config["splitter_func"])
         if not splitter_cls:
-            raise ValueError(f"No splitter registered under '{name}'")
-        return splitter_cls
+            raise ValueError(
+                f"No splitter registered under '{config['splitter_func']}'"
+            )
+        return splitter_cls(config)
 
     @classmethod
     def list(cls) -> Dict[str, List[str]]:
