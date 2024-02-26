@@ -57,26 +57,48 @@ class TransformClient:
         self._server = TransformServer(asdict(self._config))
 
     def run(self, input_list: List[Context]) -> List[Mapping[str, Any]]:
-        # Initialize the splitter with the desired chunk size and overlap size
-        splitter = RecursiveCharacterSplitter(name='text_splitter', chunk_size=4000, chunk_overlap_size=50)
-        
-        output = []
+        processed_input = []
 
-        # Iterate over each input context
-        for input_item in input_list:
-            # Use the splitter to split the text into chunks if necessary
-            nodes = [Node(name='input_node', value_dict={'text': input_item.context})]
-            split_nodes = splitter(nodes)
+        # Check if auto-splitting of long text is enabled
+        if self._config.auto_split_long_text:
+            # Define the token size limitation
+            token_size_limit = 10000
 
-            # Process each chunk as a separate context
-            for node in split_nodes:
-                chunk_text = node.value_dict['text']
-                # Convert the chunk text into a Context object
-                chunk_context = Context(context=chunk_text)
-                chunk_output = self._server.run([chunk_context])
-                output.extend(chunk_output)
+            # Iterate over each input context
+            for input_item in input_list:
+                # Directly use the character count as a proxy for size, though not perfectly accurate
+                context_length = len(input_item.context)
 
-        # Assuming the outputs are already in the correct format, just return them
+                # If the context length is larger than a conservative estimate for the token size limit, split it
+                if context_length > token_size_limit:
+                    # Initialize the splitter with an adjusted chunk size based on the need to stay under the token limit
+                    # This size should be adjusted based on empirical data about the average token size for the text in question
+                    print("The current Context object needs splitting because it exceeds the token limitation.")
+                    adjusted_chunk_size = token_size_limit  # Adjust based on empirical tokenization data
+                    splitter = RecursiveCharacterSplitter(name='text_splitter', chunk_size=adjusted_chunk_size, chunk_overlap_size=50)
+                    nodes = [Node(name='input_node', value_dict={'text': input_item.context})]
+                    split_nodes = splitter(nodes)
+
+                    # Convert each chunk into a Context object and add to processed input
+                    # print(len(split_nodes))
+                    for node in split_nodes:
+                        chunk_text = node.value_dict['text']
+                        # print(chunk_text)
+                        # print(len(chunk_text[0]))
+                        # print(chunk_text[0])
+                        for c_text in chunk_text:
+                            print(len(c_text))
+                            chunk_context = Context(context=c_text)
+                            processed_input.append(chunk_context)
+                else:
+                    # If the context length is within the limit, use it as is
+                    processed_input.append(input_item)
+        else:
+            # If auto-splitting is not enabled, use the original input list
+            processed_input = input_list
+
+        # Pass the processed input to the server and return the output
+        output = self._server.run(processed_input)
         return output
 
     def async_run(self) -> None:
