@@ -66,10 +66,10 @@ class TransformClient:
         the input is processed as is.
 
         Args:
-            input_list (List[Context]): List of context objects to be processed.
+            input_list (List[Mapping[str, Any]]): List of inputs to the flow
 
         Returns:
-            List[Mapping[str, Any]]: List of outputs from the server after processing the input contexts.
+            List[Mapping[str, Any]]: List of outputs from the flow
         """
         
         processed_input = []
