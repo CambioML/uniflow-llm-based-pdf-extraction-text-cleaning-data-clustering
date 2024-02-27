@@ -24,7 +24,6 @@ Here is some example code to get you started:
 
   config = ExtractPDFConfig(
     model_config=NougatModelConfig(
-      model_name = "0.1.0-small",
       batch_size = 1 # When batch_size>1, nougat will run on CUDA, otherwise it will run on CPU
     ),
     splitter=PARAGRAPH_SPLITTER,

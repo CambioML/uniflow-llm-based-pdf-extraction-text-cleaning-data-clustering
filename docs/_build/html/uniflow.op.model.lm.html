@@ -1,0 +1,675 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.op.model.mm package" href="uniflow.op.model.mm.html" /><link rel="prev" title="uniflow.op.model.cv package" href="uniflow.op.model.cv.html" />
+
+    <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
+        <title>uniflow.op.model.lm package - uniflow 0.0.24 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=c42c57ed" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  --color-admonition-title--note: #00ebc7;
+  --color-admonition-title-background--note: #a2fff1;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-admonition-title--note: #a2fff1;
+  --color-admonition-title-background--note: #00C9AB;
+  --background: #333;
+  --textColor: var(--color-foreground-primary);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  --color-admonition-title--note: #a2fff1;
+  --color-admonition-title-background--note: #00C9AB;
+  --background: #333;
+  --textColor: var(--color-foreground-primary);
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/uniflow-logo-round.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/uniflow-logo-round.png" alt="Dark Logo"/>
+  </div>
+  
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tour.html">Quick Tour</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="context.html">Context</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="extract.html">ExtractFlow</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ExtractFlow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="extract_client.html">ExtractClient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extract_config.html">ExtractConfig</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="transform.html">TransformFlow</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of TransformFlow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="transform_client.html">TransformClient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transform_config.html">TransformConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="transform_prompt_template.html">PromptTemplate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">MultiFlowsPipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rater.html">Rater</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">uniflow</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of uniflow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children"><a class="reference internal" href="uniflow.html">uniflow package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of uniflow package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="uniflow.flow.html">uniflow.flow package</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of uniflow.flow package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html">uniflow.flow.extract package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.rater.html">uniflow.flow.rater package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html">uniflow.flow.transform package</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current has-children"><a class="reference internal" href="uniflow.op.html">uniflow.op package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of uniflow.op package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html">uniflow.op.basic package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="uniflow.op.extract.html">uniflow.op.extract package</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of uniflow.op.extract package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5 has-children"><a class="reference internal" href="uniflow.op.extract.load.html">uniflow.op.extract.load package</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of uniflow.op.extract.load package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l6"><a class="reference internal" href="uniflow.op.extract.load.aws.html">uniflow.op.extract.load.aws package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4 current has-children"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5 current current-page"><a class="current reference internal" href="#">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Social</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="community.html">Community</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="uniflow-op-model-lm-package">
+<h1>uniflow.op.model.lm package<a class="headerlink" href="#uniflow-op-model-lm-package" title="Link to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-uniflow.op.model.lm.model">
+<span id="uniflow-op-model-lm-model-module"></span><h2>uniflow.op.model.lm.model module<a class="headerlink" href="#module-uniflow.op.model.lm.model" title="Link to this heading">#</a></h2>
+<p>Language model (LM) model class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model.JsonLmModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model.</span></span><span class="sig-name descname"><span class="pre">JsonLmModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model.html#JsonLmModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model.JsonLmModel" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.abs_model.AbsModel" title="uniflow.op.model.abs_model.AbsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModel</span></code></a></p>
+<p>Extends the LmModel Class to ensure the response is in json.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model.LmModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model.</span></span><span class="sig-name descname"><span class="pre">LmModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model.html#LmModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model.LmModel" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.abs_model.AbsModel" title="uniflow.op.model.abs_model.AbsModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModel</span></code></a></p>
+<p>Language model (LM) model class.</p>
+<p>It handles serialization and deserialization of data,
+manages interactions with the LLM model server, and applies
+a guided prompt template to the data.</p>
+</dd></dl>
+
+</section>
+<section id="module-uniflow.op.model.lm.model_server">
+<span id="uniflow-op-model-lm-model-server-module"></span><h2>uniflow.op.model.lm.model_server module<a class="headerlink" href="#module-uniflow.op.model.lm.model_server" title="Link to this heading">#</a></h2>
+<p>All LM Model Servers.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.AWSBaseModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">AWSBaseModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#AWSBaseModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_server.AbsModelServer" title="uniflow.op.model.model_server.AbsModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModelServer</span></code></a></p>
+<p>AWS Base Model Server Class.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.AWSBaseModelServer.enforce_stop_tokens">
+<span class="sig-name descname"><span class="pre">enforce_stop_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#AWSBaseModelServer.enforce_stop_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer.enforce_stop_tokens" title="Link to this definition">#</a></dt>
+<dd><p>Cut off the text as soon as any stop words occur.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.AWSBaseModelServer.prepare_input">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prepare_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#AWSBaseModelServer.prepare_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer.prepare_input" title="Link to this definition">#</a></dt>
+<dd><p>Prepare the input for the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.AWSBaseModelServer.prepare_output">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prepare_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#AWSBaseModelServer.prepare_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer.prepare_output" title="Link to this definition">#</a></dt>
+<dd><p>Prepares the output based on the provider and response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.AzureOpenAIModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">AzureOpenAIModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#AzureOpenAIModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.AzureOpenAIModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_server.AbsModelServer" title="uniflow.op.model.model_server.AbsModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModelServer</span></code></a></p>
+<p>Azure OpenAI Model Server Class.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.BedrockModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">BedrockModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#BedrockModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.BedrockModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer" title="uniflow.op.model.lm.model_server.AWSBaseModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AWSBaseModelServer</span></code></a></p>
+<p>Bedrock Model Server Class.</p>
+<p>The AWS client authenticates by automatically loading credentials as per the methods outlined here:
+<a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a></p>
+<p>If you wish to use a specific credential profile, please provide the profile name from your ~/.aws/credentials file.</p>
+<p>Make sure that the credentials or roles in use have the necessary policies for Bedrock service access.</p>
+<p>Additionally, it is important to verify that your boto3 version supports the Bedrock runtime.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.BedrockModelServer.invoke_bedrock_model">
+<span class="sig-name descname"><span class="pre">invoke_bedrock_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#BedrockModelServer.invoke_bedrock_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.BedrockModelServer.invoke_bedrock_model" title="Link to this definition">#</a></dt>
+<dd><p>Invokes the bedrock model with the given prompt and optional stop tokens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<em>str</em>) – The input prompt for the model.</p></li>
+<li><p><strong>stop</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of stop tokens to indicate the end of the generated text.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to be passed to the model. Please refer to</p></li>
+<li><p><strong>https</strong> – //docs.aws.amazon.com/bedrock/latest/userguide/model-parameters.html for more details.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated text from the bedrock model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If there is an error raised by the bedrock service.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.BedrockModelServer.prepare_input">
+<span class="sig-name descname"><span class="pre">prepare_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#BedrockModelServer.prepare_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.BedrockModelServer.prepare_input" title="Link to this definition">#</a></dt>
+<dd><p>Prepare the input for the model based on the provider.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>provider</strong> (<em>str</em>) – The provider of the model.</p></li>
+<li><p><strong>prompt</strong> (<em>str</em>) – The input prompt.</p></li>
+<li><p><strong>model_kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Additional model arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The prepared input for the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.BedrockModelServer.prepare_output">
+<span class="sig-name descname"><span class="pre">prepare_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#BedrockModelServer.prepare_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.BedrockModelServer.prepare_output" title="Link to this definition">#</a></dt>
+<dd><p>Prepares the output based on the provider and response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>provider</strong> (<em>str</em>) – The provider of the response.</p></li>
+<li><p><strong>response</strong> (<em>Any</em>) – The response object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The prepared output.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.GoogleModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">GoogleModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#GoogleModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.GoogleModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_server.AbsModelServer" title="uniflow.op.model.model_server.AbsModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModelServer</span></code></a></p>
+<p>Google Model Server Class.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.HuggingfaceModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">HuggingfaceModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#HuggingfaceModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.HuggingfaceModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_server.AbsModelServer" title="uniflow.op.model.model_server.AbsModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModelServer</span></code></a></p>
+<p>Huggingface Model Server Class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.HuggingfaceModelServer.PATTERN">
+<span class="sig-name descname"><span class="pre">PATTERN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'\\[\\/?INST\\]|&lt;s&gt;|&lt;&lt;SYS&gt;&gt;|\\[ASST\\]|\\[\\/ASST\\]'</span></em><a class="headerlink" href="#uniflow.op.model.lm.model_server.HuggingfaceModelServer.PATTERN" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.LMQGModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">LMQGModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#LMQGModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.LMQGModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_server.AbsModelServer" title="uniflow.op.model.model_server.AbsModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModelServer</span></code></a></p>
+<p>Huggingface Model Server Class.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.OpenAIModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">OpenAIModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#OpenAIModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.OpenAIModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_server.AbsModelServer" title="uniflow.op.model.model_server.AbsModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbsModelServer</span></code></a></p>
+<p>OpenAI Model Server Class.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.SageMakerModelServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.model_server.</span></span><span class="sig-name descname"><span class="pre">SageMakerModelServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#SageMakerModelServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.SageMakerModelServer" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer" title="uniflow.op.model.lm.model_server.AWSBaseModelServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AWSBaseModelServer</span></code></a></p>
+<p>SageMaker Model Server Class.</p>
+<p>The AWS client authenticates by automatically loading credentials as per the methods outlined here:
+<a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a></p>
+<p>If you wish to use a specific credential profile, please provide the profile name from your ~/.aws/credentials file.</p>
+<p>Make sure that the credentials or roles in use have the necessary policies for SageMaker service access.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.SageMakerModelServer.invoke_sagemaker_model">
+<span class="sig-name descname"><span class="pre">invoke_sagemaker_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#SageMakerModelServer.invoke_sagemaker_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.SageMakerModelServer.invoke_sagemaker_model" title="Link to this definition">#</a></dt>
+<dd><p>Invokes the sagemaker model with the given prompt and optional stop tokens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<em>str</em>) – The input prompt for the model.</p></li>
+<li><p><strong>stop</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of stop tokens to indicate the end of the generated text.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to be passed to the model.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The generated text from the sagemaker model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If there is an error raised by the Amazon Sagemaker service.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.SageMakerModelServer.prepare_input">
+<span class="sig-name descname"><span class="pre">prepare_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#SageMakerModelServer.prepare_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.SageMakerModelServer.prepare_input" title="Link to this definition">#</a></dt>
+<dd><p>Prepare the input for the model based on the model_type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_type</strong> (<em>str</em>) – The type of the model.</p></li>
+<li><p><strong>prompt</strong> (<em>str</em>) – The input prompt.</p></li>
+<li><p><strong>model_kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – Additional model arguments.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The prepared input for the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.model_server.SageMakerModelServer.prepare_output">
+<span class="sig-name descname"><span class="pre">prepare_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/uniflow/op/model/lm/model_server.html#SageMakerModelServer.prepare_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.model_server.SageMakerModelServer.prepare_output" title="Link to this definition">#</a></dt>
+<dd><p>Prepares the output based on the model_type and response.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_type</strong> (<em>str</em>) – The model_type of the response.</p></li>
+<li><p><strong>response</strong> (<em>Any</em>) – The response object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The prepared output.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>None</strong> – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="uniflow-op-model-lm-neuron-utils-module">
+<h2>uniflow.op.model.lm.neuron_utils module<a class="headerlink" href="#uniflow-op-model-lm-neuron-utils-module" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-uniflow.op.model.lm.rater_model">
+<span id="uniflow-op-model-lm-rater-model-module"></span><h2>uniflow.op.model.lm.rater_model module<a class="headerlink" href="#module-uniflow.op.model.lm.rater_model" title="Link to this heading">#</a></h2>
+<p>Language model (LM) rater model class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.rater_model.HuggingfaceJsonFormattedLLMRater">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.rater_model.</span></span><span class="sig-name descname"><span class="pre">HuggingfaceJsonFormattedLLMRater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/rater_model.html#HuggingfaceJsonFormattedLLMRater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.rater_model.HuggingfaceJsonFormattedLLMRater" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.op.model.lm.model.LmModel" title="uniflow.op.model.lm.model.LmModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">LmModel</span></code></a></p>
+<p>Huggingface formatted Json Formatted LLM Rater</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.rater_model.LmRaterModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.rater_model.</span></span><span class="sig-name descname"><span class="pre">LmRaterModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/rater_model.html#LmRaterModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.rater_model.LmRaterModel" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.op.model.lm.model.LmModel" title="uniflow.op.model.lm.model.LmModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">LmModel</span></code></a></p>
+<p>Language model (LM) rater model class.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="uniflow.op.model.lm.rater_model.OpenAIJsonFormattedLLMRater">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.model.lm.rater_model.</span></span><span class="sig-name descname"><span class="pre">OpenAIJsonFormattedLLMRater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt_template</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.html#uniflow.op.prompt.PromptTemplate" title="uniflow.op.prompt.PromptTemplate"><span class="pre">PromptTemplate</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label2score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/model/lm/rater_model.html#OpenAIJsonFormattedLLMRater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.model.lm.rater_model.OpenAIJsonFormattedLLMRater" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.op.model.lm.model.JsonLmModel" title="uniflow.op.model.lm.model.JsonLmModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">JsonLmModel</span></code></a></p>
+<p>OpenAI formatted LLM Rater</p>
+</dd></dl>
+
+</section>
+<section id="module-uniflow.op.model.lm">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-uniflow.op.model.lm" title="Link to this heading">#</a></h2>
+<p>Language Model (LM) Model Server.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="uniflow.op.model.mm.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">uniflow.op.model.mm package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="uniflow.op.model.cv.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">uniflow.op.model.cv package</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, CambioML
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://www.cambioml.com" aria-label="Website"><img src="_static/cambioml-logo-round.png" alt="Website"></a>
+              <a class="muted-link " href="https://github.com/CambioML/uniflow" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">uniflow.op.model.lm package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-uniflow.op.model.lm.model">uniflow.op.model.lm.model module</a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model.JsonLmModel"><code class="docutils literal notranslate"><span class="pre">JsonLmModel</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model.LmModel"><code class="docutils literal notranslate"><span class="pre">LmModel</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-uniflow.op.model.lm.model_server">uniflow.op.model.lm.model_server module</a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer"><code class="docutils literal notranslate"><span class="pre">AWSBaseModelServer</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer.enforce_stop_tokens"><code class="docutils literal notranslate"><span class="pre">AWSBaseModelServer.enforce_stop_tokens()</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer.prepare_input"><code class="docutils literal notranslate"><span class="pre">AWSBaseModelServer.prepare_input()</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.AWSBaseModelServer.prepare_output"><code class="docutils literal notranslate"><span class="pre">AWSBaseModelServer.prepare_output()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.AzureOpenAIModelServer"><code class="docutils literal notranslate"><span class="pre">AzureOpenAIModelServer</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.BedrockModelServer"><code class="docutils literal notranslate"><span class="pre">BedrockModelServer</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.BedrockModelServer.invoke_bedrock_model"><code class="docutils literal notranslate"><span class="pre">BedrockModelServer.invoke_bedrock_model()</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.BedrockModelServer.prepare_input"><code class="docutils literal notranslate"><span class="pre">BedrockModelServer.prepare_input()</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.BedrockModelServer.prepare_output"><code class="docutils literal notranslate"><span class="pre">BedrockModelServer.prepare_output()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.GoogleModelServer"><code class="docutils literal notranslate"><span class="pre">GoogleModelServer</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.HuggingfaceModelServer"><code class="docutils literal notranslate"><span class="pre">HuggingfaceModelServer</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.HuggingfaceModelServer.PATTERN"><code class="docutils literal notranslate"><span class="pre">HuggingfaceModelServer.PATTERN</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.LMQGModelServer"><code class="docutils literal notranslate"><span class="pre">LMQGModelServer</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.OpenAIModelServer"><code class="docutils literal notranslate"><span class="pre">OpenAIModelServer</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.SageMakerModelServer"><code class="docutils literal notranslate"><span class="pre">SageMakerModelServer</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.SageMakerModelServer.invoke_sagemaker_model"><code class="docutils literal notranslate"><span class="pre">SageMakerModelServer.invoke_sagemaker_model()</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.SageMakerModelServer.prepare_input"><code class="docutils literal notranslate"><span class="pre">SageMakerModelServer.prepare_input()</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.model_server.SageMakerModelServer.prepare_output"><code class="docutils literal notranslate"><span class="pre">SageMakerModelServer.prepare_output()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uniflow-op-model-lm-neuron-utils-module">uniflow.op.model.lm.neuron_utils module</a></li>
+<li><a class="reference internal" href="#module-uniflow.op.model.lm.rater_model">uniflow.op.model.lm.rater_model module</a><ul>
+<li><a class="reference internal" href="#uniflow.op.model.lm.rater_model.HuggingfaceJsonFormattedLLMRater"><code class="docutils literal notranslate"><span class="pre">HuggingfaceJsonFormattedLLMRater</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.rater_model.LmRaterModel"><code class="docutils literal notranslate"><span class="pre">LmRaterModel</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.op.model.lm.rater_model.OpenAIJsonFormattedLLMRater"><code class="docutils literal notranslate"><span class="pre">OpenAIJsonFormattedLLMRater</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-uniflow.op.model.lm">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=f91d8841"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
+    </body>
+</html>

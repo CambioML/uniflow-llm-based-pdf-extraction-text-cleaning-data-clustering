@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.op.extract.load.aws package" href="uniflow.op.extract.load.aws.html" /><link rel="prev" title="uniflow.op.extract package" href="uniflow.op.extract.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.op.extract.load package - uniflow 0.0.21 documentation</title>
+        <title>uniflow.op.extract.load package - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -209,7 +209,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -287,12 +292,6 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.html_op.</span></span><span class="sig-name descname"><span class="pre">ExtractHTMLOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/html_op.html#ExtractHTMLOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="uniflow.op.html#uniflow.op.op.Op" title="uniflow.op.op.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
 <p>Extract HTML Op Class.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html">
-<span class="sig-name descname"><span class="pre">parse_html</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/html_op.html#ExtractHTMLOp.parse_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html" title="Link to this definition">#</a></dt>
-<dd><p>Function Parse Html.</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -308,7 +307,7 @@
 <p>Model Op Module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="uniflow.op.extract.load.image_op.ExtractImageOp">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.image_op.</span></span><span class="sig-name descname"><span class="pre">ExtractImageOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.abs_llm_processor.AbsLLMProcessor" title="uniflow.op.model.abs_llm_processor.AbsLLMProcessor"><span class="pre">AbsLLMProcessor</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/image_op.html#ExtractImageOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.image_op.ExtractImageOp" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.image_op.</span></span><span class="sig-name descname"><span class="pre">ExtractImageOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.abs_model.AbsModel" title="uniflow.op.model.abs_model.AbsModel"><span class="pre">AbsModel</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/image_op.html#ExtractImageOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.image_op.ExtractImageOp" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="uniflow.op.html#uniflow.op.op.Op" title="uniflow.op.op.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
 <p>Process Image Op Class.</p>
 </dd></dl>
@@ -362,7 +361,7 @@
 <p>Model Op Module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="uniflow.op.extract.load.pdf_op.ExtractPDFOp">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.pdf_op.</span></span><span class="sig-name descname"><span class="pre">ExtractPDFOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.abs_llm_processor.AbsLLMProcessor" title="uniflow.op.model.abs_llm_processor.AbsLLMProcessor"><span class="pre">AbsLLMProcessor</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/pdf_op.html#ExtractPDFOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.pdf_op.ExtractPDFOp" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.pdf_op.</span></span><span class="sig-name descname"><span class="pre">ExtractPDFOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.abs_model.AbsModel" title="uniflow.op.model.abs_model.AbsModel"><span class="pre">AbsModel</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/pdf_op.html#ExtractPDFOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.pdf_op.ExtractPDFOp" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="uniflow.op.html#uniflow.op.op.Op" title="uniflow.op.op.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
 <p>Process PDF Op Class.</p>
 </dd></dl>
@@ -385,11 +384,43 @@
 <p>Extract txt Op Class.</p>
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="uniflow.op.extract.load.txt_op.ProcessTxtOp">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.txt_op.</span></span><span class="sig-name descname"><span class="pre">ProcessTxtOp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/txt_op.html#ProcessTxtOp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.txt_op.ProcessTxtOp" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="uniflow.op.html#uniflow.op.op.Op" title="uniflow.op.op.Op"><code class="xref py py-class docutils literal notranslate"><span class="pre">Op</span></code></a></p>
-<p>Process txt Op Class.</p>
+</section>
+<section id="module-uniflow.op.extract.load.utils">
+<span id="uniflow-op-extract-load-utils-module"></span><h2>uniflow.op.extract.load.utils module<a class="headerlink" href="#module-uniflow.op.extract.load.utils" title="Link to this heading">#</a></h2>
+<p>Defines a function to read files from Amazon S3, URLs, or local paths in text or binary mode.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="uniflow.op.extract.load.utils.read_file">
+<span class="sig-prename descclassname"><span class="pre">uniflow.op.extract.load.utils.</span></span><span class="sig-name descname"><span class="pre">read_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'r'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/op/extract/load/utils.html#read_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.op.extract.load.utils.read_file" title="Link to this definition">#</a></dt>
+<dd><p>Reads a file from an S3 bucket, a URL, or the local filesystem based on the source path provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>str</em>) – The path to the file. This can be an S3 bucket path (s3://bucket_name/file_path),
+a URL (http:// or https://), or a local file path.</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – The mode in which to open the file. Use ‘r’ for text mode and ‘rb’ for binary mode.
+Default is ‘r’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The content of the file as a string if mode is ‘r’, or as bytes if mode is ‘rb’.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Example usage:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">content</span> <span class="pre">=</span> <span class="pre">read_file(&quot;s3://my_bucket/my_file.txt&quot;)</span>
+<span class="pre">content</span> <span class="pre">=</span> <span class="pre">read_file(&quot;https://my_bucket.abc.com/my_file.txt&quot;)</span>
+<span class="pre">content</span> <span class="pre">=</span> <span class="pre">read_file(&quot;./my_file.txt&quot;)</span>
+<span class="pre">`</span></code></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>When reading from an S3 bucket, make sure you have the necessary credentials and permissions.</p></li>
+<li><p>When reading from a URL, ensure that the URL is accessible and the file exists.</p></li>
+<li><p>When reading from the local filesystem, provide the correct file path.</p></li>
+</ul>
+</div>
 </dd></dl>
 
 </section>
@@ -465,10 +496,7 @@
 <li><a class="reference internal" href="#subpackages">Subpackages</a></li>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-uniflow.op.extract.load.html_op">uniflow.op.extract.load.html_op module</a><ul>
-<li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLOp</span></code></a><ul>
-<li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp.parse_html"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLOp.parse_html()</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ExtractHTMLOp"><code class="docutils literal notranslate"><span class="pre">ExtractHTMLOp</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.op.extract.load.html_op.ProcessHTMLOp"><code class="docutils literal notranslate"><span class="pre">ProcessHTMLOp</span></code></a></li>
 </ul>
 </li>
@@ -494,7 +522,10 @@
 </li>
 <li><a class="reference internal" href="#module-uniflow.op.extract.load.txt_op">uniflow.op.extract.load.txt_op module</a><ul>
 <li><a class="reference internal" href="#uniflow.op.extract.load.txt_op.ExtractTxtOp"><code class="docutils literal notranslate"><span class="pre">ExtractTxtOp</span></code></a></li>
-<li><a class="reference internal" href="#uniflow.op.extract.load.txt_op.ProcessTxtOp"><code class="docutils literal notranslate"><span class="pre">ProcessTxtOp</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-uniflow.op.extract.load.utils">uniflow.op.extract.load.utils module</a><ul>
+<li><a class="reference internal" href="#uniflow.op.extract.load.utils.read_file"><code class="docutils literal notranslate"><span class="pre">read_file()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-uniflow.op.extract.load">Module contents</a></li>
@@ -509,7 +540,7 @@
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="_static/documentation_options.js?v=f91d8841"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>
