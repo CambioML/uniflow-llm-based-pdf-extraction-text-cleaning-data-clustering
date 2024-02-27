@@ -9,7 +9,6 @@ import re
 import warnings
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
-from time import sleep
 from typing import Any, Dict, List, Optional
 
 from uniflow.op.model.model_config import (
@@ -255,15 +254,15 @@ class AzureOpenAIModelServer(AbsModelServer):
 
     def __call__(self, data: List[str]) -> List[str]:
         """Run model with ThreadPoolExecutor."""
-        # with ThreadPoolExecutor(max_workers=self._model_config.num_thread) as executor:
-        #     futures = [executor.submit(self._make_api_call, d) for d in data]
-        #     inference_data = [future.result() for future in futures]
+        with ThreadPoolExecutor(max_workers=self._model_config.num_thread) as executor:
+            futures = [executor.submit(self._make_api_call, d) for d in data]
+            inference_data = [future.result() for future in futures]
 
-        inference_data = []
-        for d in data:
-            response = self._make_api_call(d)
-            inference_data.append(response)
-            sleep(60)
+        # inference_data = []
+        # for d in data:
+        #     response = self._make_api_call(d)
+        #     inference_data.append(response)
+        #     sleep(60)
 
         # Assuming the Azure response format is directly compatible, adjust if needed
         return [
