@@ -30,11 +30,10 @@ class OpenAIModelConfig(ModelConfig):
 class AzureOpenAIModelConfig:
     """Azure OpenAI Model Config Class."""
 
-    api_key: str = os.getenv("api_key")
-    api_version: str = os.getenv("model_version")
-    endpoint: str = os.getenv("endpoint")
-    deployment_name: str = os.getenv("deployment_id")
-    # model_name: str = "gpt-3.5-turbo-1106"
+    azure_api_key: str = os.getenv("AZURE_API_KEY")
+    azure_endpoint: str = os.getenv("AZURE_ENDPOINT")
+    azure_deployment_name: str = os.getenv("AZURE_DEPLOYMENT_NAME")
+    azure_api_version: str = os.getenv("AZURE_API_VERSION")
     model_server: str = "AzureOpenAIModelServer"
     num_call: int = 1
     temperature: float = 0.7

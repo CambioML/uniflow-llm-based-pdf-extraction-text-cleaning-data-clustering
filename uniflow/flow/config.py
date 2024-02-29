@@ -1,6 +1,5 @@
 """Extract, Transform and Pipeline config module."""
 
-import os
 from dataclasses import dataclass, field
 from typing import Dict, Optional
 
@@ -271,80 +270,6 @@ class TransformForClusteringOpenAIGPT4Config:
         default_factory=lambda: OpenAIModelConfig(
             model_name="gpt-4-1106-preview",
             model_server="OpenAIModelServer",
-            num_call=1,
-            temperature=0,
-            response_format={"type": "json_object"},
-        )
-    )
-    prompt_template: PromptTemplate = field(
-        default_factory=lambda: PromptTemplate(
-            instruction="""
-                Your task as a technology expert is to categorize a list of tech terms. First, cluster these terms into distinct groups based on their semantic similarities, where each group encapsulates a specific technological concept. Second, within these clusters, identify and merge terms that are essentially synonymous. Your final output should be a well-structured dictionary, where each key signifies a unique category of technology, and its corresponding value is a list of technology terms.
-            """,
-            few_shot_prompt=[
-                Context(
-                    context=[
-                        "artificial intelligence",
-                        "AI",
-                        "500 bar GDi technology",
-                        "ML",
-                        "500 bar GDi",
-                        "machine learning",
-                    ],
-                    answer={
-                        "500_BAR_GDI": ["500 bar GDi"],
-                        "AIML": ["AI", "ML"],
-                    },
-                ),
-                Context(
-                    context=[
-                        "cryptocurrency",
-                        "blockchain",
-                        "Bitcoin",
-                        "Ethereum",
-                        "digital currency",
-                        "crypto mining",
-                        "mRNA vaccine",
-                        "gene editing",
-                        "CRISPR",
-                        "Ethereum platform",
-                        "Ether",
-                        "NFTs",
-                        "DNA sequencing",
-                        "bioinformatics",
-                        "mRNA therapy",
-                    ],
-                    answer={
-                        "BIO_TECH": [
-                            "mRNA vaccine",
-                            "gene editing",
-                            "CRISPR",
-                            "DNA sequencing",
-                            "bioinformatics",
-                            "mRNA therapy",
-                        ],
-                        "BLOCKCHAIN_TECH": ["blockchain", "crypto mining", "NFTs"],
-                        "CRYPTOCURRENCY": ["Bitcoin", "cryptocurrency", "Ethereum"],
-                    },
-                ),
-            ],
-        )
-    )
-
-
-@dataclass
-class TransformForClusteringAzureOpenAIGPT4Config:
-    flow_name: str = "TransformAzureOpenAIFlow"
-    model_config: AzureOpenAIModelConfig = field(
-        default_factory=lambda: AzureOpenAIModelConfig(
-            api_key=os.getenv("api_key"),
-            api_version=os.getenv("model_version"),
-            azure_endpoint=os.getenv("endpoint"),
-            # model_name=os.getenv("model_name"),
-            deployment_id=os.getenv("deployment_id"),
-            # model_name="gpt-3.5-turbo-1106",  # todo
-            model_name="gpt-4-1106-preview",
-            model_server="AzureOpenAIModelServer",
             num_call=1,
             temperature=0,
             response_format={"type": "json_object"},
