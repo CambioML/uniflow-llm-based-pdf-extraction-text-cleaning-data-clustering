@@ -179,6 +179,9 @@ class OpenAIModelServer(AbsModelServer):
         return data
 
 
+import requests
+
+
 class AzureOpenAIModelServer(AbsModelServer):
     """Azure OpenAI Model Server Class."""
 
