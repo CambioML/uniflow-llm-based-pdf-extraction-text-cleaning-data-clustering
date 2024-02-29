@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.flow.extract package" href="uniflow.flow.extract.html" /><link rel="prev" title="uniflow package" href="uniflow.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.flow package - uniflow 0.0.21 documentation</title>
+        <title>uniflow.flow package - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -209,7 +209,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -287,14 +292,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_mardown_flow">uniflow.flow.extract.extract_mardown_flow module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_mardown_flow.ExtractMarkdownFlow"><code class="docutils literal notranslate"><span class="pre">ExtractMarkdownFlow</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_mardown_flow.ExtractMarkdownFlow.TAG"><code class="docutils literal notranslate"><span class="pre">ExtractMarkdownFlow.TAG</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_mardown_flow.ExtractMarkdownFlow.run"><code class="docutils literal notranslate"><span class="pre">ExtractMarkdownFlow.run()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_md_flow">uniflow.flow.extract.extract_md_flow module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_md_flow.ExtractMarkdownFlow"><code class="docutils literal notranslate"><span class="pre">ExtractMarkdownFlow</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_md_flow.ExtractMarkdownFlow.TAG"><code class="docutils literal notranslate"><span class="pre">ExtractMarkdownFlow.TAG</span></code></a></li>
@@ -312,7 +309,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_txt_flow">uniflow.flow.extract.extract_txt_flow module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_txt_flow.ExtractS3TxtFlow"><code class="docutils literal notranslate"><span class="pre">ExtractS3TxtFlow</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow"><code class="docutils literal notranslate"><span class="pre">ExtractTxtFlow</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow.TAG"><code class="docutils literal notranslate"><span class="pre">ExtractTxtFlow.TAG</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#uniflow.flow.extract.extract_txt_flow.ExtractTxtFlow.run"><code class="docutils literal notranslate"><span class="pre">ExtractTxtFlow.run()</span></code></a></li>
@@ -396,6 +392,28 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_google_flow">uniflow.flow.transform.transform_google_flow module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_flow.GoogleModelFlow"><code class="docutils literal notranslate"><span class="pre">GoogleModelFlow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_flow.GoogleModelFlow.run"><code class="docutils literal notranslate"><span class="pre">GoogleModelFlow.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_flow.TransformGoogleFlow"><code class="docutils literal notranslate"><span class="pre">TransformGoogleFlow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_flow.TransformGoogleFlow.TAG"><code class="docutils literal notranslate"><span class="pre">TransformGoogleFlow.TAG</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_google_multimodal_flow">uniflow.flow.transform.transform_google_multimodal_flow module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.GoogleMultiModalModelFlow"><code class="docutils literal notranslate"><span class="pre">GoogleMultiModalModelFlow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.GoogleMultiModalModelFlow.run"><code class="docutils literal notranslate"><span class="pre">GoogleMultiModalModelFlow.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.TransformGoogleMultiModalModelFlow"><code class="docutils literal notranslate"><span class="pre">TransformGoogleMultiModalModelFlow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_google_multimodal_flow.TransformGoogleMultiModalModelFlow.TAG"><code class="docutils literal notranslate"><span class="pre">TransformGoogleMultiModalModelFlow.TAG</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_huggingface_flow">uniflow.flow.transform.transform_huggingface_flow module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_huggingface_flow.HuggingFaceModelFlow"><code class="docutils literal notranslate"><span class="pre">HuggingFaceModelFlow</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.transform_huggingface_flow.HuggingFaceModelFlow.run"><code class="docutils literal notranslate"><span class="pre">HuggingFaceModelFlow.run()</span></code></a></li>
@@ -434,6 +452,14 @@
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformCopyFlow"><code class="docutils literal notranslate"><span class="pre">TransformCopyFlow</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformCopyFlow.TAG"><code class="docutils literal notranslate"><span class="pre">TransformCopyFlow.TAG</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformCopyFlow.run"><code class="docutils literal notranslate"><span class="pre">TransformCopyFlow.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformGoogleFlow"><code class="docutils literal notranslate"><span class="pre">TransformGoogleFlow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformGoogleFlow.TAG"><code class="docutils literal notranslate"><span class="pre">TransformGoogleFlow.TAG</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformGoogleMultiModalModelFlow"><code class="docutils literal notranslate"><span class="pre">TransformGoogleMultiModalModelFlow</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformGoogleMultiModalModelFlow.TAG"><code class="docutils literal notranslate"><span class="pre">TransformGoogleMultiModalModelFlow.TAG</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.transform.html#uniflow.flow.transform.TransformHuggingFaceFlow"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceFlow</span></code></a><ul>
@@ -659,18 +685,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="uniflow.flow.config.ExtractPDFConfig.splitter">
 <span class="sig-name descname"><span class="pre">splitter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ParagraphSplitter'</span></em><a class="headerlink" href="#uniflow.flow.config.ExtractPDFConfig.splitter" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="uniflow.flow.config.ExtractS3TxtConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.config.</span></span><span class="sig-name descname"><span class="pre">ExtractS3TxtConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ExtractS3TxtFlow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_thread</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_config.ModelConfig" title="uniflow.op.model.model_config.ModelConfig"><span class="pre">ModelConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">splitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/flow/config.html#ExtractS3TxtConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.config.ExtractS3TxtConfig" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#uniflow.flow.config.ExtractConfig" title="uniflow.flow.config.ExtractConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractConfig</span></code></a></p>
-<p>Extract S3 Txt Config Class.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="uniflow.flow.config.ExtractS3TxtConfig.flow_name">
-<span class="sig-name descname"><span class="pre">flow_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ExtractS3TxtFlow'</span></em><a class="headerlink" href="#uniflow.flow.config.ExtractS3TxtConfig.flow_name" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1372,6 +1386,23 @@ grounding answer, generated answer, label, and explanation for each case.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="uniflow.flow.config.TransformGoogleConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.config.</span></span><span class="sig-name descname"><span class="pre">TransformGoogleConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'TransformGoogleFlow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config:</span> <span class="pre">~uniflow.op.model.model_config.ModelConfig</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_thread:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_template:</span> <span class="pre">~uniflow.op.prompt.PromptTemplate</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/flow/config.html#TransformGoogleConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.config.TransformGoogleConfig" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#uniflow.flow.config.TransformConfig" title="uniflow.flow.config.TransformConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformConfig</span></code></a></p>
+<p>Transform Google Config Class.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uniflow.flow.config.TransformGoogleConfig.flow_name">
+<span class="sig-name descname"><span class="pre">flow_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TransformGoogleFlow'</span></em><a class="headerlink" href="#uniflow.flow.config.TransformGoogleConfig.flow_name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="uniflow.flow.config.TransformGoogleConfig.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="uniflow.op.model.html#uniflow.op.model.model_config.ModelConfig" title="uniflow.op.model.model_config.ModelConfig"><span class="pre">ModelConfig</span></a></em><a class="headerlink" href="#uniflow.flow.config.TransformGoogleConfig.model_config" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="uniflow.flow.config.TransformHuggingFaceConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uniflow.flow.config.</span></span><span class="sig-name descname"><span class="pre">TransformHuggingFaceConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow_name:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">'TransformHuggingFaceFlow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_config:</span> <span class="pre">~uniflow.op.model.model_config.ModelConfig</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_thread:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_template:</span> <span class="pre">~uniflow.op.prompt.PromptTemplate</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/uniflow/flow/config.html#TransformHuggingFaceConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uniflow.flow.config.TransformHuggingFaceConfig" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#uniflow.flow.config.TransformConfig" title="uniflow.flow.config.TransformConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformConfig</span></code></a></p>
@@ -1799,10 +1830,6 @@ grounding answer, generated answer, label, and explanation for each case.</p>
 <li><a class="reference internal" href="#uniflow.flow.config.ExtractPDFConfig.splitter"><code class="docutils literal notranslate"><span class="pre">ExtractPDFConfig.splitter</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#uniflow.flow.config.ExtractS3TxtConfig"><code class="docutils literal notranslate"><span class="pre">ExtractS3TxtConfig</span></code></a><ul>
-<li><a class="reference internal" href="#uniflow.flow.config.ExtractS3TxtConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">ExtractS3TxtConfig.flow_name</span></code></a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#uniflow.flow.config.ExtractTxtConfig"><code class="docutils literal notranslate"><span class="pre">ExtractTxtConfig</span></code></a><ul>
 <li><a class="reference internal" href="#uniflow.flow.config.ExtractTxtConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">ExtractTxtConfig.flow_name</span></code></a></li>
 </ul>
@@ -1916,6 +1943,11 @@ grounding answer, generated answer, label, and explanation for each case.</p>
 <li><a class="reference internal" href="#uniflow.flow.config.TransformForGenerationOpenAIGPT3p5Config.prompt_template"><code class="docutils literal notranslate"><span class="pre">TransformForGenerationOpenAIGPT3p5Config.prompt_template</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#uniflow.flow.config.TransformGoogleConfig"><code class="docutils literal notranslate"><span class="pre">TransformGoogleConfig</span></code></a><ul>
+<li><a class="reference internal" href="#uniflow.flow.config.TransformGoogleConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">TransformGoogleConfig.flow_name</span></code></a></li>
+<li><a class="reference internal" href="#uniflow.flow.config.TransformGoogleConfig.model_config"><code class="docutils literal notranslate"><span class="pre">TransformGoogleConfig.model_config</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#uniflow.flow.config.TransformHuggingFaceConfig"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceConfig</span></code></a><ul>
 <li><a class="reference internal" href="#uniflow.flow.config.TransformHuggingFaceConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceConfig.flow_name</span></code></a></li>
 <li><a class="reference internal" href="#uniflow.flow.config.TransformHuggingFaceConfig.model_config"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceConfig.model_config</span></code></a></li>
@@ -1995,7 +2027,7 @@ grounding answer, generated answer, label, and explanation for each case.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="_static/documentation_options.js?v=f91d8841"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

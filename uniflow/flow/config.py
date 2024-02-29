@@ -1,7 +1,7 @@
 """Extract, Transform and Pipeline config module."""
 
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 
 from uniflow import Context, PromptTemplate
 from uniflow.op.extract.split.constants import (
@@ -11,6 +11,7 @@ from uniflow.op.extract.split.constants import (
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
     BedrockModelConfig,
+    GoogleModelConfig,
     HuggingfaceModelConfig,
     LayoutModelConfig,
     LMQGModelConfig,
@@ -33,6 +34,7 @@ class ExtractConfig:
     num_thread: int = 1
     model_config: Optional[ModelConfig] = None
     splitter: Optional[str] = None
+    post_extract_fn: Optional[Callable] = None
 
 
 @dataclass
@@ -115,6 +117,14 @@ class TransformConfig:
             ],
         )
     )
+
+
+@dataclass
+class TransformGoogleConfig(TransformConfig):
+    """Transform Google Config Class."""
+
+    flow_name: str = "TransformGoogleFlow"
+    model_config: ModelConfig = field(default_factory=GoogleModelConfig)
 
 
 @dataclass

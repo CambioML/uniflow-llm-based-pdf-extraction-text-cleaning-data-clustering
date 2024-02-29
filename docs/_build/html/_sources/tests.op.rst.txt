@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    tests.op.basic
+   tests.op.extract
 
 Submodules
 ----------
