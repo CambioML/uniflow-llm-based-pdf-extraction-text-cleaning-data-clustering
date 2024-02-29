@@ -194,6 +194,28 @@ class AzureOpenAIModelServer(AbsModelServer):
         super().__init__(prompt_template, model_config)
         self._model_config = AzureOpenAIModelConfig(**self._model_config)
 
+    def _preprocess(self, data: List[str]) -> List[str]:
+        """Preprocess data.
+
+        Args:
+            data (List[str]): Data to preprocess.
+
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: List[str]) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (str): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        return [c.message.content for d in data for c in d.choices]
+
     def _make_api_call(self, data: str) -> str:
         print(f"Making API call with data: {data[:100]}")
         """Helper method to make API call to Azure OpenAI."""
