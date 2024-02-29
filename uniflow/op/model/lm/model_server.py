@@ -10,6 +10,8 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
 
+import requests
+
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
     BedrockModelConfig,
@@ -177,9 +179,6 @@ class OpenAIModelServer(AbsModelServer):
 
         data = self._postprocess(inference_data)
         return data
-
-
-import requests
 
 
 class AzureOpenAIModelServer(AbsModelServer):
