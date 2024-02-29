@@ -35,9 +35,10 @@ class TestSplitterOpsFactory(unittest.TestCase):
             SplitterOpsFactory.get("")
 
     def test_list(self):
-        splitters = SplitterOpsFactory.list()
+        excepted_splitters = [
+            PARAGRAPH_SPLITTER,
+            MARKDOWN_HEADER_SPLITTER,
+            RECURSIVE_CHARACTER_SPLITTER,
+        ]
 
-        self.assertEqual(len(splitters), 3)
-        self.assertIn(PARAGRAPH_SPLITTER, splitters)
-        self.assertIn(MARKDOWN_HEADER_SPLITTER, splitters)
-        self.assertIn(RECURSIVE_CHARACTER_SPLITTER, splitters)
+        self.assertEqual(SplitterOpsFactory.list(), excepted_splitters)

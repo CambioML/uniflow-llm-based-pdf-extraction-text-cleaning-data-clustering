@@ -92,18 +92,17 @@ class TestRecursiveCharacterSplitter(unittest.TestCase):
 
     def test_special_function_call_with_multiple_nodes(self):
         node0 = Node(name="node1", value_dict={"text": "Hello\n\nWorld"})
-        expected0 = ["HelloWorld"]
         node1 = Node(name="node1", value_dict={"text": "Hello\n\nWorld."})
-        expected1 = ["Hello", "World."]
         node2 = Node(name="node1", value_dict={"text": "Hello\n\nWorld\n\n" * 10})
-        expected2 = ["HelloWorld"] * 10
         node3 = Node(name="node1", value_dict={"text": "Hello\n\nWorld.\n\n" * 2})
-        expected3 = ["Hello", "World.", "Hello", "World."]
+        expected_texts = [
+            ["HelloWorld"],
+            ["Hello", "World."],
+            ["HelloWorld"] * 10,
+            ["Hello", "World.", "Hello", "World."],
+        ]
 
         output_nodes = self.splitter([node0, node1, node2, node3])
+        output_texts = [node.value_dict["text"] for node in output_nodes]
 
-        self.assertEqual(len(output_nodes), 4)
-        self.assertEqual(output_nodes[0].value_dict["text"], expected0)
-        self.assertEqual(output_nodes[1].value_dict["text"], expected1)
-        self.assertEqual(output_nodes[2].value_dict["text"], expected2)
-        self.assertEqual(output_nodes[3].value_dict["text"], expected3)
+        self.assertEqual(output_texts, expected_texts)
