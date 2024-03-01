@@ -174,4 +174,3 @@ class RecursiveCharacterSplitter_Token(Op):
             docs.append(doc)
 
         return docs
-

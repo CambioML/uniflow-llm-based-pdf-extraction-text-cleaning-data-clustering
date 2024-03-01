@@ -9,7 +9,7 @@ from uniflow.op.extract.split.constants import (
 )
 from uniflow.op.extract.split.markdown_header_splitter import MarkdownHeaderSplitter
 from uniflow.op.extract.split.pattern_splitter_op import PatternSplitter
-from uniflow.op.extract.split.recursive_character_splitter_token import (
+from uniflow.op.extract.split.recursive_character_splitter import (
     RecursiveCharacterSplitter,
 )
 
