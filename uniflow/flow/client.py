@@ -2,12 +2,14 @@
 
 from dataclasses import asdict
 from typing import Any, List, Mapping
-from uniflow.op.prompt import Context
-from uniflow.op.extract.split.recursive_character_splitter_token import RecursiveCharacterSplitter_Token
-from uniflow.node import Node
 
 from uniflow.flow.config import ExtractConfig, RaterConfig, TransformConfig
 from uniflow.flow.server import ExtractServer, RaterServer, TransformServer
+from uniflow.node import Node
+from uniflow.op.extract.split.recursive_character_splitter_token import (
+    RecursiveCharacterSplitter_Token,
+)
+from uniflow.op.prompt import Context
 
 
 class ExtractClient:
@@ -60,9 +62,9 @@ class TransformClient:
         """
         Process and possibly split input contexts before running them through the server.
 
-        This method checks if auto-splitting of long text is enabled in the configuration. If so, it evaluates each input context. 
-        If a context exceeds a certain size, it is split into smaller chunks to meet the token size limitations. 
-        Each chunk is then processed separately. If auto-splitting is not enabled, or if the context is within the acceptable size limit, 
+        This method checks if auto-splitting of long text is enabled in the configuration. If so, it evaluates each input context.
+        If a context exceeds a certain size, it is split into smaller chunks to meet the token size limitations.
+        Each chunk is then processed separately. If auto-splitting is not enabled, or if the context is within the acceptable size limit,
         the input is processed as is.
 
         Args:
@@ -71,7 +73,7 @@ class TransformClient:
         Returns:
             List[Mapping[str, Any]]: List of outputs from the flow
         """
-        
+
         processed_input = []
 
         # Check if auto-splitting of long text is enabled
@@ -88,22 +90,28 @@ class TransformClient:
                 if context_length > token_size_limit:
                     # Log the need for splitting the context due to size exceeding the limit
                     # print("The current Context object needs splitting because it exceeds the token limitation.")
-                    
+
                     # Set an adjusted chunk size for splitting
                     adjusted_chunk_size = token_size_limit  # This size may need adjustment based on tokenization characteristics
-                    
+
                     # Initialize the splitter with the calculated chunk size and overlap
-                    splitter = RecursiveCharacterSplitter_Token(name='text_splitter', chunk_size=adjusted_chunk_size, chunk_overlap_size=50)
-                    
+                    splitter = RecursiveCharacterSplitter_Token(
+                        name="text_splitter",
+                        chunk_size=adjusted_chunk_size,
+                        chunk_overlap_size=50,
+                    )
+
                     # Create a node from the current context for splitting
-                    nodes = [Node(name='input_node', value_dict={'text': input_item.context})]
-                    
+                    nodes = [
+                        Node(name="input_node", value_dict={"text": input_item.context})
+                    ]
+
                     # Split the context into smaller chunks
                     split_nodes = splitter(nodes)
 
                     # Process each split chunk
                     for node in split_nodes:
-                        chunk_text = node.value_dict['text']
+                        chunk_text = node.value_dict["text"]
                         for c_text in chunk_text:
                             # Create a new Context object for each chunk and add it to the processed list
                             chunk_context = Context(context=c_text)
@@ -118,7 +126,6 @@ class TransformClient:
         # Pass the processed input to the server for further processing
         output = self._server.run(processed_input)
         return output
-
 
     def async_run(self) -> None:
         """Run the flow asynchronously"""
