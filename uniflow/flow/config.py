@@ -125,7 +125,6 @@ class TransformGoogleConfig(TransformConfig):
 
     flow_name: str = "TransformGoogleFlow"
     model_config: ModelConfig = field(default_factory=GoogleModelConfig)
-    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -143,7 +142,6 @@ class TransformHuggingFaceConfig(TransformConfig):
 
     flow_name: str = "TransformHuggingFaceFlow"
     model_config: ModelConfig = field(default_factory=HuggingfaceModelConfig)
-    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -177,7 +175,6 @@ class TransformQAHuggingFaceConfig(TransformConfig):
             ],
         )
     )
-    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -214,7 +211,6 @@ class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
             ],
         )
     )
-    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -226,7 +222,6 @@ class TransformLMQGConfig(TransformConfig):
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=LMQGModelConfig)
-    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -238,7 +233,6 @@ class TransformCopyConfig(TransformConfig):
         default_factory=lambda: PromptTemplate(instruction="", few_shot_prompt=[])
     )
     model_config: ModelConfig = field(default_factory=lambda: {})
-    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
