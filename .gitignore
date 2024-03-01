@@ -184,3 +184,7 @@ example/flex/
 
 # retrieval
 temp/
+
+# google workspace json
+credentials.json
+token.json
