@@ -172,4 +172,3 @@ class RecursiveCharacterSplitter(Op):
             docs.append(doc)
 
         return docs
-    

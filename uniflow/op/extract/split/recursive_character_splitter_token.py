@@ -5,6 +5,7 @@ import re
 from typing import Iterable, List, Optional, Sequence
 
 import tiktoken
+
 from uniflow.node import Node
 from uniflow.op.op import Op
 
@@ -139,7 +140,9 @@ class RecursiveCharacterSplitter_Token(Op):
             token_len = len(self._encoder.encode(s))
             # Calculate the total token length including the separator
             current_length = (
-                total + token_len + (len(self._encoder.encode(separator)) if len(current_doc) > 0 else 0)
+                total
+                + token_len
+                + (len(self._encoder.encode(separator)) if len(current_doc) > 0 else 0)
             )
 
             # Check if the current length exceeds the chunk size
@@ -160,13 +163,17 @@ class RecursiveCharacterSplitter_Token(Op):
                         current_length > self._chunk_size and total > 0
                     ):
                         total -= len(self._encoder.encode(current_doc[0])) + (
-                            len(self._encoder.encode(separator)) if len(current_doc) > 1 else 0
+                            len(self._encoder.encode(separator))
+                            if len(current_doc) > 1
+                            else 0
                         )
                         current_doc = current_doc[1:]
 
             # Add the current split to the current document and update the total token length
             current_doc.append(s)
-            total += token_len + (len(self._encoder.encode(separator)) if len(current_doc) > 1 else 0)
+            total += token_len + (
+                len(self._encoder.encode(separator)) if len(current_doc) > 1 else 0
+            )
 
         # Add the remaining document to the list of documents
         doc = separator.join(current_doc).strip()
