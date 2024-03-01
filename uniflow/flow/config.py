@@ -333,7 +333,6 @@ class TransformForClusteringOpenAIGPT4Config:
             ],
         )
     )
-    auto_split_long_text: bool = field(default=False)
 
 
 ###########################################################
