@@ -77,7 +77,7 @@ class TransformClient:
         # Check if auto-splitting of long text is enabled
         if self._config.auto_split_long_text:
             # Define the token size limitation
-            token_size_limit = 10000
+            token_size_limit = 4096
 
             # Iterate over each input context
             for input_item in input_list:
