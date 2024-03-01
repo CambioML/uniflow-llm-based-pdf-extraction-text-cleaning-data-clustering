@@ -54,10 +54,10 @@ class OpenAIModelConfig(ModelConfig):
 class AzureOpenAIModelConfig:
     """Azure OpenAI Model Config Class."""
 
-    azure_api_key: str = os.getenv("AZURE_API_KEY")
+    api_key: str = os.getenv("AZURE_API_KEY")
     azure_endpoint: str = os.getenv("AZURE_ENDPOINT")
-    azure_deployment_name: str = os.getenv("AZURE_DEPLOYMENT_NAME")
-    azure_api_version: str = os.getenv("AZURE_API_VERSION")
+    api_version: str = os.getenv("AZURE_API_VERSION")
+    model_name: str = os.getenv("AZURE_DEPLOYMENT_NAME")
     model_server: str = "AzureOpenAIModelServer"
     num_call: int = 1
     temperature: float = 0.7

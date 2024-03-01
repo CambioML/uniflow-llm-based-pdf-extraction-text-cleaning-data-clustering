@@ -10,8 +10,6 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
 
-import requests
-
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
     BedrockModelConfig,
@@ -192,6 +190,11 @@ class AzureOpenAIModelServer(AbsModelServer):
 
         super().__init__(prompt_template, model_config)
         self._model_config = AzureOpenAIModelConfig(**self._model_config)
+        self._client = AzureOpenAI(
+            api_key=self._model_config.api_key,
+            api_version=self._model_config.api_version,
+            azure_endpoint=self._model_config.azure_endpoint,
+        )
 
     def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
@@ -216,36 +219,42 @@ class AzureOpenAIModelServer(AbsModelServer):
         return [c.message.content for d in data for c in d.choices]
 
     def _make_api_call(self, data: str) -> str:
-        print(f"Making API call with data: {data[:100]}")
-        """Helper method to make API call to Azure OpenAI."""
-        url = f"{self._model_config.azure_endpoint}/openai/deployments/{self._model_config.azure_deployment_name}/chat/completions?api-version={self._model_config.azure_api_version}"
-        headers = {
-            "Content-Type": "application/json",
-            "api-key": self._model_config.azure_api_key,
-        }
-        body = {
-            "messages": [
+        """Helper method to make API call.
+
+        Args:
+            data (str): Data to run.
+
+        Returns:
+            str: Output data.
+        """
+        return self._client.chat.completions.create(
+            model=self._model_config.model_name,
+            messages=[
                 {"role": "user", "content": data},
             ],
-            "n": self._model_config.num_call,
-            "temperature": self._model_config.temperature,
-            "response_format": self._model_config.response_format,
-        }
-        response = requests.post(url, json=body, headers=headers)
-        print(f"Received response: {response.json()}")
-        return response.json()
+            n=self._model_config.num_call,
+            temperature=self._model_config.temperature,
+            response_format=self._model_config.response_format,
+        )
 
     def __call__(self, data: List[str]) -> List[str]:
-        """Run model with ThreadPoolExecutor."""
+        """Run model with ThreadPoolExecutor.
+
+        Args:
+            data (List[str]): Data to run.
+
+        Returns:
+            List[str]: Output data.
+        """
+        data = self._preprocess(data)
+
+        # Using ThreadPoolExecutor to parallelize API calls
         with ThreadPoolExecutor(max_workers=self._model_config.num_thread) as executor:
             futures = [executor.submit(self._make_api_call, d) for d in data]
             inference_data = [future.result() for future in futures]
 
-        return [
-            d["choices"][0]["message"]["content"]
-            for d in inference_data
-            if "choices" in d
-        ]
+        data = self._postprocess(inference_data)
+        return data
 
 
 class HuggingfaceModelServer(AbsModelServer):
