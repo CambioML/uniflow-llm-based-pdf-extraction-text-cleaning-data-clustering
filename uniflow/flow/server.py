@@ -40,6 +40,10 @@ class ExtractServer:
             kwargs["splitter"] = self._config.splitter
         if self._config.post_extract_fn:
             kwargs["post_extract_fn"] = self._config.post_extract_fn
+        if self._config.credentials_path:
+            kwargs["credentials_path"] = self._config.credentials_path
+        if self._config.token_path:
+            kwargs["token_path"] = self._config.token_path
         for i in range(self._num_thread):
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(self._flow_cls(**kwargs))
