@@ -9,6 +9,7 @@ from uniflow.op.extract.split.constants import (
     PARAGRAPH_SPLITTER,
 )
 from uniflow.op.model.model_config import (
+    AzureOpenAIModelConfig,
     BedrockModelConfig,
     GoogleModelConfig,
     HuggingfaceModelConfig,
@@ -132,6 +133,14 @@ class TransformOpenAIConfig(TransformConfig):
 
     flow_name: str = "TransformOpenAIFlow"
     model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
+
+
+@dataclass
+class TransformAzureOpenAIConfig(TransformConfig):
+    """Transform Azure OpenAI Config Class."""
+
+    flow_name: str = "TransformAzureOpenAIFlow"
+    model_config: ModelConfig = field(default_factory=AzureOpenAIModelConfig)
 
 
 @dataclass
