@@ -3,7 +3,7 @@
 from dataclasses import asdict
 from typing import Any, List, Mapping
 from uniflow.op.prompt import Context
-from uniflow.op.extract.split.recursive_character_splitter import RecursiveCharacterSplitter
+from uniflow.op.extract.split.recursive_character_splitter_token import RecursiveCharacterSplitter_Token
 from uniflow.node import Node
 
 from uniflow.flow.config import ExtractConfig, RaterConfig, TransformConfig
@@ -93,7 +93,7 @@ class TransformClient:
                     adjusted_chunk_size = token_size_limit  # This size may need adjustment based on tokenization characteristics
                     
                     # Initialize the splitter with the calculated chunk size and overlap
-                    splitter = RecursiveCharacterSplitter(name='text_splitter', chunk_size=adjusted_chunk_size, chunk_overlap_size=50)
+                    splitter = RecursiveCharacterSplitter_Token(name='text_splitter', chunk_size=adjusted_chunk_size, chunk_overlap_size=50)
                     
                     # Create a node from the current context for splitting
                     nodes = [Node(name='input_node', value_dict={'text': input_item.context})]
