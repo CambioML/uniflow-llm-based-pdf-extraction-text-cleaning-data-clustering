@@ -74,6 +74,8 @@ class RecursiveCharacterSplitter(Op):
             )
         return output_nodes
 
+    Still high git diff, you should keep the same comments as the original code, and make less code modification:
+---
     def _recursive_splitter(self, text: str, separators: List[str]) -> List[str]:
         """Split incoming text and return chunks.
 
@@ -106,24 +108,25 @@ class RecursiveCharacterSplitter(Op):
                 next_separators = separators[(i + 1) :]
                 break
 
-        # Split by current separator first
+        # Splited by current separator firstly
         cur_separator = re.escape(cur_separator)
         splits = [s for s in re.split(cur_separator, text) if s != ""]
 
-        # Then go merging things, recursively splitting longer texts
+        # Then go merging things, recursively splitting longer texts.
         _tmp_splits, _separator = [], ""
         for s in splits:
+            # Change from len(s) to self._get_length(s) for comparison
             if self._get_length(s) < self._chunk_size:
                 _tmp_splits.append(s)
             else:
-                # Merge split texts into a chunk
+                # merge splitted texts into a chunk
                 if _tmp_splits:
                     merged_text = self._merge_splits(_tmp_splits, _separator)
                     final_chunks.extend(merged_text)
                     # reset tmp_splits
                     _tmp_splits = []
 
-                # Recursively split using next separators
+                # recursively split using next separators
                 if not next_separators:
                     final_chunks.append(s)
                 else:
@@ -146,12 +149,12 @@ class RecursiveCharacterSplitter(Op):
         Returns:
             List[str]: Merged medium size chunks.
         """
-        separator_len = len(separator)
+        separator_len = self._get_length(separator) 
 
         docs, total = [], 0
         current_doc: List[str] = []
         for s in splits:
-            _len = self._get_length(s)
+            _len = self._get_length(s)  # Adjust this line to use self._get_length
             current_length = (
                 total + _len + (separator_len if len(current_doc) > 0 else 0)
             )
@@ -159,11 +162,12 @@ class RecursiveCharacterSplitter(Op):
             if current_length > self._chunk_size:
                 if total > self._chunk_size:
                     print(
-                        f"Created a chunk of size {total}, which is longer than the specified {self._chunk_size}"
+                        f"Created a chunk of size {total}, "
+                        f"which is longer than the specified {self._chunk_size}"
                     )
                 if len(current_doc) > 0:
                     doc = separator.join(current_doc).strip()
-                    if doc:
+                    if doc is not None:
                         docs.append(doc)
                     # Keep on popping if:
                     # - we have a larger chunk than in the chunk overlap
@@ -181,7 +185,7 @@ class RecursiveCharacterSplitter(Op):
 
         doc = separator.join(current_doc).strip()
 
-        if doc:
+        if doc is not None:
             docs.append(doc)
 
         return docs
