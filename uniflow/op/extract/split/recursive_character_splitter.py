@@ -74,8 +74,6 @@ class RecursiveCharacterSplitter(Op):
             )
         return output_nodes
 
-    Still high git diff, you should keep the same comments as the original code, and make less code modification:
----
     def _recursive_splitter(self, text: str, separators: List[str]) -> List[str]:
         """Split incoming text and return chunks.
 
@@ -149,7 +147,7 @@ class RecursiveCharacterSplitter(Op):
         Returns:
             List[str]: Merged medium size chunks.
         """
-        separator_len = self._get_length(separator) 
+        separator_len = self._get_length(separator)
 
         docs, total = [], 0
         current_doc: List[str] = []
