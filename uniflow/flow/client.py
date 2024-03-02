@@ -117,8 +117,6 @@ class TransformClient:
                     for node in split_nodes:
                         chunk_text = node.value_dict["text"]
                         for c_text in chunk_text:
-                            chunk_token_length = len(self._encoder.encode(c_text))
-                            print(f"Chunk text (first 40 chars): '{c_text[:40]}' has token length: {chunk_token_length}")
                             # Create a new Context object for each chunk and add it to the processed list
                             chunk_context = Context(context=c_text)
                             processed_input.append(chunk_context)
