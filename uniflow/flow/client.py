@@ -3,11 +3,13 @@
 from dataclasses import asdict
 from typing import Any, List, Mapping
 
+import tiktoken
+
 from uniflow.flow.config import ExtractConfig, RaterConfig, TransformConfig
 from uniflow.flow.server import ExtractServer, RaterServer, TransformServer
 from uniflow.node import Node
-from uniflow.op.extract.split.recursive_character_splitter_token import (
-    RecursiveCharacterSplitter_Token,
+from uniflow.op.extract.split.recursive_character_splitter import (
+    RecursiveCharacterSplitter,
 )
 from uniflow.op.prompt import Context
 
@@ -57,6 +59,7 @@ class TransformClient:
         """
         self._config = config
         self._server = TransformServer(asdict(self._config))
+        self._encoder = tiktoken.encoding_for_model("gpt-3.5")
 
     def run(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
@@ -84,7 +87,7 @@ class TransformClient:
             # Iterate over each input context
             for input_item in input_list:
                 # Calculate the length of the context in characters
-                context_length = len(input_item.context)
+                context_length = len(self._encoder.encode(input_item.context))
 
                 # Compare context length with the token size limit
                 if context_length > token_size_limit:
@@ -95,10 +98,11 @@ class TransformClient:
                     adjusted_chunk_size = token_size_limit  # This size may need adjustment based on tokenization characteristics
 
                     # Initialize the splitter with the calculated chunk size and overlap
-                    splitter = RecursiveCharacterSplitter_Token(
+                    splitter = RecursiveCharacterSplitter(
                         name="text_splitter",
                         chunk_size=adjusted_chunk_size,
                         chunk_overlap_size=50,
+                        splitting_mode="token",  # This is the key update to use token-based splitting
                     )
 
                     # Create a node from the current context for splitting

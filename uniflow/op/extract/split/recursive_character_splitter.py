@@ -4,6 +4,8 @@ import copy
 import re
 from typing import Iterable, List, Optional, Sequence
 
+import tiktoken  # Import necessary for token-based splitting
+
 from uniflow.node import Node
 from uniflow.op.op import Op
 
@@ -19,6 +21,7 @@ class RecursiveCharacterSplitter(Op):
         chunk_size: int = 1024,
         chunk_overlap_size: int = 0,
         separators: Optional[List[str]] = None,
+        splitting_mode: str = "char",  # Added parameter for splitting mode
     ) -> None:
         """Recursive Splitter Op Constructor
 
@@ -30,12 +33,23 @@ class RecursiveCharacterSplitter(Op):
             chunk_size (int): Maximum size of chunks to return.
             chunk_overlap_size (int): Overlap in characters between chunks.
             separators (List[str]): Separators to use.
-            keep_separator: Whether to keep the separator in the chunks.
+            splitting_mode (str): "char" for character count, "token" for token count. Defaults to "char".
         """
         super().__init__(name)
         self._chunk_size = chunk_size
         self._chunk_overlap_size = chunk_overlap_size
         self._separators = separators or self.default_separators
+        self._splitting_mode = splitting_mode  # Track splitting mode
+        if self._splitting_mode == "token":
+            self._encoder = tiktoken.encoding_for_model(
+                "gpt-3.5"
+            )  # Setup encoder for token-based splitting
+
+    def _get_length(self, text: str) -> int:
+        """Return the length of the text, either in characters or tokens."""
+        if self._splitting_mode == "token":
+            return len(self._encoder.encode(text))
+        return len(text)
 
     def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Op.
@@ -92,24 +106,24 @@ class RecursiveCharacterSplitter(Op):
                 next_separators = separators[(i + 1) :]
                 break
 
-        # Splited by current separator firstly
+        # Split by current separator first
         cur_separator = re.escape(cur_separator)
         splits = [s for s in re.split(cur_separator, text) if s != ""]
 
-        # Then go merging things, recursively splitting longer texts.
+        # Then go merging things, recursively splitting longer texts
         _tmp_splits, _separator = [], ""
         for s in splits:
-            if len(s) < self._chunk_size:
+            if self._get_length(s) < self._chunk_size:
                 _tmp_splits.append(s)
             else:
-                # merge splitted texts into a chunk
+                # Merge split texts into a chunk
                 if _tmp_splits:
                     merged_text = self._merge_splits(_tmp_splits, _separator)
                     final_chunks.extend(merged_text)
                     # reset tmp_splits
                     _tmp_splits = []
 
-                # recursively split using next separators
+                # Recursively split using next separators
                 if not next_separators:
                     final_chunks.append(s)
                 else:
@@ -137,7 +151,7 @@ class RecursiveCharacterSplitter(Op):
         docs, total = [], 0
         current_doc: List[str] = []
         for s in splits:
-            _len = len(s)
+            _len = self._get_length(s)
             current_length = (
                 total + _len + (separator_len if len(current_doc) > 0 else 0)
             )
@@ -145,12 +159,11 @@ class RecursiveCharacterSplitter(Op):
             if current_length > self._chunk_size:
                 if total > self._chunk_size:
                     print(
-                        f"Created a chunk of size {total}, "
-                        f"which is longer than the specified {self._chunk_size}"
+                        f"Created a chunk of size {total}, which is longer than the specified {self._chunk_size}"
                     )
                 if len(current_doc) > 0:
                     doc = separator.join(current_doc).strip()
-                    if doc is not None:
+                    if doc:
                         docs.append(doc)
                     # Keep on popping if:
                     # - we have a larger chunk than in the chunk overlap
@@ -168,7 +181,7 @@ class RecursiveCharacterSplitter(Op):
 
         doc = separator.join(current_doc).strip()
 
-        if doc is not None:
+        if doc:
             docs.append(doc)
 
         return docs
