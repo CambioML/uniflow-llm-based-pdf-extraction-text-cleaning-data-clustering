@@ -183,7 +183,9 @@ class RecursiveCharacterSplitter(Op):
             current_doc.append(s)
             total += _len + (separator_len if len(current_doc) > 1 else 0)
 
-        if current_doc:  # Directly check for non-empty list without None check
-            docs.append(separator.join(current_doc).strip())
+        doc = separator.join(current_doc).strip()
+
+        if doc is not None:
+            docs.append(doc)
 
         return docs
