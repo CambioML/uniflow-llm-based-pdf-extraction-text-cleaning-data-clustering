@@ -146,27 +146,44 @@ class RecursiveCharacterSplitter(Op):
         Returns:
             List[str]: Merged medium size chunks.
         """
-        separator_len = self._get_length(separator)
+        separator_len = self._get_length(separator)  # Use _get_length for separator
 
         docs, total = [], 0
         current_doc: List[str] = []
         for s in splits:
-            _len = self._get_length(s)
-            # Calculate the current total length including the split and separator length
-            current_length = total + _len + (separator_len if current_doc else 0)
+            _len = self._get_length(s)  # Use _get_length for split length
+            current_length = (
+                total + _len + (separator_len if len(current_doc) > 0 else 0)
+            )
 
-            if current_length <= self._chunk_size:
-                current_doc.append(s)
-                total = current_length
-            else:
-                # If the current document is not empty, add it to the list of documents and start a new document with the current split
-                if current_doc:
-                    docs.append(separator.join(current_doc).strip())
-                    current_doc, total = [s], _len
-                else:
-                    docs.append(s)
+            if current_length > self._chunk_size:
+                if total > self._chunk_size:
+                    print(
+                        f"Created a chunk of size {total}, "
+                        f"which is longer than the specified {self._chunk_size}"
+                    )
+                if len(current_doc) > 0:
+                    doc = separator.join(current_doc).strip()
+                    if doc is not None:
+                        docs.append(doc)
+                    # Keep on popping if:
+                    # - we have a larger chunk than in the chunk overlap
+                    # - or if we still have any chunks and the length is long
+                    while total > self._chunk_overlap_size or (
+                        current_length > self._chunk_size and total > 0
+                    ):
+                        popped_length = self._get_length(
+                            current_doc[0]
+                        )  # Adjust pop length calculation
+                        total -= popped_length + (
+                            separator_len if len(current_doc) > 1 else 0
+                        )
+                        current_doc = current_doc[1:]
 
-        if current_doc:
+            current_doc.append(s)
+            total += _len + (separator_len if len(current_doc) > 1 else 0)
+
+        if current_doc:  # Directly check for non-empty list without None check
             docs.append(separator.join(current_doc).strip())
 
         return docs
