@@ -200,6 +200,11 @@ class TransformServer:
         batch_size = self._config.model_config.get(
             "batch_size", 1
         )  # pylint: disable=no-member
+        if not batch_size:
+            batch_size = self._config.model_config.get(
+            "num_thread", 1
+        )  # pylint: disable=no-member
+
         if batch_size <= 0:
             raise ValueError("Batch size must be a positive integer.")
         if not input_list:  # Check if the list is empty
