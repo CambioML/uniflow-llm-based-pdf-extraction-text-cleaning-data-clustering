@@ -26,7 +26,7 @@ class GoogleModelConfig(ModelConfig):
     candidate_count: int = 1
     num_thread: int = 1
     # this is not real batch inference, but size to group for thread pool executor.
-    batch_size: int = 1
+    # batch_size: int = 1
 
 
 @dataclass
@@ -47,7 +47,7 @@ class OpenAIModelConfig(ModelConfig):
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
     num_thread: int = 1
     # this is not real batch inference, but size to group for thread pool executor.
-    batch_size: int = 1
+    # batch_size: int = 1
 
 
 @dataclass
@@ -64,7 +64,7 @@ class AzureOpenAIModelConfig:
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
     num_thread: int = 1
     # this is not real batch inference, but size to group for thread pool executor.
-    batch_size: int = 1
+    # batch_size: int = 1
 
 
 @dataclass
