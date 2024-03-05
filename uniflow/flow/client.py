@@ -60,6 +60,7 @@ class TransformClient:
         self._config = config
         self._server = TransformServer(asdict(self._config))
         self._encoder = tiktoken.encoding_for_model("gpt-3.5")
+        self._token_size_limit = 4096  # Define the token size limitation
 
     def run(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
@@ -81,21 +82,20 @@ class TransformClient:
 
         # Check if auto-splitting of long text is enabled
         if self._config.auto_split_long_text:
-            # Define the token size limitation
-            token_size_limit = 4096
-
             # Iterate over each input context
             for input_item in input_list:
                 # Calculate the length of the context in characters
                 context_length = len(self._encoder.encode(input_item.context))
 
                 # Compare context length with the token size limit
-                if context_length > token_size_limit:
+                if context_length > self._token_size_limit:
                     # Log the need for splitting the context due to size exceeding the limit
                     # print("The current Context object needs splitting because it exceeds the token limitation.")
 
                     # Set an adjusted chunk size for splitting
-                    adjusted_chunk_size = token_size_limit  # This size may need adjustment based on tokenization characteristics
+                    adjusted_chunk_size = (
+                        self._token_size_limit
+                    )  # This size may need adjustment based on tokenization characteristics
 
                     # Initialize the splitter with the calculated chunk size and overlap
                     splitter = RecursiveCharacterSplitter(

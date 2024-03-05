@@ -40,10 +40,9 @@ class RecursiveCharacterSplitter(Op):
         self._chunk_overlap_size = chunk_overlap_size
         self._separators = separators or self.default_separators
         self._splitting_mode = splitting_mode  # Track splitting mode
-        if self._splitting_mode == "token":
-            self._encoder = tiktoken.encoding_for_model(
-                "gpt-3.5"
-            )  # Setup encoder for token-based splitting
+        self._encoder = tiktoken.encoding_for_model(
+            "gpt-3.5"
+        )  # Setup encoder for token-based splitting
 
     def _get_length(self, text: str) -> int:
         """Return the length of the text, either in characters or tokens."""
