@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="uniflow.flow package" href="uniflow.flow.html" /><link rel="prev" title="uniflow" href="modules.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow package - uniflow 0.0.21 documentation</title>
+        <title>uniflow package - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -209,7 +209,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -268,7 +273,6 @@
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_html_flow">uniflow.flow.extract.extract_html_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_image_flow">uniflow.flow.extract.extract_image_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_ipynb_flow">uniflow.flow.extract.extract_ipynb_flow module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_mardown_flow">uniflow.flow.extract.extract_mardown_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_md_flow">uniflow.flow.extract.extract_md_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_pdf_flow">uniflow.flow.extract.extract_pdf_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.extract.html#module-uniflow.flow.extract.extract_txt_flow">uniflow.flow.extract.extract_txt_flow module</a></li>
@@ -285,6 +289,8 @@
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_azure_openai_flow">uniflow.flow.transform.transform_azure_openai_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_copy_flow">uniflow.flow.transform.transform_copy_flow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_google_flow">uniflow.flow.transform.transform_google_flow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_google_multimodal_flow">uniflow.flow.transform.transform_google_multimodal_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_huggingface_flow">uniflow.flow.transform.transform_huggingface_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_lmqg_flow">uniflow.flow.transform.transform_lmqg_flow module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.transform.html#module-uniflow.flow.transform.transform_openai_flow">uniflow.flow.transform.transform_openai_flow module</a></li>
@@ -342,10 +348,6 @@
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.ExtractPDFConfig"><code class="docutils literal notranslate"><span class="pre">ExtractPDFConfig</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.ExtractPDFConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">ExtractPDFConfig.flow_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.ExtractPDFConfig.splitter"><code class="docutils literal notranslate"><span class="pre">ExtractPDFConfig.splitter</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.ExtractS3TxtConfig"><code class="docutils literal notranslate"><span class="pre">ExtractS3TxtConfig</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.ExtractS3TxtConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">ExtractS3TxtConfig.flow_name</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.ExtractTxtConfig"><code class="docutils literal notranslate"><span class="pre">ExtractTxtConfig</span></code></a><ul>
@@ -461,6 +463,11 @@
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformForGenerationOpenAIGPT3p5Config.prompt_template"><code class="docutils literal notranslate"><span class="pre">TransformForGenerationOpenAIGPT3p5Config.prompt_template</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformGoogleConfig"><code class="docutils literal notranslate"><span class="pre">TransformGoogleConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformGoogleConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">TransformGoogleConfig.flow_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformGoogleConfig.model_config"><code class="docutils literal notranslate"><span class="pre">TransformGoogleConfig.model_config</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformHuggingFaceConfig"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceConfig</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformHuggingFaceConfig.flow_name"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceConfig.flow_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.flow.html#uniflow.flow.config.TransformHuggingFaceConfig.model_config"><code class="docutils literal notranslate"><span class="pre">TransformHuggingFaceConfig.model_config</span></code></a></li>
@@ -536,6 +543,8 @@
 <li class="toctree-l3"><a class="reference internal" href="uniflow.op.basic.html">uniflow.op.basic package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html#module-uniflow.op.basic.copy_op">uniflow.op.basic.copy_op module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html#module-uniflow.op.basic.expand_op">uniflow.op.basic.expand_op module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html#module-uniflow.op.basic.reduce_op">uniflow.op.basic.reduce_op module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.basic.html#module-uniflow.op.basic">Module contents</a></li>
 </ul>
 </li>
@@ -545,17 +554,13 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="uniflow.op.model.html">uniflow.op.model package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#subpackages">Subpackages</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.abs_llm_processor">uniflow.op.model.abs_llm_processor module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.abs_model">uniflow.op.model.abs_model module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.constants">uniflow.op.model.constants module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#uniflow-op-model-layout-utils-module">uniflow.op.model.layout_utils module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.llm_preprocessor">uniflow.op.model.llm_preprocessor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.llm_processor">uniflow.op.model.llm_processor module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.llm_rater">uniflow.op.model.llm_rater module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.model_config">uniflow.op.model.model_config module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.model_op">uniflow.op.model.model_op module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model.model_server">uniflow.op.model.model_server module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#uniflow-op-model-neuron-utils-module">uniflow.op.model.neuron_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="uniflow.op.model.html#module-uniflow.op.model">Module contents</a></li>
 </ul>
 </li>
@@ -964,7 +969,7 @@ mapping of field names to [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo].</
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="_static/documentation_options.js?v=f91d8841"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=32e29ea5"></script>

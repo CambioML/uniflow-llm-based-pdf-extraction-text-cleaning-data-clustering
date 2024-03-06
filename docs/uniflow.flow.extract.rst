@@ -28,14 +28,6 @@ uniflow.flow.extract.extract\_ipynb\_flow module
    :undoc-members:
    :show-inheritance:
 
-uniflow.flow.extract.extract\_mardown\_flow module
---------------------------------------------------
-
-.. automodule:: uniflow.flow.extract.extract_mardown_flow
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 uniflow.flow.extract.extract\_md\_flow module
 ---------------------------------------------
 

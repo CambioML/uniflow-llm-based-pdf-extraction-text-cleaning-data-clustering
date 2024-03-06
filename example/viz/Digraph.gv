@@ -1,9 +1,0 @@
-digraph {
-	node1
-	node1 -> node2
-	node2
-	node2 -> node3
-	node2 -> node4
-	node3
-	node4
-}

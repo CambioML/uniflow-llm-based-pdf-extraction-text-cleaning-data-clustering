@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../../genindex.html" /><link rel="search" title="Search" href="../../../../../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>uniflow.op.extract.load.ipynb_op - uniflow 0.0.21 documentation</title>
+        <title>uniflow.op.extract.load.ipynb_op - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../../index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="../../../../../index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -208,7 +208,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../../../../../uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../../../../../uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../../../../uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../../uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../../../../uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="../../../../../uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -268,15 +273,7 @@
 <span class="k">class</span> <span class="nc">ExtractIpynbOp</span><span class="p">(</span><span class="n">Op</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract ipynb Op Class.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Model Op.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            nodes (Sequence[Node]): Nodes to run.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Sequence[Node]: Nodes after running.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">nbformat</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
             <span class="kn">from</span> <span class="nn">nbconvert</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># pylint: disable=import-outside-toplevel</span>
@@ -286,11 +283,26 @@
             <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
                 <span class="s2">&quot;Please install nbformat and nbconvert to load ipynb file. You can use `pip install nbformat nbconvert` to install them.&quot;</span>
             <span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nbformat</span> <span class="o">=</span> <span class="n">nbformat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_markdown_exporter</span> <span class="o">=</span> <span class="n">MarkdownExporter</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Node</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run Model Op.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nodes (Sequence[Node]): Nodes to run.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Sequence[Node]: Nodes after running.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">output_nodes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
             <span class="n">value_dict</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value_dict</span><span class="p">)</span>
-            <span class="n">nb</span> <span class="o">=</span> <span class="n">nbformat</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">value_dict</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">as_version</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-            <span class="n">md_exporter</span> <span class="o">=</span> <span class="n">MarkdownExporter</span><span class="p">()</span>
+            <span class="n">nb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nbformat</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">value_dict</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">],</span> <span class="n">as_version</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+            <span class="n">md_exporter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_markdown_exporter</span><span class="p">()</span>
             <span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="n">md_exporter</span><span class="o">.</span><span class="n">from_notebook_node</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
             <span class="n">output_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">Node</span><span class="p">(</span>
@@ -371,7 +383,7 @@
       
     </aside>
   </div>
-</div><script src="../../../../../_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="../../../../../_static/documentation_options.js?v=f91d8841"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=32e29ea5"></script>

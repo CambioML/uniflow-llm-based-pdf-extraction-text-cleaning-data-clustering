@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Overview: module code - uniflow 0.0.21 documentation</title>
+        <title>Overview: module code - uniflow 0.0.24 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">uniflow 0.0.21 documentation</div></a>
+      <a href="../index.html"><div class="brand">uniflow 0.0.24 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -208,7 +208,12 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="../uniflow.op.model.html">uniflow.op.model package</a></li>
+<li class="toctree-l4 has-children"><a class="reference internal" href="../uniflow.op.model.html">uniflow.op.model package</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of uniflow.op.model package</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l5"><a class="reference internal" href="../uniflow.op.model.cv.html">uniflow.op.model.cv package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../uniflow.op.model.lm.html">uniflow.op.model.lm package</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../uniflow.op.model.mm.html">uniflow.op.model.mm package</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="../uniflow.op.preprocess.html">uniflow.op.preprocess package</a></li>
 </ul>
 </li>
@@ -256,6 +261,9 @@
           <h1>All modules for which code is available</h1>
 <ul><li><a href="tests/flow/test_flow.html">tests.flow.test_flow</a></li>
 <li><a href="tests/op/basic/test_copy_op.html">tests.op.basic.test_copy_op</a></li>
+<li><a href="tests/op/basic/test_expand_op.html">tests.op.basic.test_expand_op</a></li>
+<li><a href="tests/op/basic/test_reduce_op.html">tests.op.basic.test_reduce_op</a></li>
+<li><a href="tests/op/extract/load/test_txt_op.html">tests.op.extract.load.test_txt_op</a></li>
 <li><a href="tests/op/test_op.html">tests.op.test_op</a></li>
 <li><a href="tests/test_node.html">tests.test_node</a></li>
 <li><a href="tests/test_viz.html">tests.test_viz</a></li>
@@ -264,7 +272,6 @@
 <li><a href="uniflow/flow/extract/extract_html_flow.html">uniflow.flow.extract.extract_html_flow</a></li>
 <li><a href="uniflow/flow/extract/extract_image_flow.html">uniflow.flow.extract.extract_image_flow</a></li>
 <li><a href="uniflow/flow/extract/extract_ipynb_flow.html">uniflow.flow.extract.extract_ipynb_flow</a></li>
-<li><a href="uniflow/flow/extract/extract_mardown_flow.html">uniflow.flow.extract.extract_mardown_flow</a></li>
 <li><a href="uniflow/flow/extract/extract_md_flow.html">uniflow.flow.extract.extract_md_flow</a></li>
 <li><a href="uniflow/flow/extract/extract_pdf_flow.html">uniflow.flow.extract.extract_pdf_flow</a></li>
 <li><a href="uniflow/flow/extract/extract_txt_flow.html">uniflow.flow.extract.extract_txt_flow</a></li>
@@ -274,11 +281,15 @@
 <li><a href="uniflow/flow/server.html">uniflow.flow.server</a></li>
 <li><a href="uniflow/flow/transform/transform_azure_openai_flow.html">uniflow.flow.transform.transform_azure_openai_flow</a></li>
 <li><a href="uniflow/flow/transform/transform_copy_flow.html">uniflow.flow.transform.transform_copy_flow</a></li>
+<li><a href="uniflow/flow/transform/transform_google_flow.html">uniflow.flow.transform.transform_google_flow</a></li>
+<li><a href="uniflow/flow/transform/transform_google_multimodal_flow.html">uniflow.flow.transform.transform_google_multimodal_flow</a></li>
 <li><a href="uniflow/flow/transform/transform_huggingface_flow.html">uniflow.flow.transform.transform_huggingface_flow</a></li>
 <li><a href="uniflow/flow/transform/transform_lmqg_flow.html">uniflow.flow.transform.transform_lmqg_flow</a></li>
 <li><a href="uniflow/flow/transform/transform_openai_flow.html">uniflow.flow.transform.transform_openai_flow</a></li>
 <li><a href="uniflow/node.html">uniflow.node</a></li>
 <li><a href="uniflow/op/basic/copy_op.html">uniflow.op.basic.copy_op</a></li>
+<li><a href="uniflow/op/basic/expand_op.html">uniflow.op.basic.expand_op</a></li>
+<li><a href="uniflow/op/basic/reduce_op.html">uniflow.op.basic.reduce_op</a></li>
 <li><a href="uniflow/op/extract/load/aws/s3_op.html">uniflow.op.extract.load.aws.s3_op</a></li>
 <li><a href="uniflow/op/extract/load/html_op.html">uniflow.op.extract.load.html_op</a></li>
 <li><a href="uniflow/op/extract/load/image_op.html">uniflow.op.extract.load.image_op</a></li>
@@ -286,10 +297,15 @@
 <li><a href="uniflow/op/extract/load/md_op.html">uniflow.op.extract.load.md_op</a></li>
 <li><a href="uniflow/op/extract/load/pdf_op.html">uniflow.op.extract.load.pdf_op</a></li>
 <li><a href="uniflow/op/extract/load/txt_op.html">uniflow.op.extract.load.txt_op</a></li>
-<li><a href="uniflow/op/model/abs_llm_processor.html">uniflow.op.model.abs_llm_processor</a></li>
-<li><a href="uniflow/op/model/llm_preprocessor.html">uniflow.op.model.llm_preprocessor</a></li>
-<li><a href="uniflow/op/model/llm_processor.html">uniflow.op.model.llm_processor</a></li>
-<li><a href="uniflow/op/model/llm_rater.html">uniflow.op.model.llm_rater</a></li>
+<li><a href="uniflow/op/extract/load/utils.html">uniflow.op.extract.load.utils</a></li>
+<li><a href="uniflow/op/model/abs_model.html">uniflow.op.model.abs_model</a></li>
+<li><a href="uniflow/op/model/cv/model.html">uniflow.op.model.cv.model</a></li>
+<li><a href="uniflow/op/model/cv/model_server.html">uniflow.op.model.cv.model_server</a></li>
+<li><a href="uniflow/op/model/lm/model.html">uniflow.op.model.lm.model</a></li>
+<li><a href="uniflow/op/model/lm/model_server.html">uniflow.op.model.lm.model_server</a></li>
+<li><a href="uniflow/op/model/lm/rater_model.html">uniflow.op.model.lm.rater_model</a></li>
+<li><a href="uniflow/op/model/mm/model.html">uniflow.op.model.mm.model</a></li>
+<li><a href="uniflow/op/model/mm/model_server.html">uniflow.op.model.mm.model_server</a></li>
 <li><a href="uniflow/op/model/model_config.html">uniflow.op.model.model_config</a></li>
 <li><a href="uniflow/op/model/model_op.html">uniflow.op.model.model_op</a></li>
 <li><a href="uniflow/op/model/model_server.html">uniflow.op.model.model_server</a></li>
@@ -338,7 +354,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=a11416ff"></script>
+</div><script src="../_static/documentation_options.js?v=f91d8841"></script>
     <script src="../_static/doctools.js?v=888ff710"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
