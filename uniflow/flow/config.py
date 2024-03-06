@@ -128,6 +128,7 @@ class TransformConfig:
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -180,6 +181,7 @@ class TransformOpenAIConfig(TransformConfig):
 
     flow_name: str = "TransformOpenAIFlow"
     model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -318,6 +320,7 @@ class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
