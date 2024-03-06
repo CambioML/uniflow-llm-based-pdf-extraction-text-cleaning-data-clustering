@@ -197,9 +197,7 @@ class TransformServer:
         """
         # currently only HuggingFace model support batch.
         # this will require some refactoring to support other models.
-        batch_size = self._config.model_config.get(
-            "batch_size", None
-        )
+        batch_size = self._config.model_config.get("batch_size", None)
         if not batch_size:
             batch_size = self._config.model_config.get(
                 "num_thread", 1
