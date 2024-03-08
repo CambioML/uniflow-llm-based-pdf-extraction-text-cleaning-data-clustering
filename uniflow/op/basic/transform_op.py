@@ -23,7 +23,7 @@ class TransformOp(Op):
         super().__init__(name)
         self._fn = fn
 
-    def __call__(self, nodes: Sequence[Tuple[Node, Node]]) -> Sequence[Node]:
+    def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Calls transform operation.
 
         Args:
