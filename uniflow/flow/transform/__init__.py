@@ -27,6 +27,10 @@ from uniflow.flow.transform.transform_openai_flow import (  # noqa: F401, F403
     TransformOpenAIFlow,
 )
 
+from uniflow.flow.transform.transform_huggingface_gemma_flow import (  # noqa: F401, F403
+    TransformHuggingFaceGemmaFlow
+)
+
 __all__ = [
     "TransformOpenAIFlow",
     "TransformHuggingFaceFlow",
@@ -35,4 +39,5 @@ __all__ = [
     "TransformAzureOpenAIFlow",
     "TransformGoogleFlow",
     "TransformGoogleMultiModalModelFlow",
+    "TransformHuggingFaceGemmaFlow"
 ]

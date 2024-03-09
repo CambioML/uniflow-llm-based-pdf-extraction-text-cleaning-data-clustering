@@ -9,6 +9,8 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
+import torch
 
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
@@ -18,6 +20,7 @@ from uniflow.op.model.model_config import (
     LMQGModelConfig,
     OpenAIModelConfig,
     SageMakerModelConfig,
+    GemmaModelConfig
 )
 from uniflow.op.model.model_server import AbsModelServer
 from uniflow.op.prompt import PromptTemplate
@@ -438,6 +441,53 @@ class HuggingfaceModelServer(AbsModelServer):
         data = self._pipeline(data)
         data = self._postprocess(data)
         return data
+
+
+class GemmaModelServer(AbsModelServer):
+    def __init__(self, prompt_template, model_config: Dict[str, Any]):
+        super().__init__(prompt_template, model_config)
+        torch.set_default_device('cuda')
+
+        # Initialize GemmaModelConfig from the model_config dictionary
+        self._model_config = GemmaModelConfig(**model_config)
+        self.tokenizer, self.model = self._initialize_model()
+
+    def _initialize_model(self):
+        # Initialize tokenizer and model using attributes from GemmaModelConfig
+        tokenizer = AutoTokenizer.from_pretrained(
+            self._model_config.model_name, 
+            quantization_config=self._model_config.quantization_config, 
+            torch_dtype=self._model_config.torch_dtype, 
+            device_map=self._model_config.device_map, 
+            use_auth_token=self._model_config.token
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            self._model_config.model_name, 
+            torch_dtype=self._model_config.torch_dtype, 
+            device_map=self._model_config.device_map, 
+            use_auth_token=self._model_config.token
+        )
+        return tokenizer, model
+
+    def run(self, input_list: List[str]) -> List[str]:
+        outputs = []
+        for input_item in input_list:
+            prompt = self.tokenizer.apply_chat_template([{"role": "user", "content": input_item}], tokenize=False, add_generation_prompt=True)
+            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
+            output_tokens = self.model.generate(
+                inputs["input_ids"].to(self.model.device),
+                max_new_tokens=self._model_config.max_new_tokens,
+                do_sample=self._model_config.do_sample,
+                temperature=self._model_config.temperature,
+                top_k=self._model_config.top_k
+            )
+            decoded_output = self.tokenizer.decode(output_tokens[0], skip_special_tokens=True)
+            outputs.append(decoded_output)
+        return outputs
+
+    # Optionally, redirect __call__ to use run to maintain compatibility
+    def __call__(self, input_list: List[str]) -> List[str]:
+        return self.run(input_list)
 
 
 class LMQGModelServer(AbsModelServer):
