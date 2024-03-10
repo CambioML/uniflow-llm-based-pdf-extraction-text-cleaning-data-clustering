@@ -392,10 +392,9 @@ class TransformForClusteringOpenAIGPT4Config:
     )
 
 
-
 @dataclass
 class GemmaTransformConfig(TransformConfig):
-    flow_name: str = "TransformHuggingFaceGemmaFlow"
+    flow_name: str = "TransformGemmaFlow"
     model_config: GemmaModelConfig = field(default_factory=GemmaModelConfig)
     prompt_template: PromptTemplate = field(
         default_factory=lambda: PromptTemplate(

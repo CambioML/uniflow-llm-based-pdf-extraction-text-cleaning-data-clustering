@@ -443,7 +443,7 @@ class HuggingfaceModelServer(AbsModelServer):
         return data
 
 
-class GemmaModelServer(AbsModelServer):
+class HuggingfaceModelConfig(AbsModelServer):
     def __init__(self, prompt_template, model_config: Dict[str, Any]):
         super().__init__(prompt_template, model_config)
         torch.set_default_device('cuda')

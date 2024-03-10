@@ -95,7 +95,7 @@ class GemmaModelConfig:
     quantization_config: BitsAndBytesConfig = BitsAndBytesConfig(load_in_4bit=True)
     torch_dtype: str = "auto"
     device_map: str = "auto"
-    token: str = "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"  # Ensure this is your actual access token
+    token: str = "hf_G123"  # Ensure this is your actual access token
     max_new_tokens: int = 512
     do_sample: bool = True
     temperature: float = 0.1
