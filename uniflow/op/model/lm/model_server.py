@@ -19,8 +19,7 @@ from uniflow.op.model.model_config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
     OpenAIModelConfig,
-    SageMakerModelConfig,
-    GemmaModelConfig
+    SageMakerModelConfig
 )
 from uniflow.op.model.model_server import AbsModelServer
 from uniflow.op.prompt import PromptTemplate
@@ -261,111 +260,82 @@ class AzureOpenAIModelServer(AbsModelServer):
 
 
 class HuggingfaceModelServer(AbsModelServer):
-    """Huggingface Model Server Class."""
-
     PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
 
-    def __init__(
-        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
-    ) -> None:
-        # import in class level to avoid installing transformers package
+    def __init__(self, prompt_template, model_config: Dict[str, Any]):
         super().__init__(prompt_template, model_config)
-        self._model_config = HuggingfaceModelConfig(**self._model_config)
-        if self._model_config.neuron is False:
-            try:
-                from transformers import (  # pylint: disable=import-outside-toplevel
-                    pipeline,
-                )
-            except ModuleNotFoundError as exc:
-                raise ModuleNotFoundError(
-                    "Please install transformers to use HuggingfaceModelServer. You can use `pip install transformers` to install it."
-                ) from exc
-            model, tokenizer = self._get_model()
-            # explicitly set batch_size for pipeline
-            # for batch inference.
-            self._pipeline = pipeline(
-                "text-generation",
-                model=model,
-                tokenizer=tokenizer,
-                device_map="auto",
-                do_sample=self._model_config.do_sample,
-                temperature=self._model_config.temperature,
-                num_beams=self._model_config.num_beams,
-                max_new_tokens=self._model_config.max_new_tokens,
-                num_return_sequences=self._model_config.num_return_sequences,
-                repetition_penalty=self._model_config.repetition_penalty,
-                eos_token_id=tokenizer.eos_token_id,
-                pad_token_id=tokenizer.pad_token_id,
-                batch_size=self._model_config.batch_size,
-            )
+        self._model_config = HuggingfaceModelConfig(**model_config)
+        
+        if self._model_config.model_name == "google/gemma-7b-it":
+            self.tokenizer, self.model = self._initialize_gemma_model()
+            self._pipeline = pipeline("text-generation",
+                                      model=self.model,
+                                      tokenizer=self.tokenizer,
+                                      device_map="auto",
+                                      do_sample=self._model_config.do_sample,
+                                      temperature=self._model_config.temperature,
+                                      num_beams=self._model_config.num_beams,
+                                      max_new_tokens=self._model_config.max_new_tokens,
+                                      num_return_sequences=self._model_config.num_return_sequences,
+                                      repetition_penalty=self._model_config.repetition_penalty,
+                                      eos_token_id=self.tokenizer.eos_token_id,
+                                      pad_token_id=self.tokenizer.pad_token_id,
+                                      batch_size=self._model_config.batch_size)
         else:
-            if self._model_config.load_in_4bit or self._model_config.load_in_8bit:
-                self._model_config.load_in_4bit = False
-                self._model_config.load_in_8bit = False
-                print(
-                    "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
-                )
-            from uniflow.op.model.lm.neuron_utils import (  # pylint: disable=import-outside-toplevel
-                Neuron,
-            )
+            self.tokenizer, self.model = self._initialize_default_model()
 
-            model, tokenizer = Neuron.get_neuron_model(
-                self._model_config.model_name, self._model_config.batch_size
-            )
-            self._pipeline = partial(
-                Neuron.neuron_infer,
-                model=model,
-                tokenizer=tokenizer,
-                max_new_tokens=self._model_config.max_new_tokens,
-                batch_size=self._model_config.batch_size,
-            )
-        self._tokenizer = tokenizer
+    def _initialize_gemma_model(self):
+        quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+        tokenizer = AutoTokenizer.from_pretrained(self._model_config.model_name, 
+                                                  quantization_config=quantization_config, 
+                                                  torch_dtype="auto", 
+                                                  device_map="auto", 
+                                                  use_auth_token=self._model_config.token)
+        model = AutoModelForCausalLM.from_pretrained(self._model_config.model_name, 
+                                                     torch_dtype="auto", 
+                                                     device_map="auto", 
+                                                     use_auth_token=self._model_config.token)
+        return tokenizer, model
+
+    def _initialize_default_model(self):
+        try:
+            model, tokenizer = self._get_model()
+            self._pipeline = pipeline("text-generation",
+                                      model=model,
+                                      tokenizer=tokenizer,
+                                      device_map="auto",
+                                      do_sample=self._model_config.do_sample,
+                                      temperature=self._model_config.temperature,
+                                      num_beams=self._model_config.num_beams,
+                                      max_new_tokens=self._model_config.max_new_tokens,
+                                      num_return_sequences=self._model_config.num_return_sequences,
+                                      repetition_penalty=self._model_config.repetition_penalty,
+                                      eos_token_id=tokenizer.eos_token_id,
+                                      pad_token_id=tokenizer.pad_token_id,
+                                      batch_size=self._model_config.batch_size)
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError("Please install transformers to use HuggingfaceModelServer.") from exc
+        return tokenizer, model
 
     def _get_model(self):
-        """Get model."""
-        from transformers import (  # pylint: disable=import-outside-toplevel
-            AutoModelForCausalLM,
-            AutoTokenizer,
-        )
-
-        tokenizer = AutoTokenizer.from_pretrained(
-            self._model_config.model_name,
-        )
+        tokenizer = AutoTokenizer.from_pretrained(self._model_config.model_name)
         tokenizer.pad_token = tokenizer.eos_token
-        model = AutoModelForCausalLM.from_pretrained(
-            self._model_config.model_name,
-            device_map="auto",
-            offload_folder="./offload",
-            load_in_4bit=self._model_config.load_in_4bit,
-            load_in_8bit=self._model_config.load_in_8bit,
-        )
+        model = AutoModelForCausalLM.from_pretrained(self._model_config.model_name,
+                                                     device_map="auto",
+                                                     offload_folder="./offload",
+                                                     load_in_4bit=self._model_config.load_in_4bit,
+                                                     load_in_8bit=self._model_config.load_in_8bit)
         return model, tokenizer
 
     def _preprocess(self, data: List[str]) -> List[str]:
-        """Preprocess data.
-
-        Args:
-            data (List[str]): Data to preprocess.
-
-        Returns:
-            List[str]: Preprocessed data.
-        """
-        # add role and content key to data for apply_chat_template
-        # as argument
+        """Preprocess data."""
+        # add role and content key to data for apply_chat_template as argument
         data = [[{"role": "user", "content": d}] for d in data]
         # if response_start_key is provided (few shot mode), add it with colon after
         # the end of instruction token for better instruction following performance.
-        # Below is an example, if you have a QA prompt template like this for 1 shot mode:
-
-        # <s>[INST] "instruction: This is an instruction.\n <-- instruction
-        # context: ... <-- few shot context
-        # question: ... <-- few shot question
-        # answer: ... <-- few shot answer
-        # context: ... [/INST] <-- input context with [/INST]
-        # question:   <-- response_start_key is added here !!!
         if self._model_config.response_start_key:
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False)
+                self.tokenizer.apply_chat_template(d, tokenize=False)
                 + f"\n{self._model_config.response_start_key}: "  # noqa: W503
                 for d in data
             ]
@@ -373,19 +343,12 @@ class HuggingfaceModelServer(AbsModelServer):
         # using apply_chat_template
         else:
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
+                self.tokenizer.apply_chat_template(d, tokenize=False) for d in data
             ]
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
-        """Postprocess data.
-
-        Args:
-            data (List[str]): Data to postprocess.
-
-        Returns:
-            List[str]: Postprocessed data.
-        """
+        """Postprocess data."""
         response_list = []
         # clean up instruction token.
         for output_list in data:
@@ -429,65 +392,11 @@ class HuggingfaceModelServer(AbsModelServer):
         return response_list
 
     def __call__(self, data: List[str]) -> List[str]:
-        """Run model.
-
-        Args:
-            data (List[str]): Data to run.
-
-        Returns:
-            List[str]: Output data.
-        """
+        """Run model."""
         data = self._preprocess(data)
         data = self._pipeline(data)
         data = self._postprocess(data)
         return data
-
-
-class HuggingfaceModelConfig(AbsModelServer):
-    def __init__(self, prompt_template, model_config: Dict[str, Any]):
-        super().__init__(prompt_template, model_config)
-        torch.set_default_device('cuda')
-
-        # Initialize GemmaModelConfig from the model_config dictionary
-        self._model_config = GemmaModelConfig(**model_config)
-        self.tokenizer, self.model = self._initialize_model()
-
-    def _initialize_model(self):
-        # Initialize tokenizer and model using attributes from GemmaModelConfig
-        tokenizer = AutoTokenizer.from_pretrained(
-            self._model_config.model_name, 
-            quantization_config=self._model_config.quantization_config, 
-            torch_dtype=self._model_config.torch_dtype, 
-            device_map=self._model_config.device_map, 
-            use_auth_token=self._model_config.token
-        )
-        model = AutoModelForCausalLM.from_pretrained(
-            self._model_config.model_name, 
-            torch_dtype=self._model_config.torch_dtype, 
-            device_map=self._model_config.device_map, 
-            use_auth_token=self._model_config.token
-        )
-        return tokenizer, model
-
-    def run(self, input_list: List[str]) -> List[str]:
-        outputs = []
-        for input_item in input_list:
-            prompt = self.tokenizer.apply_chat_template([{"role": "user", "content": input_item}], tokenize=False, add_generation_prompt=True)
-            inputs = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True)
-            output_tokens = self.model.generate(
-                inputs["input_ids"].to(self.model.device),
-                max_new_tokens=self._model_config.max_new_tokens,
-                do_sample=self._model_config.do_sample,
-                temperature=self._model_config.temperature,
-                top_k=self._model_config.top_k
-            )
-            decoded_output = self.tokenizer.decode(output_tokens[0], skip_special_tokens=True)
-            outputs.append(decoded_output)
-        return outputs
-
-    # Optionally, redirect __call__ to use run to maintain compatibility
-    def __call__(self, input_list: List[str]) -> List[str]:
-        return self.run(input_list)
 
 
 class LMQGModelServer(AbsModelServer):

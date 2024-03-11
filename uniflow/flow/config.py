@@ -19,7 +19,6 @@ from uniflow.op.model.model_config import (
     NougatModelConfig,
     OpenAIModelConfig,
     SageMakerModelConfig,
-    GemmaModelConfig,
 )
 
 ###########################################################
@@ -394,14 +393,21 @@ class TransformForClusteringOpenAIGPT4Config:
 
 @dataclass
 class GemmaTransformConfig(TransformConfig):
+    model_config: HuggingfaceModelConfig = field(default_factory=lambda: HuggingfaceModelConfig(
+        model_name="google/gemma-7b-it",
+        token="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",  # Use your Hugging Face API token
+        batch_size=64,
+        load_in_4bit=True,
+        max_new_tokens=512,
+        do_sample=True,
+        temperature=0.1,
+        response_format={"type": "text"},
+    ))
     flow_name: str = "TransformGemmaFlow"
-    model_config: GemmaModelConfig = field(default_factory=GemmaModelConfig)
-    prompt_template: PromptTemplate = field(
-        default_factory=lambda: PromptTemplate(
-            instruction="You are Gemma, a large language model trained by Google. Write out your reasoning step-by-step to be sure you get the right answers!",
-            few_shot_prompt=[]
-        )
-    )
+    prompt_template: PromptTemplate = field(default_factory=lambda: PromptTemplate(
+        instruction="You are Gemma, a large language model trained by Google. Write out your reasoning step-by-step to be sure you get the right answers!",
+        few_shot_prompt=[]
+    ))
 
 
 ###########################################################

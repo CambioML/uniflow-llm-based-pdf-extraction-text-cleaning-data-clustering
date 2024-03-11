@@ -2,7 +2,7 @@
 
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict
+from typing import Optional, Any, Dict
 from transformers import BitsAndBytesConfig
 
 
@@ -73,6 +73,7 @@ class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
     model_name: str = "mistralai/Mistral-7B-Instruct-v0.2"
+    token: Optional[str] = None
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
     neuron: bool = False
@@ -86,22 +87,6 @@ class HuggingfaceModelConfig(ModelConfig):
     repetition_penalty: float = 1.2
     response_start_key: str = None
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
-
-
-@dataclass
-class GemmaModelConfig:
-    model_name: str = "google/gemma-7b-it"
-    batch_size: int = 64  # This might be adjusted or not used depending on implementation
-    quantization_config: BitsAndBytesConfig = BitsAndBytesConfig(load_in_4bit=True)
-    torch_dtype: str = "auto"
-    device_map: str = "auto"
-    token: str = "hf_G123"  # Ensure this is your actual access token
-    max_new_tokens: int = 512
-    do_sample: bool = True
-    temperature: float = 0.1
-    top_k: int = 50
-    response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
-    model_server: str = "GemmaModelServer"
 
 
 @dataclass
