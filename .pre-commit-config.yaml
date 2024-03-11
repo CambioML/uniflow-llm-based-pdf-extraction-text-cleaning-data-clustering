@@ -28,3 +28,14 @@ repos:
           - "--remove-all-unused-imports"
         exclude: "uniflow/__init__.py"
 
+  # run all unittests
+  - repo: local
+    hooks:
+      - id: unittests
+        name: Run Unittests
+        entry: ./run_tests.sh
+        language: script
+        # Optional: Specify types of files that trigger this hook
+        # types: [python]
+        # Optional: Specify files or directories to exclude
+        # exclude: '^docs/'
