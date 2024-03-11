@@ -1,6 +1,5 @@
 import os
-import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 
 class S3Client:
@@ -16,6 +15,8 @@ class S3Client:
         try:
             # import in class level to avoid installing boto3
             import boto3
+
+            boto3.__version__
 
             self._s3_client = aws_session.client("s3", region_name=self._aws_region)
 
