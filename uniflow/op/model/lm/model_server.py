@@ -313,18 +313,15 @@ class HuggingfaceModelServer(AbsModelServer):
         """Get model."""
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
-            torch_dtype="auto" if is_gemma else None,
-            device_map="auto",
             use_auth_token=self._model_config.token if is_gemma else None,
         )
         tokenizer.pad_token = tokenizer.eos_token
         model = AutoModelForCausalLM.from_pretrained(
             self._model_config.model_name,
-            torch_dtype="auto" if is_gemma else None,
             device_map="auto",
             offload_folder="./offload" if not is_gemma else None,
-            load_in_4bit=self._model_config.load_in_4bit if not is_gemma else False,
-            load_in_8bit=self._model_config.load_in_8bit if not is_gemma else False,
+            load_in_4bit=self._model_config.load_in_4bit,
+            load_in_8bit=self._model_config.load_in_8bit,
             use_auth_token=self._model_config.token if is_gemma else None,
         )
         return tokenizer, model
