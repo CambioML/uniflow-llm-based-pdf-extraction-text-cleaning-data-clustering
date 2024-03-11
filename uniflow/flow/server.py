@@ -196,7 +196,8 @@ class TransformServer:
             List[Mapping[str, Any]]: List of batches
         """
         # currently only HuggingFace model support batch.
-        # this will require some refactoring to support other models.
+        # For others, we use a thread pool to invoke remote server
+        # multiple times to mock a batch inference.
         batch_size = self._config.model_config.get("batch_size", None)
         if not batch_size:
             batch_size = self._config.model_config.get(
