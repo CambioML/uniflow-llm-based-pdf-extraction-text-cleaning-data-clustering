@@ -32,7 +32,7 @@ repos:
   - repo: local
     hooks:
       - id: unittests
-        name: Run Unittests
+        name: unittests
         entry: ./run_tests.sh
         language: script
         # Optional: Specify types of files that trigger this hook
