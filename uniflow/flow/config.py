@@ -396,11 +396,9 @@ class GemmaTransformConfig(TransformConfig):
     model_config: HuggingfaceModelConfig = field(default_factory=lambda: HuggingfaceModelConfig(
         model_name="google/gemma-7b-it",
         token="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",  # Use your Hugging Face API token
-        batch_size=64,
-        load_in_4bit=True,
-        max_new_tokens=512,
-        do_sample=True,
+        batch_size=128,
         temperature=0.1,
+        do_sample=True,
         response_format={"type": "text"},
     ))
     flow_name: str = "TransformGemmaFlow"
