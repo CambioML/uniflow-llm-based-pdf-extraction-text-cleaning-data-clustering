@@ -10,7 +10,6 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
 
-import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 from uniflow.op.model.model_config import (
@@ -271,82 +270,67 @@ class HuggingfaceModelServer(AbsModelServer):
         self._model_config = HuggingfaceModelConfig(**model_config)
 
         if self._model_config.model_name == "google/gemma-7b-it":
-            self.tokenizer, self.model = self._initialize_gemma_model()
-            self._pipeline = pipeline(
-                "text-generation",
-                model=self.model,
-                tokenizer=self.tokenizer,
-                device_map="auto",
-                do_sample=self._model_config.do_sample,
-                temperature=self._model_config.temperature,
-                num_beams=self._model_config.num_beams,
-                max_new_tokens=self._model_config.max_new_tokens,
-                num_return_sequences=self._model_config.num_return_sequences,
-                repetition_penalty=self._model_config.repetition_penalty,
-                eos_token_id=self.tokenizer.eos_token_id,
-                pad_token_id=self.tokenizer.pad_token_id,
-                batch_size=self._model_config.batch_size,
-            )
+            self._initialize_gemma_model()
         else:
-            self.tokenizer, self.model = self._initialize_default_model()
+            self._initialize_default_model()
 
     def _initialize_gemma_model(self):
-        tokenizer = AutoTokenizer.from_pretrained(
-            self._model_config.model_name,
-            torch_dtype="auto",
-            device_map="auto",
-            use_auth_token=self._model_config.token,
-        )
-        model = AutoModelForCausalLM.from_pretrained(
-            self._model_config.model_name,
-            torch_dtype="auto",
-            device_map="auto",
-            use_auth_token=self._model_config.token,
-        )
-        return tokenizer, model
+        self._tokenizer, self._model = self._get_model(is_gemma=True)
+        self._pipeline = self._create_pipeline(self._model, self._tokenizer)
 
     def _initialize_default_model(self):
         try:
-            model, tokenizer = self._get_model()
-            self._pipeline = pipeline(
-                "text-generation",
-                model=model,
-                tokenizer=tokenizer,
-                device_map="auto",
-                do_sample=self._model_config.do_sample,
-                temperature=self._model_config.temperature,
-                num_beams=self._model_config.num_beams,
-                max_new_tokens=self._model_config.max_new_tokens,
-                num_return_sequences=self._model_config.num_return_sequences,
-                repetition_penalty=self._model_config.repetition_penalty,
-                eos_token_id=tokenizer.eos_token_id,
-                pad_token_id=tokenizer.pad_token_id,
-                batch_size=self._model_config.batch_size,
-            )
+            self._tokenizer, self._model = self._get_model()
+            self._pipeline = self._create_pipeline(self._model, self._tokenizer)
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
                 "Please install transformers to use HuggingfaceModelServer."
             ) from exc
-        return tokenizer, model
 
-    def _get_model(self):
+    def _get_model(self, is_gemma: bool = False):
+        """Get model."""
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
+            torch_dtype="auto" if is_gemma else None,
+            device_map="auto",
+            use_auth_token=self._model_config.token if is_gemma else None,
         )
         tokenizer.pad_token = tokenizer.eos_token
         model = AutoModelForCausalLM.from_pretrained(
             self._model_config.model_name,
+            torch_dtype="auto" if is_gemma else None,
             device_map="auto",
-            offload_folder="./offload",
-            load_in_4bit=self._model_config.load_in_4bit,
-            load_in_8bit=self._model_config.load_in_8bit,
+            offload_folder="./offload" if not is_gemma else None,
+            load_in_4bit=self._model_config.load_in_4bit if not is_gemma else False,
+            load_in_8bit=self._model_config.load_in_8bit if not is_gemma else False,
+            use_auth_token=self._model_config.token if is_gemma else None,
         )
-        return model, tokenizer
+        return tokenizer, model
+
+    def _create_pipeline(self, model, tokenizer):
+        """Create the text-generation pipeline."""
+        return pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=tokenizer,
+            device_map="auto",
+            do_sample=self._model_config.do_sample,
+            temperature=self._model_config.temperature,
+            num_beams=self._model_config.num_beams,
+            max_new_tokens=self._model_config.max_new_tokens,
+            num_return_sequences=self._model_config.num_return_sequences,
+            repetition_penalty=self._model_config.repetition_penalty,
+            eos_token_id=tokenizer.eos_token_id,
+            pad_token_id=tokenizer.pad_token_id,
+            batch_size=self._model_config.batch_size,
+        )
 
     def _preprocess(self, data: List[str]) -> List[str]:
         """Preprocess data.
+
         Args:
             data (List[str]): Data to preprocess.
+
         Returns:
             List[str]: Preprocessed data.
         """
@@ -365,20 +349,24 @@ class HuggingfaceModelServer(AbsModelServer):
         # question:   <-- response_start_key is added here !!!
         if self._model_config.response_start_key:
             data = [
-                self.tokenizer.apply_chat_template(d, tokenize=False)
+                self._tokenizer.apply_chat_template(d, tokenize=False)
                 + f"\n{self._model_config.response_start_key}: "  # noqa: W503
                 for d in data
             ]
         # if response_start_key is not provided, simply add the instruction token
         # using apply_chat_template
         else:
-            data = [self.tokenizer.apply_chat_template(d, tokenize=False) for d in data]
+            data = [
+                self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
+            ]
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
         """Postprocess data.
+
         Args:
             data (List[str]): Data to postprocess.
+
         Returns:
             List[str]: Postprocessed data.
         """
