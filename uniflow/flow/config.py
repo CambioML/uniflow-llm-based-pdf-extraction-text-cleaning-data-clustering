@@ -393,19 +393,23 @@ class TransformForClusteringOpenAIGPT4Config:
 
 @dataclass
 class GemmaTransformConfig(TransformConfig):
-    model_config: HuggingfaceModelConfig = field(default_factory=lambda: HuggingfaceModelConfig(
-        model_name="google/gemma-7b-it",
-        token="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",  # Use your Hugging Face API token
-        batch_size=128,
-        temperature=0.1,
-        do_sample=True,
-        response_format={"type": "text"},
-    ))
+    model_config: HuggingfaceModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(
+            model_name="google/gemma-7b-it",
+            token="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",  # Use your Hugging Face API token
+            batch_size=128,
+            temperature=0.1,
+            do_sample=True,
+            response_format={"type": "text"},
+        )
+    )
     flow_name: str = "TransformGemmaFlow"
-    prompt_template: PromptTemplate = field(default_factory=lambda: PromptTemplate(
-        instruction="You are Gemma, a large language model trained by Google. Write out your reasoning step-by-step to be sure you get the right answers!",
-        few_shot_prompt=[]
-    ))
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="You are Gemma, a large language model trained by Google. Write out your reasoning step-by-step to be sure you get the right answers!",
+            few_shot_prompt=[],
+        )
+    )
 
 
 ###########################################################

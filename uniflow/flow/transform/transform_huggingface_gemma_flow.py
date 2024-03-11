@@ -9,6 +9,7 @@ from uniflow.op.model.lm.model import LmModel
 from uniflow.op.model.model_op import ModelOp
 from uniflow.op.prompt import PromptTemplate
 
+
 class GemmaModelFlow(Flow):
     """Gemma Model Flow Class."""
 
@@ -44,6 +45,7 @@ class GemmaModelFlow(Flow):
         """
         # Pass nodes through the model operation
         return self._model_op(nodes)
+
 
 class TransformGemmaFlow(GemmaModelFlow):
     """Transform Gemma Flow Class."""

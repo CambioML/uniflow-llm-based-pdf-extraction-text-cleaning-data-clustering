@@ -9,8 +9,14 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from typing import Any, Dict, List, Optional
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, pipeline
+
 import torch
+from transformers import (
+    AutoModelForCausalLM,
+    AutoTokenizer,
+    BitsAndBytesConfig,
+    pipeline,
+)
 
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
@@ -19,7 +25,7 @@ from uniflow.op.model.model_config import (
     HuggingfaceModelConfig,
     LMQGModelConfig,
     OpenAIModelConfig,
-    SageMakerModelConfig
+    SageMakerModelConfig,
 )
 from uniflow.op.model.model_server import AbsModelServer
 from uniflow.op.prompt import PromptTemplate
@@ -265,66 +271,78 @@ class HuggingfaceModelServer(AbsModelServer):
     def __init__(self, prompt_template, model_config: Dict[str, Any]):
         super().__init__(prompt_template, model_config)
         self._model_config = HuggingfaceModelConfig(**model_config)
-        
+
         if self._model_config.model_name == "google/gemma-7b-it":
             self.tokenizer, self.model = self._initialize_gemma_model()
-            self._pipeline = pipeline("text-generation",
-                                      model=self.model,
-                                      tokenizer=self.tokenizer,
-                                      device_map="auto",
-                                      do_sample=self._model_config.do_sample,
-                                      temperature=self._model_config.temperature,
-                                      num_beams=self._model_config.num_beams,
-                                      max_new_tokens=self._model_config.max_new_tokens,
-                                      num_return_sequences=self._model_config.num_return_sequences,
-                                      repetition_penalty=self._model_config.repetition_penalty,
-                                      eos_token_id=self.tokenizer.eos_token_id,
-                                      pad_token_id=self.tokenizer.pad_token_id,
-                                      batch_size=self._model_config.batch_size)
+            self._pipeline = pipeline(
+                "text-generation",
+                model=self.model,
+                tokenizer=self.tokenizer,
+                device_map="auto",
+                do_sample=self._model_config.do_sample,
+                temperature=self._model_config.temperature,
+                num_beams=self._model_config.num_beams,
+                max_new_tokens=self._model_config.max_new_tokens,
+                num_return_sequences=self._model_config.num_return_sequences,
+                repetition_penalty=self._model_config.repetition_penalty,
+                eos_token_id=self.tokenizer.eos_token_id,
+                pad_token_id=self.tokenizer.pad_token_id,
+                batch_size=self._model_config.batch_size,
+            )
         else:
             self.tokenizer, self.model = self._initialize_default_model()
 
     def _initialize_gemma_model(self):
         quantization_config = BitsAndBytesConfig(load_in_4bit=True)
-        tokenizer = AutoTokenizer.from_pretrained(self._model_config.model_name, 
-                                                  quantization_config=quantization_config, 
-                                                  torch_dtype="auto", 
-                                                  device_map="auto", 
-                                                  use_auth_token=self._model_config.token)
-        model = AutoModelForCausalLM.from_pretrained(self._model_config.model_name, 
-                                                     torch_dtype="auto", 
-                                                     device_map="auto", 
-                                                     use_auth_token=self._model_config.token)
+        tokenizer = AutoTokenizer.from_pretrained(
+            self._model_config.model_name,
+            quantization_config=quantization_config,
+            torch_dtype="auto",
+            device_map="auto",
+            use_auth_token=self._model_config.token,
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            self._model_config.model_name,
+            torch_dtype="auto",
+            device_map="auto",
+            use_auth_token=self._model_config.token,
+        )
         return tokenizer, model
 
     def _initialize_default_model(self):
         try:
             model, tokenizer = self._get_model()
-            self._pipeline = pipeline("text-generation",
-                                      model=model,
-                                      tokenizer=tokenizer,
-                                      device_map="auto",
-                                      do_sample=self._model_config.do_sample,
-                                      temperature=self._model_config.temperature,
-                                      num_beams=self._model_config.num_beams,
-                                      max_new_tokens=self._model_config.max_new_tokens,
-                                      num_return_sequences=self._model_config.num_return_sequences,
-                                      repetition_penalty=self._model_config.repetition_penalty,
-                                      eos_token_id=tokenizer.eos_token_id,
-                                      pad_token_id=tokenizer.pad_token_id,
-                                      batch_size=self._model_config.batch_size)
+            self._pipeline = pipeline(
+                "text-generation",
+                model=model,
+                tokenizer=tokenizer,
+                device_map="auto",
+                do_sample=self._model_config.do_sample,
+                temperature=self._model_config.temperature,
+                num_beams=self._model_config.num_beams,
+                max_new_tokens=self._model_config.max_new_tokens,
+                num_return_sequences=self._model_config.num_return_sequences,
+                repetition_penalty=self._model_config.repetition_penalty,
+                eos_token_id=tokenizer.eos_token_id,
+                pad_token_id=tokenizer.pad_token_id,
+                batch_size=self._model_config.batch_size,
+            )
         except ModuleNotFoundError as exc:
-            raise ModuleNotFoundError("Please install transformers to use HuggingfaceModelServer.") from exc
+            raise ModuleNotFoundError(
+                "Please install transformers to use HuggingfaceModelServer."
+            ) from exc
         return tokenizer, model
 
     def _get_model(self):
         tokenizer = AutoTokenizer.from_pretrained(self._model_config.model_name)
         tokenizer.pad_token = tokenizer.eos_token
-        model = AutoModelForCausalLM.from_pretrained(self._model_config.model_name,
-                                                     device_map="auto",
-                                                     offload_folder="./offload",
-                                                     load_in_4bit=self._model_config.load_in_4bit,
-                                                     load_in_8bit=self._model_config.load_in_8bit)
+        model = AutoModelForCausalLM.from_pretrained(
+            self._model_config.model_name,
+            device_map="auto",
+            offload_folder="./offload",
+            load_in_4bit=self._model_config.load_in_4bit,
+            load_in_8bit=self._model_config.load_in_8bit,
+        )
         return model, tokenizer
 
     def _preprocess(self, data: List[str]) -> List[str]:
@@ -342,9 +360,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # if response_start_key is not provided, simply add the instruction token
         # using apply_chat_template
         else:
-            data = [
-                self.tokenizer.apply_chat_template(d, tokenize=False) for d in data
-            ]
+            data = [self.tokenizer.apply_chat_template(d, tokenize=False) for d in data]
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
