@@ -4,8 +4,6 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 
-from transformers import BitsAndBytesConfig
-
 
 @dataclass
 class ModelConfig:
