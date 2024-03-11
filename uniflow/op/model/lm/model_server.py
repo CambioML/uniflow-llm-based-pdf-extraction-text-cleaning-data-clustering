@@ -271,12 +271,34 @@ class HuggingfaceModelServer(AbsModelServer):
 
         if self._model_config.model_name == "google/gemma-7b-it":
             self._initialize_gemma_model()
+        elif self._model_config.neuron:
+            self._initialize_neuron_model()
         else:
             self._initialize_default_model()
 
     def _initialize_gemma_model(self):
         self._tokenizer, self._model = self._get_model(is_gemma=True)
         self._pipeline = self._create_pipeline(self._model, self._tokenizer)
+
+    def _initialize_neuron_model(self):
+        if self._model_config.load_in_4bit or self._model_config.load_in_8bit:
+            self._model_config.load_in_4bit = False
+            self._model_config.load_in_8bit = False
+            print(
+                "Neuron model does not support quantized models. load_in_4bit and load_in_8bit are automatically set to False."
+            )
+        from uniflow.op.model.lm.neuron_utils import Neuron
+
+        self._tokenizer, self._model = Neuron.get_neuron_model(
+            self._model_config.model_name, self._model_config.batch_size
+        )
+        self._pipeline = partial(
+            Neuron.neuron_infer,
+            model=self._model,
+            tokenizer=self._tokenizer,
+            max_new_tokens=self._model_config.max_new_tokens,
+            batch_size=self._model_config.batch_size,
+        )
 
     def _initialize_default_model(self):
         try:
@@ -377,8 +399,20 @@ class HuggingfaceModelServer(AbsModelServer):
                 response = re.sub(self.PATTERN, "", d["generated_text"]).strip()
                 response_list.append(response)
 
+        if self._model_config.model_name == "google/gemma-7b-it":
+            # Process Gemma's output to remove special tokens and extract the answer
+            response_list = [
+                re.sub(
+                    r"<bos><start_of_turn>.*?<end_of_turn>\n",
+                    "",
+                    response,
+                    flags=re.DOTALL,
+                ).strip()
+                for response in response_list
+            ]
+
         # if response_format is json_object, parse the response into json_object.
-        if (
+        elif (
             self._model_config.response_format
             and self._model_config.response_format["type"]  # noqa: W503
             == "json_object"  # noqa: W503
