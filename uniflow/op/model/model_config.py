@@ -25,8 +25,6 @@ class GoogleModelConfig(ModelConfig):
     top_p: float = 1.0
     candidate_count: int = 1
     num_thread: int = 1
-    # this is not real batch inference, but size to group for thread pool executor.
-    # batch_size: int = 1
 
 
 @dataclass
@@ -46,8 +44,6 @@ class OpenAIModelConfig(ModelConfig):
     temperature: float = 0.9
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
     num_thread: int = 1
-    # this is not real batch inference, but size to group for thread pool executor.
-    # batch_size: int = 1
 
 
 @dataclass
@@ -63,8 +59,6 @@ class AzureOpenAIModelConfig:
     temperature: float = 0.7
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
     num_thread: int = 1
-    # this is not real batch inference, but size to group for thread pool executor.
-    # batch_size: int = 1
 
 
 @dataclass
