@@ -397,9 +397,6 @@ class GemmaTransformConfig(TransformConfig):
         default_factory=lambda: HuggingfaceModelConfig(
             model_name="google/gemma-7b-it",
             token="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",  # Use your Hugging Face API token
-            batch_size=128,
-            temperature=0.1,
-            do_sample=True,
             response_format={"type": "text"},
         )
     )

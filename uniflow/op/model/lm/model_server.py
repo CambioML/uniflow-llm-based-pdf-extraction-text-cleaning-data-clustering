@@ -11,12 +11,7 @@ from functools import partial
 from typing import Any, Dict, List, Optional
 
 import torch
-from transformers import (
-    AutoModelForCausalLM,
-    AutoTokenizer,
-    BitsAndBytesConfig,
-    pipeline,
-)
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 from uniflow.op.model.model_config import (
     AzureOpenAIModelConfig,
@@ -266,9 +261,12 @@ class AzureOpenAIModelServer(AbsModelServer):
 
 
 class HuggingfaceModelServer(AbsModelServer):
+    """Huggingface Model Server Class."""
+
     PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
 
-    def __init__(self, prompt_template, model_config: Dict[str, Any]):
+    def __init__(self, prompt_template, model_config: Dict[str, Any]) -> None:
+        # import in class level to avoid installing transformers package
         super().__init__(prompt_template, model_config)
         self._model_config = HuggingfaceModelConfig(**model_config)
 
@@ -293,10 +291,8 @@ class HuggingfaceModelServer(AbsModelServer):
             self.tokenizer, self.model = self._initialize_default_model()
 
     def _initialize_gemma_model(self):
-        quantization_config = BitsAndBytesConfig(load_in_4bit=True)
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
-            quantization_config=quantization_config,
             torch_dtype="auto",
             device_map="auto",
             use_auth_token=self._model_config.token,
@@ -334,7 +330,9 @@ class HuggingfaceModelServer(AbsModelServer):
         return tokenizer, model
 
     def _get_model(self):
-        tokenizer = AutoTokenizer.from_pretrained(self._model_config.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(
+            self._model_config.model_name,
+        )
         tokenizer.pad_token = tokenizer.eos_token
         model = AutoModelForCausalLM.from_pretrained(
             self._model_config.model_name,
@@ -346,11 +344,25 @@ class HuggingfaceModelServer(AbsModelServer):
         return model, tokenizer
 
     def _preprocess(self, data: List[str]) -> List[str]:
-        """Preprocess data."""
-        # add role and content key to data for apply_chat_template as argument
+        """Preprocess data.
+        Args:
+            data (List[str]): Data to preprocess.
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        # add role and content key to data for apply_chat_template
+        # as argument
         data = [[{"role": "user", "content": d}] for d in data]
         # if response_start_key is provided (few shot mode), add it with colon after
         # the end of instruction token for better instruction following performance.
+        # Below is an example, if you have a QA prompt template like this for 1 shot mode:
+
+        # <s>[INST] "instruction: This is an instruction.\n <-- instruction
+        # context: ... <-- few shot context
+        # question: ... <-- few shot question
+        # answer: ... <-- few shot answer
+        # context: ... [/INST] <-- input context with [/INST]
+        # question:   <-- response_start_key is added here !!!
         if self._model_config.response_start_key:
             data = [
                 self.tokenizer.apply_chat_template(d, tokenize=False)
@@ -364,7 +376,12 @@ class HuggingfaceModelServer(AbsModelServer):
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
-        """Postprocess data."""
+        """Postprocess data.
+        Args:
+            data (List[str]): Data to postprocess.
+        Returns:
+            List[str]: Postprocessed data.
+        """
         response_list = []
         # clean up instruction token.
         for output_list in data:
@@ -408,7 +425,12 @@ class HuggingfaceModelServer(AbsModelServer):
         return response_list
 
     def __call__(self, data: List[str]) -> List[str]:
-        """Run model."""
+        """Run model.
+        Args:
+            data (List[str]): Data to run.
+        Returns:
+            List[str]: Output data.
+        """
         data = self._preprocess(data)
         data = self._pipeline(data)
         data = self._postprocess(data)
