@@ -257,6 +257,7 @@ class TransformQAHuggingFaceConfig(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -293,6 +294,7 @@ class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
