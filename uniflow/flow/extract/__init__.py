@@ -10,6 +10,9 @@ from uniflow.flow.extract.extract_ipynb_flow import ExtractIpynbFlow  # noqa: F4
 from uniflow.flow.extract.extract_md_flow import ExtractMarkdownFlow  # noqa: F401;
 from uniflow.flow.extract.extract_pdf_flow import ExtractPDFFlow  # noqa: F401;
 from uniflow.flow.extract.extract_txt_flow import ExtractTxtFlow  # noqa: F401, F403
+from uniflow.flow.extract.gcp.workspace.extract_gmail_flow import (  # noqa: F401, F403
+    ExtractGmailFlow,
+)
 
 __all__ = [
     "ExtractIpynbFlow",
@@ -18,4 +21,5 @@ __all__ = [
     "ExtractTxtFlow",
     "ExtractImageFlow",
     "ExtractHTMLFlow",
+    "ExtractGmailFlow",
 ]
