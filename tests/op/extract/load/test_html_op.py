@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+from bs4 import BeautifulSoup
 from uniflow.node import Node
 from uniflow.op.extract.load.html_op import ExtractHTMLOp, ProcessHTMLOp
 
@@ -8,6 +9,10 @@ from uniflow.op.extract.load.html_op import ExtractHTMLOp, ProcessHTMLOp
 class TestExtractHTMLOp(unittest.TestCase):
     def setUp(self):
         self.extract_op = ExtractHTMLOp("test_extract")
+
+    def test_bs4(self):
+        soup = BeautifulSoup("<html></html>", "html.parser")
+        return soup
 
     def test_extract_html_op_with_url(self):
         node = Node("test_node", {"url": "http://testsite.com"})
