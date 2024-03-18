@@ -49,6 +49,10 @@ class OpenAIModelFlow(Flow):
         Returns:
             Sequence[Node]: Nodes after running.
         """
+        temp = self._model_op(nodes)
+        print("nodes: ", temp[0])
+        print("value dict:", temp[0].value_dict)
+
         return self._model_op(nodes)
 
 

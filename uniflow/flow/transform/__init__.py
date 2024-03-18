@@ -26,8 +26,11 @@ from uniflow.flow.transform.transform_lmqg_flow import (  # noqa: F401, F403
 from uniflow.flow.transform.transform_openai_flow import (  # noqa: F401, F403
     TransformOpenAIFlow,
 )
-from uniflow.flow.transform.transform_summary_flow import (
-    TransformSummaryGoogleFlow,
+from uniflow.flow.transform.transform_comparison_google_flow import ( # noqa: F401, F403
+    TransformComparisonGoogleFlow,
+)
+from uniflow.flow.transform.transform_comparison_openai_flow import ( # noqa: F401, F403
+    TransformComparisonOpenAIFlow,
 )
 
 __all__ = [
@@ -38,5 +41,6 @@ __all__ = [
     "TransformAzureOpenAIFlow",
     "TransformGoogleFlow",
     "TransformGoogleMultiModalModelFlow",
-    "TransformSummaryGoogleFlow",
+    "TransformComparisonGoogleFlow",
+    "TransformComparisonOpenAIFlow",
 ]

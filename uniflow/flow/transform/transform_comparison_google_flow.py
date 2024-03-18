@@ -1,5 +1,6 @@
-"""Paper Comparison Flow Module."""
+"""Paper Comparison Google Model Flow Module."""
 
+import re
 from typing import Any, Dict, Sequence
 
 from uniflow.constants import TRANSFORM
@@ -15,44 +16,36 @@ from uniflow.op.basic.reduce_op import ReduceOp
 from uniflow.op.basic.group_op import GroupOp
 
 
-class GoogleModelFlow(Flow):
-    """Google Model Flow Class."""
+class GoogleComparisonFlow(Flow):
+    """Google Compariosn Flow Class."""
 
     def __init__(
         self,
         prompt_template: PromptTemplate,
         model_config: Dict[str, Any],
     ) -> None:
-        """Google Model Flow Constructor.
+        """Google Compariosn Flow Constructor.
 
         Args:
             prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
+        # TODO: Refactoring needed to make model_op output Context format. Need to keep it in Context format and only convert back to dictionary format before exiting Flow
         super().__init__()
-        self._model_op = ModelOp(
-            name="google_model_op",
-            model=LmModel(
-                prompt_template=prompt_template,
-                model_config=model_config,
-            ),
-        )
 
         # Expand list of nodes to two or more nodes 
-        self.expand0_fn = lambda x: [[x[0][i]] for i in range(len(x[0]))]
-        self._expand0_op = ExpandOp(
-            name="google_model_exapnd0",
-            fn=self.expand0_fn
+        self._expand_from_papers = ExpandOp(
+            name="expand_to_paper_node_from_nodes",
+            fn=lambda x: [[x[0][i]] for i in range(len(x[0]))]
         )
 
         # Split into chunks
-        self.expand1_fn = lambda d: [[Context(context=item.strip())] for item in d[0].Context.split('\n') if item.strip()]
-
-        self._expand1_op = ExpandOp(
-            name="google_model_expand1",
-            fn=self.expand1_fn
+        self._expand_to_chunks = ExpandOp(
+            name="split_to_chunks",
+            fn=lambda markdown_content: [[Context(context=item.strip())] for item in re.split(r'\n\s*\n', markdown_content[0].Context) if item.strip()],
         )
 
+        # TODO: Refactoring needed to make model_op output Context format
         # Add label
         label_prompt_template = PromptTemplate(
             instruction="""
@@ -69,6 +62,7 @@ class GoogleModelFlow(Flow):
             ),
         )
 
+        # TODO: Refactoring needed to make model_op output Context format
         # Summarize 
         summary_prompt_template = PromptTemplate(
             instruction="""
@@ -86,21 +80,18 @@ class GoogleModelFlow(Flow):
         )
 
         # Group summaries by label
-        self.group_fn = lambda labels, summaries: {label: [s for l, s in zip(labels, summaries) if l == label] for label in set(labels)}
-        self.preprocess_fn = lambda nodes_1, nodes_2: [(node_label.value_dict['response'][0], node_summary.value_dict['response'][0])
-                                                       for node_label, node_summary in zip(nodes_1, nodes_2)]
-
         self._group = GroupOp(
-            name="google_model_groupby",
-            preprocss_fn=self.preprocess_fn,
-            fn=self.group_fn
+            name="summaries_groupby_labels",
+            preprocss_fn=lambda nodes_1, nodes_2: [(node_label.value_dict['response'][0], node_summary.value_dict['response'][0])
+                                                       for node_label, node_summary in zip(nodes_1, nodes_2)],
+            fn=lambda labels, summaries: {label: [s for l, s in zip(labels, summaries) if l == label] for label in set(labels)},
+            given_fixed_labels=["1-Abstract", "2-Introduction", "3-Background", "4-Approach", "5-Experiment or Result", "6-Conclusion or Future work"],
         )
 
         # Reduce pair chunks from each paper into list of nodes
-        self.reduce_fn = lambda list1, list2: [Context(context=f"paper A: {a.context}, paper B: {b.context}") for a, b in zip(list1, list2)]
         self._reduce_op = ReduceOp(
-            name="google_model_reduce",
-            fn=self.reduce_fn
+            name="reduce_to_pairs",
+            fn=lambda list1, list2: [Context(context=f"paper A: {a.context}, paper B: {b.context}") for a, b in zip(list1, list2)],
         ) 
 
         # Compare
@@ -129,33 +120,30 @@ class GoogleModelFlow(Flow):
         Returns:
             Sequence[Node]: Nodes after running.
         """
+        paper1_node, paper2_node = self._expand_from_papers(nodes[0])
 
-        paper1_node, paper2_node = self._expand0_op(nodes[0])
+        paper1_node_chunks = self._expand_to_chunks(paper1_node)
+        paper2_node_chunks = self._expand_to_chunks(paper2_node)
 
-        p3_op_nodes_1 = self._expand1_op(paper1_node)
-        p3_op_nodes_2 = self._expand1_op(paper2_node)
+        paper1_node_chunks_labels = self._model_label(paper1_node_chunks)
+        paper1_node_chunks_summaries = self._model_summary(paper1_node_chunks)
 
-        label_nodes_1 = self._model_label(p3_op_nodes_1)
-        summary_nodes_1 = self._model_summary(p3_op_nodes_1)
+        paper2_node_chunks_labels = self._model_label(paper2_node_chunks)
+        paper2_node_chunks_summaries = self._model_summary(paper2_node_chunks)
 
-        label_nodes_2 = self._model_label(p3_op_nodes_2)
-        summary_nodes_2 = self._model_summary(p3_op_nodes_2)
+        paper1_node_grouped = self._group(paper1_node_chunks_labels, paper1_node_chunks_summaries)
+        paper2_node_grouped = self._group(paper2_node_chunks_labels, paper2_node_chunks_summaries)
 
-        p4_op_nodes_1 = self._group(label_nodes_1, summary_nodes_1)
-        p4_op_nodes_2 = self._group(label_nodes_2, summary_nodes_2)
-
-        p5_op_nodes = []
-        for node_1, node_2 in zip(p4_op_nodes_1, p4_op_nodes_2):
-            p5_op_nodes.append(self._reduce_op([(node_1, node_2)])[0])
+        combined_nodes = []
+        for node_1, node_2 in zip(paper1_node_grouped, paper2_node_grouped):
+            combined_nodes.append(self._reduce_op([(node_1, node_2)])[0])
         
-        p6_op_nodes = self._model_compare(p5_op_nodes)
-
         # TODO: add a model to fine fune overall comparison if needed  
         
-        return p6_op_nodes
+        return self._model_compare(combined_nodes)
 
 
-class TransformSummaryGoogleFlow(GoogleModelFlow):
+class TransformComparisonGoogleFlow(GoogleComparisonFlow):
     """Transform Google Flow Class."""  
 
     TAG = TRANSFORM
