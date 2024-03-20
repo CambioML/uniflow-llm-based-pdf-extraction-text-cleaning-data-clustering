@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from bs4 import BeautifulSoup
+
 from uniflow.node import Node
 from uniflow.op.extract.load.html_op import ExtractHTMLOp, ProcessHTMLOp
 

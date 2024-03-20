@@ -7,7 +7,6 @@ from uniflow.op.model.abs_model import AbsModel
 
 
 class TestExtractPDFOp(unittest.TestCase):
-
     def test_extract_pdf_op_with_valid_node(self):
         model = MagicMock(spec=AbsModel)
         model.run.return_value = {"response": ["Extracted text"]}
@@ -41,7 +40,6 @@ class TestExtractPDFOp(unittest.TestCase):
 
 
 class TestProcessPDFOp(unittest.TestCase):
-
     def setUp(self):
         self.process_op = ProcessPDFOp("process_pdf")
 

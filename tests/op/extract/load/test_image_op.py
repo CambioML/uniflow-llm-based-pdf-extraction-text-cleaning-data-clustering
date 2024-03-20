@@ -7,7 +7,6 @@ from uniflow.op.model.abs_model import AbsModel
 
 
 class TestExtractImageOp(unittest.TestCase):
-
     def test_extract_image_with_empty_sequence(self):
         model = Mock(spec=AbsModel)
         op = ExtractImageOp("test_op", model)
@@ -40,7 +39,6 @@ class TestExtractImageOp(unittest.TestCase):
 
 
 class TestProcessImageOp(unittest.TestCase):
-
     def test_process_image_with_empty_sequence(self):
         op = ProcessImageOp("test_op")
         self.assertEqual(op([]), [])
