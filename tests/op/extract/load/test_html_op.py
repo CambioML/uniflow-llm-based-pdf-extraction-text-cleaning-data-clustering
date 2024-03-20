@@ -8,8 +8,10 @@ from uniflow.op.extract.load.html_op import ExtractHTMLOp, ProcessHTMLOp
 
 
 class TestExtractHTMLOp(unittest.TestCase):
+
     def setUp(self):
         self.extract_op = ExtractHTMLOp("test_extract")
+        self._beautiful_soup_parser = BeautifulSoup("<html></html>", "html.parser")
 
     def test_bs4(self):
         soup = BeautifulSoup("<html></html>", "html.parser")
