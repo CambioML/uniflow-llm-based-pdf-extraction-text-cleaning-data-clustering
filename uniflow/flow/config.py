@@ -132,6 +132,32 @@ class TransformConfig:
 
 
 @dataclass
+class TransformSummaryConfig(TransformConfig):
+    """Transform Summary Config Class."""
+
+    flow_name: str = "TransformOpenAIFlow"
+    model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Given a lengthy and detailed text, the task is to generate a concise and accurate summary that captures the main points, themes, and conclusions without losing the essence of the original content.
+            The summary should be coherent, readable, and no longer than a few sentences, making it easily understandable at a glance.
+            It must distill complex ideas and narratives into their core insights, highlighting critical information while omitting extraneous details.
+            The goal is to provide a clear and succinct overview that enables readers to grasp the significance and overarching narrative of the full text quickly.
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="...",
+                    summary="...",
+                ),
+            ],
+        )
+    )
+    auto_split_long_text: bool = field(default=False)
+
+
+@dataclass
 class TransformGmailSpamConfig(TransformConfig):
     """Transform Google Config Class."""
 
@@ -231,6 +257,7 @@ class TransformQAHuggingFaceConfig(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -267,6 +294,7 @@ class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass

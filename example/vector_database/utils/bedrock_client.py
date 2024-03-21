@@ -1,7 +1,6 @@
 import json
 import os
-import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 
 class BedrockEmbeddingClient:
@@ -31,6 +30,8 @@ class BedrockEmbeddingClient:
         try:
             # import in class level to avoid installing boto3
             import boto3
+
+            boto3.__version__
 
             self._bedrock_client = aws_session.client(
                 "bedrock-runtime", region_name=self._aws_region
