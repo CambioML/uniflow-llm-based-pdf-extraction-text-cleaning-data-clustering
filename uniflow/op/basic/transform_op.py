@@ -1,6 +1,6 @@
 """Transform operation module."""
 
-from typing import Any, Callable, Mapping, Sequence, Tuple
+from typing import Any, Callable, Mapping, Sequence
 
 from uniflow.node import Node
 from uniflow.op.op import Op
