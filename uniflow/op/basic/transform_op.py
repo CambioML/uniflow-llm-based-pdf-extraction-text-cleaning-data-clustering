@@ -1,6 +1,6 @@
 """Transform operation module."""
 
-from typing import Any, Callable, Mapping, Sequence, Tuple
+from typing import Any, Callable, Mapping, Sequence
 
 from uniflow.node import Node
 from uniflow.op.op import Op
@@ -23,7 +23,7 @@ class TransformOp(Op):
         super().__init__(name)
         self._fn = fn
 
-    def __call__(self, nodes: Sequence[Tuple[Node, Node]]) -> Sequence[Node]:
+    def __call__(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Calls transform operation.
 
         Args:
