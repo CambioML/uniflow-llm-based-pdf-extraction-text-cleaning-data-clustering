@@ -260,7 +260,11 @@ class AzureOpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
+    MODEL_PATTERNS = {
+        "default": r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]",
+        "google/gemma-7b-it": r"<start_of_turn>|<end_of_turn>",
+    }
+
 
     def __init__(
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
@@ -268,6 +272,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # import in class level to avoid installing transformers package
         super().__init__(prompt_template, model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
+        self.pattern = self.MODEL_PATTERNS.get(self._model_config.model_name, self.MODEL_PATTERNS["default"])
         if self._model_config.neuron is False:
             try:
                 from transformers import (  # pylint: disable=import-outside-toplevel
@@ -387,7 +392,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # clean up instruction token.
         for output_list in data:
             for d in output_list:
-                response = re.sub(self.PATTERN, "", d["generated_text"]).strip()
+                response = re.sub(self.pattern, "", d["generated_text"]).strip()
                 response_list.append(response)
 
         # if response_format is json_object, parse the response into json_object.
