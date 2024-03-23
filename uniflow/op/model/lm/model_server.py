@@ -262,7 +262,10 @@ class AzureOpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
+    MODEL_PATTERNS = {
+        "default": r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]",
+        "google/gemma-7b-it": r"<user>.*?<model>",
+    }
 
     def __init__(self, prompt_template, model_config: Dict[str, Any]) -> None:
         # import in class level to avoid installing transformers package
