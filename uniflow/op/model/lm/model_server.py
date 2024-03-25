@@ -356,7 +356,6 @@ class HuggingfaceModelServer(AbsModelServer):
         """
         # add role and content key to data for apply_chat_template
         # as argument
-        print(data)
         
         data = [[{"role": "user", "content": re.sub(r'(.*)\ncontext:', r'\1\ncurrent context:', d, flags=re.DOTALL)}] for d in data]
         # if response_start_key is provided (few shot mode), add it with colon after
@@ -381,10 +380,6 @@ class HuggingfaceModelServer(AbsModelServer):
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
             ]
-
-        # Print the prompt to the model
-        for prompt in data:
-            print("Prompt to the model:", prompt)
 
         return data
 
