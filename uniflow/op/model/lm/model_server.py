@@ -356,7 +356,9 @@ class HuggingfaceModelServer(AbsModelServer):
         """
         # add role and content key to data for apply_chat_template
         # as argument
-        data = [[{"role": "user", "content": d}] for d in data]
+        print(data)
+        
+        data = [[{"role": "user", "content": re.sub(r'(.*)\ncontext:', r'\1\ncurrent context:', d, flags=re.DOTALL)}] for d in data]
         # if response_start_key is provided (few shot mode), add it with colon after
         # the end of instruction token for better instruction following performance.
         # Below is an example, if you have a QA prompt template like this for 1 shot mode:
