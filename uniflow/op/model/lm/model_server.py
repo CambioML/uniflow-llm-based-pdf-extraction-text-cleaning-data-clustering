@@ -262,7 +262,7 @@ class HuggingfaceModelServer(AbsModelServer):
 
     MODEL_PATTERNS = {
         "default": r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]",
-        "google/gemma-7b-it": r"<start_of_turn>|<end_of_turn>",
+        "google/gemma-7b-it": r"<bos><start_of_turn>user|<end_of_turn>|<start_of_turn>model",
     }
 
 
@@ -332,6 +332,7 @@ class HuggingfaceModelServer(AbsModelServer):
 
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
+            token=self._model_config.token
         )
         tokenizer.pad_token = tokenizer.eos_token
         model = AutoModelForCausalLM.from_pretrained(
@@ -340,6 +341,7 @@ class HuggingfaceModelServer(AbsModelServer):
             offload_folder="./offload",
             load_in_4bit=self._model_config.load_in_4bit,
             load_in_8bit=self._model_config.load_in_8bit,
+            token=self._model_config.token
         )
         return model, tokenizer
 
@@ -367,7 +369,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # question:   <-- response_start_key is added here !!!
         if self._model_config.response_start_key:
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False)
+                self._tokenizer.apply_chat_template(d, tokenize=False, add_generation_prompt=True)
                 + f"\n{self._model_config.response_start_key}: "  # noqa: W503
                 for d in data
             ]
@@ -375,8 +377,13 @@ class HuggingfaceModelServer(AbsModelServer):
         # using apply_chat_template
         else:
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
+                self._tokenizer.apply_chat_template(d, tokenize=False, add_generation_prompt=True) for d in data
             ]
+
+        # Print the prompt to the model
+        for prompt in data:
+            print("Prompt to the model:", prompt)
+
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
@@ -392,6 +399,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # clean up instruction token.
         for output_list in data:
             for d in output_list:
+                print("Response to the model:", d)
                 response = re.sub(self.pattern, "", d["generated_text"]).strip()
                 response_list.append(response)
 
