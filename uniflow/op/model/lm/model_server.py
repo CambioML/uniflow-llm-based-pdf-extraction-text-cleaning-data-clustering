@@ -333,7 +333,7 @@ class HuggingfaceModelServer(AbsModelServer):
 
         tokenizer = AutoTokenizer.from_pretrained(
             self._model_config.model_name,
-            token=self._model_config.token
+            # token=self._model_config.token
         )
         tokenizer.pad_token = tokenizer.eos_token
         model = AutoModelForCausalLM.from_pretrained(
@@ -342,7 +342,7 @@ class HuggingfaceModelServer(AbsModelServer):
             offload_folder="./offload",
             load_in_4bit=self._model_config.load_in_4bit,
             load_in_8bit=self._model_config.load_in_8bit,
-            token=self._model_config.token
+            # token=self._model_config.token
         )
         return model, tokenizer
 
