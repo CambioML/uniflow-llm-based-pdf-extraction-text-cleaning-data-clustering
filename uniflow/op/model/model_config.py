@@ -66,7 +66,7 @@ class HuggingfaceModelConfig(ModelConfig):
     """Huggingface Model Config Class."""
 
     model_name: str = "mistralai/Mistral-7B-Instruct-v0.2"
-    token: Optional[str] = "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"
+    token: Optional[str] = None
     batch_size: int = 1
     model_server: str = "HuggingfaceModelServer"
     neuron: bool = False
