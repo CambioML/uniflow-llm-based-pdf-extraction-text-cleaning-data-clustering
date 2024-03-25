@@ -371,7 +371,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # question:   <-- response_start_key is added here !!!
         if self._model_config.response_start_key:
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False, add_generation_prompt=True)
+                self._tokenizer.apply_chat_template(d, tokenize=False)
                 + f"\n{self._model_config.response_start_key}: "  # noqa: W503
                 for d in data
             ]
@@ -379,7 +379,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # using apply_chat_template
         else:
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False, add_generation_prompt=True) for d in data
+                self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
             ]
 
         # Print the prompt to the model
