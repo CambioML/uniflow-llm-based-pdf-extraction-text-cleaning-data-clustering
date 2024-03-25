@@ -422,7 +422,7 @@ class TransformForClusteringOpenAIGPT4Config:
 class GemmaTransformConfig(TransformConfig):
     model_config: HuggingfaceModelConfig = field(
         default_factory=lambda: HuggingfaceModelConfig(
-            model_name="google/gemma-7b-it",
+            model_name="google/gemma-7b",
             # token="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",  # Use your Hugging Face API token
         )
     )
