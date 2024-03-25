@@ -424,6 +424,7 @@ class GemmaTransformConfig(TransformConfig):
         default_factory=lambda: HuggingfaceModelConfig(
             model_name="google/gemma-7b-it",
             batch_size=4,
+            max_new_tokens=100,
             # token is needed for accessing Gemma model
         )
     )

@@ -381,10 +381,18 @@ class HuggingfaceModelServer(AbsModelServer):
             ]
         # if response_start_key is not provided, simply add the instruction token
         # using apply_chat_template
+        # Gemma heavily need add_generation_prompt to generate good response
+        elif (self._model_config.model_name in ("google/gemma-2b-it", "google/gemma-7b-it")):
+            data = [
+                self._tokenizer.apply_chat_template(d, tokenize=False, add_generation_prompt=True) for d in data
+            ]
         else:
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
             ]
+
+        print(data)
+
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
