@@ -28,7 +28,6 @@ class OpenAIComparisonFlow(Flow):
             prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
-        # TODO: Refactoring needed to make model_op output Context format. Need to keep it in Context format and only convert back to dictionary format before exiting Flow
         super().__init__()
         if model_config["response_format"]["type"] == "json_object":
             model = JsonLmModel(
@@ -52,12 +51,11 @@ class OpenAIComparisonFlow(Flow):
             name="split_to_chunks",
             fn=lambda markdown_content: [
                 [Context(context=item.strip())]
-                for item in re.split(r"\n\s*\n", markdown_content[0].Context)
+                for item in re.split(r"\n\s*\n", markdown_content[0].context)
                 if item.strip()
             ],
         )
 
-        # TODO: Refactoring needed to make model_op output Context format
         # Add label
         label_prompt_template = PromptTemplate(
             instruction="""
@@ -104,7 +102,6 @@ class OpenAIComparisonFlow(Flow):
             ),
         )
 
-        # TODO: Refactoring needed to make model_op output Context format
         # Summarize
         summary_prompt_template = PromptTemplate(
             instruction="""
@@ -124,13 +121,6 @@ class OpenAIComparisonFlow(Flow):
         # Group summaries by label
         self._group = GroupOp(
             name="summaries_groupby_labels",
-            preprocss_fn=lambda nodes_1, nodes_2: [
-                (
-                    node_label.value_dict["response"][0],
-                    node_summary.value_dict["response"][0],
-                )
-                for node_label, node_summary in zip(nodes_1, nodes_2)
-            ],
             fn=lambda labels, summaries: {
                 label: [s for l, s in zip(labels, summaries) if l == label]
                 for label in set(labels)

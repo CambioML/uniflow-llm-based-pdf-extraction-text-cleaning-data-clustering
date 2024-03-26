@@ -29,6 +29,7 @@ class LmModel(AbsModel):
             List[str]: Serialized data.
         """
         output = []
+
         for d in data:
             if not isinstance(d, Context):
                 raise ValueError("Input data must be a Context object.")
@@ -58,10 +59,7 @@ class LmModel(AbsModel):
         Returns:
             List[Dict[str, Any]]: Deserialized data.
         """
-        return {
-            RESPONSE: data,
-            ERROR: "No errors.",
-        }
+        return [Context(context=data)]
 
 
 class JsonLmModel(AbsModel):
