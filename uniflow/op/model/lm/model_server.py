@@ -266,14 +266,15 @@ class HuggingfaceModelServer(AbsModelServer):
         "google/gemma-7b-it": r"<bos><start_of_turn>user|<end_of_turn>|<start_of_turn>model",
     }
 
-
     def __init__(
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
     ) -> None:
         # import in class level to avoid installing transformers package
         super().__init__(prompt_template, model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
-        self.pattern = self.MODEL_PATTERNS.get(self._model_config.model_name, self.MODEL_PATTERNS["default"])
+        self.pattern = self.MODEL_PATTERNS.get(
+            self._model_config.model_name, self.MODEL_PATTERNS["default"]
+        )
         if self._model_config.neuron is False:
             try:
                 from transformers import (  # pylint: disable=import-outside-toplevel
@@ -357,9 +358,25 @@ class HuggingfaceModelServer(AbsModelServer):
         """
         # add role and content key to data for apply_chat_template
         # as argument
-        
-        if self._model_config.model_name in ("google/gemma-2b-it", "google/gemma-7b-it"):
-            data = [[{"role": "user", "content": re.sub(r'(.*)\ncontext:', r'\1\ncurrent context:', d, flags=re.DOTALL)}] for d in data]
+
+        if self._model_config.model_name in (
+            "google/gemma-2b-it",
+            "google/gemma-7b-it",
+        ):
+            data = [
+                [
+                    {
+                        "role": "user",
+                        "content": re.sub(
+                            r"(.*)\ncontext:",
+                            r"\1\ncurrent context:",
+                            d,
+                            flags=re.DOTALL,
+                        ),
+                    }
+                ]
+                for d in data
+            ]
         else:
             data = [[{"role": "user", "content": d}] for d in data]
         # if response_start_key is provided (few shot mode), add it with colon after
@@ -373,7 +390,11 @@ class HuggingfaceModelServer(AbsModelServer):
         # context: ... [/INST] <-- input context with [/INST]
         # question:   <-- response_start_key is added here !!!
         # with or without response start key, Gemma has no difference to answer the question
-        if (self._model_config.response_start_key and self._model_config.model_name not in ("google/gemma-2b-it", "google/gemma-7b-it")):
+        if (
+            self._model_config.response_start_key
+            and self._model_config.model_name
+            not in ("google/gemma-2b-it", "google/gemma-7b-it")
+        ):
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False)
                 + f"\n{self._model_config.response_start_key}: "  # noqa: W503
@@ -382,16 +403,20 @@ class HuggingfaceModelServer(AbsModelServer):
         # if response_start_key is not provided, simply add the instruction token
         # using apply_chat_template
         # Gemma heavily need add_generation_prompt to generate good response
-        elif (self._model_config.model_name in ("google/gemma-2b-it", "google/gemma-7b-it")):
+        elif self._model_config.model_name in (
+            "google/gemma-2b-it",
+            "google/gemma-7b-it",
+        ):
             data = [
-                self._tokenizer.apply_chat_template(d, tokenize=False, add_generation_prompt=True) for d in data
+                self._tokenizer.apply_chat_template(
+                    d, tokenize=False, add_generation_prompt=True
+                )
+                for d in data
             ]
         else:
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
             ]
-
-        print(data)
 
         return data
 
@@ -419,7 +444,10 @@ class HuggingfaceModelServer(AbsModelServer):
         ):
             # if example_keys (through few shot prompt) are provided,
             # parse the response into json_object.
-            if self._example_keys and self._model_config.model_name not in ("google/gemma-2b-it", "google/gemma-7b-it"):
+            if self._example_keys and self._model_config.model_name not in (
+                "google/gemma-2b-it",
+                "google/gemma-7b-it",
+            ):
                 keywords = [f"{example_key}:" for example_key in self._example_keys]
                 pattern = "|".join(map(re.escape, keywords))
                 json_response_list = []

@@ -418,6 +418,7 @@ class TransformForClusteringOpenAIGPT4Config:
         )
     )
 
+
 @dataclass
 class GemmaTransformConfig(TransformConfig):
     model_config: HuggingfaceModelConfig = field(
@@ -435,6 +436,7 @@ class GemmaTransformConfig(TransformConfig):
             few_shot_prompt=[],
         )
     )
+
 
 ###########################################################
 #                   All AutoRater Config                  #
