@@ -43,13 +43,15 @@ class GroupOp(Op):
         """
         output_nodes = []
 
-        labels, summaries = zip(*[
-            (
-                node_label.value_dict[0].context[0],
-                node_summary.value_dict[0].context[0],
-            )
-            for node_label, node_summary in zip(nodes_1, nodes_2)
-        ])
+        labels, summaries = zip(
+            *[
+                (
+                    node_label.value_dict[0].context[0],
+                    node_summary.value_dict[0].context[0],
+                )
+                for node_label, node_summary in zip(nodes_1, nodes_2)
+            ]
+        )
 
         aggregated_summaries = self._fn(labels, summaries)
         sorted_labels = sorted(aggregated_summaries.keys())

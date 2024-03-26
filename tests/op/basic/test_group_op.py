@@ -16,7 +16,6 @@ class TestGroupOp(unittest.TestCase):
         self.group_op = GroupOp("test_group", self.group_fn)
 
     def test_init(self):
-        self.assertEqual(self.group_op._preprocess_fn, self.preprocess_fn)
         self.assertEqual(self.group_op._fn, self.group_fn)
 
     def test_call(self):
