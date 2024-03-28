@@ -28,7 +28,6 @@ class GoogleComparisonFlow(Flow):
             prompt_template (PromptTemplate): Guided prompt template.
             model_config (Dict[str, Any]): Model config.
         """
-        # TODO: Refactoring needed to make model_op output Context format. Need to keep it in Context format and only convert back to dictionary format before exiting Flow
         super().__init__()
 
         # Expand list of nodes to two or more nodes
@@ -47,7 +46,6 @@ class GoogleComparisonFlow(Flow):
             ],
         )
 
-        # TODO: Refactoring needed to make model_op output Context format
         # Add label
         label_prompt_template = PromptTemplate(
             instruction="""
@@ -64,7 +62,6 @@ class GoogleComparisonFlow(Flow):
             ),
         )
 
-        # TODO: Refactoring needed to make model_op output Context format
         # Summarize
         summary_prompt_template = PromptTemplate(
             instruction="""
@@ -84,13 +81,6 @@ class GoogleComparisonFlow(Flow):
         # Group summaries by label
         self._group = GroupOp(
             name="summaries_groupby_labels",
-            preprocss_fn=lambda nodes_1, nodes_2: [
-                (
-                    node_label.value_dict["response"][0],
-                    node_summary.value_dict["response"][0],
-                )
-                for node_label, node_summary in zip(nodes_1, nodes_2)
-            ],
             fn=lambda labels, summaries: {
                 label: [s for l, s in zip(labels, summaries) if l == label]
                 for label in set(labels)
