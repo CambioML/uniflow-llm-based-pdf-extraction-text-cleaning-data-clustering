@@ -9,6 +9,7 @@ from uniflow.op.extract.split.constants import (
     PARAGRAPH_SPLITTER,
 )
 from uniflow.op.model.model_config import (
+    AzureOpenAIModelConfig,
     BedrockModelConfig,
     GoogleModelConfig,
     HuggingfaceModelConfig,
@@ -44,6 +45,17 @@ class ExtractConfig:
     model_config: Optional[ModelConfig] = None
     splitter_config: Optional[SplitterConfig] = None
     post_extract_fn: Optional[Callable] = None
+    credentials_path: str = ""
+    token_path: str = ""
+
+
+@dataclass
+class ExtractGmailConfig(ExtractConfig):
+    """Extract Txt Config Class."""
+
+    flow_name: str = "ExtractGmailFlow"
+    credentials_path: str = ""
+    token_path: str = ""
 
 
 @dataclass
@@ -127,6 +139,69 @@ class TransformConfig:
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
+
+
+@dataclass
+class TransformSummaryConfig(TransformConfig):
+    """Transform Summary Config Class."""
+
+    flow_name: str = "TransformOpenAIFlow"
+    model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""
+            Given a lengthy and detailed text, the task is to generate a concise and accurate summary that captures the main points, themes, and conclusions without losing the essence of the original content.
+            The summary should be coherent, readable, and no longer than a few sentences, making it easily understandable at a glance.
+            It must distill complex ideas and narratives into their core insights, highlighting critical information while omitting extraneous details.
+            The goal is to provide a clear and succinct overview that enables readers to grasp the significance and overarching narrative of the full text quickly.
+            """,
+            few_shot_prompt=[
+                Context(
+                    context="...",
+                    summary="...",
+                ),
+            ],
+        )
+    )
+    auto_split_long_text: bool = field(default=False)
+
+
+@dataclass
+class TransformGmailSpamConfig(TransformConfig):
+    """Transform Google Config Class."""
+
+    flow_name: str = "TransformGoogleFlow"
+    model_config: ModelConfig = field(default_factory=GoogleModelConfig)
+    num_thread: int = 1
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="""You are a highly intelligent AI trained to identify spam emails. Is this email a spam email?. \
+Follow the format of the few shot examples below to include explain and answer in the response for the given email. \
+You answer should be either Yes or No.""",
+            few_shot_prompt=[
+                Context(
+                    email="""Subject: Meeting Rescheduled \
+Hi Team, \
+We need to reschedule this week's meeting to Thursday at 3 PM due to a conflict. Please update your calendars and let me know if you have any issues with this new time. \
+Best, \
+Alex""",
+                    explain="This email is non-spam as it directly relates to the recipient's interests, contains no suspicious links or requests, and uses a personalized, professional tone.",
+                    answer="no",
+                ),
+                Context(
+                    email="""Subject: Congratulations! You've Won! \
+Dear Valued Customer, \
+You've been selected to win a free iPhone! Click here to claim your prize now! Offer expires in 24 hours. No purchase necessary. \
+Best, \
+Prize Notification Team""",
+                    explain="This email is spam due to its unsolicited offer, use of urgency to provoke immediate action, inclusion of a suspicious link, and lack of personalization, which are classic signs of spam.",
+                    answer="yes",
+                ),
+            ],
+        )
+    )
 
 
 @dataclass
@@ -143,6 +218,15 @@ class TransformOpenAIConfig(TransformConfig):
 
     flow_name: str = "TransformOpenAIFlow"
     model_config: ModelConfig = field(default_factory=OpenAIModelConfig)
+    auto_split_long_text: bool = field(default=False)
+
+
+@dataclass
+class TransformAzureOpenAIConfig(TransformConfig):
+    """Transform Azure OpenAI Config Class."""
+
+    flow_name: str = "TransformAzureOpenAIFlow"
+    model_config: ModelConfig = field(default_factory=AzureOpenAIModelConfig)
 
 
 @dataclass
@@ -184,6 +268,7 @@ class TransformQAHuggingFaceConfig(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -220,6 +305,7 @@ class TransformQAHuggingFaceJsonFormatConfig(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass
@@ -273,6 +359,7 @@ class TransformForGenerationOpenAIGPT3p5Config(TransformConfig):
             ],
         )
     )
+    auto_split_long_text: bool = field(default=False)
 
 
 @dataclass

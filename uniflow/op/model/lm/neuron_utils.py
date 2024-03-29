@@ -46,6 +46,12 @@ class Neuron:
                     "1c62a06d6f25c2241b72b95e00ededfb",
                 ]
             },
+            8: {
+                1024: [
+                    "https://cambioml-neuron-cache.s3.us-west-2.amazonaws.com/transformers_neuronx/Mistral-7B-Instruct-v0.2_tp2-bz8-1024.zip",
+                    "10b481c5b2f1e3054ca092027443b1a2",
+                ]
+            },
         }
     }
     instance_type_dict: Dict[str, int] = {

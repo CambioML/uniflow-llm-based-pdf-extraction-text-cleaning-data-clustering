@@ -1,5 +1,6 @@
 """Model config module."""
 
+import os
 from dataclasses import dataclass, field
 from typing import Any, Dict
 
@@ -24,8 +25,6 @@ class GoogleModelConfig(ModelConfig):
     top_p: float = 1.0
     candidate_count: int = 1
     num_thread: int = 1
-    # this is not real batch inference, but size to group for thread pool executor.
-    batch_size: int = 1
 
 
 @dataclass
@@ -45,25 +44,21 @@ class OpenAIModelConfig(ModelConfig):
     temperature: float = 0.9
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
     num_thread: int = 1
-    # this is not real batch inference, but size to group for thread pool executor.
-    batch_size: int = 1
 
 
 @dataclass
 class AzureOpenAIModelConfig:
     """Azure OpenAI Model Config Class."""
 
-    api_key: str
-    api_version: str
-    azure_endpoint: str
-    model_name: str = "gpt-3.5-turbo-1106"
+    api_key: str = os.getenv("AZURE_API_KEY")
+    azure_endpoint: str = os.getenv("AZURE_ENDPOINT")
+    api_version: str = os.getenv("AZURE_API_VERSION")
+    model_name: str = os.getenv("AZURE_DEPLOYMENT_NAME")
     model_server: str = "AzureOpenAIModelServer"
     num_call: int = 1
-    temperature: float = 0.9
+    temperature: float = 0.7
     response_format: Dict[str, str] = field(default_factory=lambda: {"type": "text"})
     num_thread: int = 1
-    # this is not real batch inference, but size to group for thread pool executor.
-    batch_size: int = 1
 
 
 @dataclass

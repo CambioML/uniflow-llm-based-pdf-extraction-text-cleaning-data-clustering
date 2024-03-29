@@ -40,6 +40,10 @@ class ExtractServer:
             kwargs["splitter_config"] = self._config.splitter_config
         if self._config.post_extract_fn:
             kwargs["post_extract_fn"] = self._config.post_extract_fn
+        if self._config.credentials_path:
+            kwargs["credentials_path"] = self._config.credentials_path
+        if self._config.token_path:
+            kwargs["token_path"] = self._config.token_path
         for i in range(self._num_thread):
             with OpScope(name="thread_" + str(i)):
                 self._flow_queue.put(self._flow_cls(**kwargs))
@@ -192,10 +196,14 @@ class TransformServer:
             List[Mapping[str, Any]]: List of batches
         """
         # currently only HuggingFace model support batch.
-        # this will require some refactoring to support other models.
-        batch_size = self._config.model_config.get(
-            "batch_size", 1
-        )  # pylint: disable=no-member
+        # For others, we use a thread pool to invoke remote server
+        # multiple times to mock a batch inference.
+        batch_size = self._config.model_config.get("batch_size", None)
+        if not batch_size:
+            batch_size = self._config.model_config.get(
+                "num_thread", 1
+            )  # pylint: disable=no-member
+
         if batch_size <= 0:
             raise ValueError("Batch size must be a positive integer.")
         if not input_list:  # Check if the list is empty
