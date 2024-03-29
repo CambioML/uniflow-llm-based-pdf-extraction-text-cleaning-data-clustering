@@ -2,7 +2,7 @@
 
 import copy
 import re
-from typing import Iterable, List, Optional, Sequence
+from typing import Iterable, List, Sequence
 
 import tiktoken  # Import necessary for token-based splitting
 
@@ -13,15 +13,15 @@ from uniflow.op.op import Op
 class RecursiveCharacterSplitter(Op):
     """Recursive character splitter class."""
 
-    default_separators = ["\n\n", "\n", ". ", " ", ""]
+    default_chunk_size = 1024
+    default_chunk_overlap_size = 32
+    default_separators = "\n\n|\n|. |.|, | "
+    default_splitting_mode = "char"
 
     def __init__(
         self,
-        name: str,
-        chunk_size: int = 1024,
-        chunk_overlap_size: int = 0,
-        separators: Optional[List[str]] = None,
-        splitting_mode: str = "char",  # Added parameter for splitting mode
+        splitterConfig: dict[str, any],
+        name: str = "recursive_character_splitter_op",
     ) -> None:
         """Recursive Splitter Op Constructor
 
@@ -36,10 +36,22 @@ class RecursiveCharacterSplitter(Op):
             splitting_mode (str): "char" for character count, "token" for token count. Defaults to "char".
         """
         super().__init__(name)
-        self._chunk_size = chunk_size
-        self._chunk_overlap_size = chunk_overlap_size
-        self._separators = separators or self.default_separators
-        self._splitting_mode = splitting_mode  # Track splitting mode
+
+        # Set up the splitter configuration
+        self._chunk_size = splitterConfig["max_chunk_size"] or self.default_chunk_size
+        self._separators = (
+            splitterConfig["separators"] or self.default_separators
+        ).split("|")
+
+        # Set up the splitter configuration for recursive splitting
+        self._chunk_overlap_size = (
+            "chunk_overlap_size" in splitterConfig
+            and splitterConfig["chunk_overlap_size"]
+        ) or self.default_chunk_overlap_size
+        self._splitting_mode = (
+            "splitting_mode" in splitterConfig and splitterConfig["splitting_mode"]
+        ) or self.default_splitting_mode
+
         self._encoder = tiktoken.encoding_for_model(
             "gpt-3.5"
         )  # Setup encoder for token-based splitting

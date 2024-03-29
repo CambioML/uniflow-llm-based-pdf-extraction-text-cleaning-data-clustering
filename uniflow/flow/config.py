@@ -72,7 +72,7 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = field(default_factory=NougatModelConfig)
-    splitter: str = PARAGRAPH_SPLITTER
+    splitter_config: SplitterConfig = field(default_factory=SplitterConfig)
 
 
 @dataclass
