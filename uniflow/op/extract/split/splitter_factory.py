@@ -24,7 +24,7 @@ class SplitterOpsFactory:
     }
 
     @classmethod
-    def get(cls, config: dict[str, any]) -> "Op":  # noqa: F821
+    def get(cls, config: dict) -> "Op":  # noqa: F821
         """Get splitter.
 
         Args:
