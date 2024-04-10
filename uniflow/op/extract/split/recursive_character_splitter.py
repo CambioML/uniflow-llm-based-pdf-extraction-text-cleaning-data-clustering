@@ -4,7 +4,7 @@ import copy
 import re
 from typing import Iterable, List, Sequence
 
-import tiktoken  # Import necessary for token-based splitting
+import tiktoken
 
 from uniflow.node import Node
 from uniflow.op.op import Op
@@ -15,7 +15,7 @@ class RecursiveCharacterSplitter(Op):
 
     default_chunk_size = 1024
     default_chunk_overlap_size = 32
-    default_separators = "\n\n|\n|. |.|, | "
+    default_separators = "\n\n|\n|. |.|, | |"
     default_splitting_mode = "char"
 
     def __init__(
@@ -34,14 +34,18 @@ class RecursiveCharacterSplitter(Op):
             chunk_overlap_size (int): Overlap in characters between chunks.
             separators (List[str]): Separators to use.
             splitting_mode (str): "char" for character count, "token" for token count. Defaults to "char".
+            keep_separator (bool): Whether to keep the separator. Defaults to True.
+            is_separator_regex (bool): Whether the separator is a regex. Defaults to False.
         """
         super().__init__(name)
 
         # Set up the splitter configuration
         self._chunk_size = splitterConfig["max_chunk_size"] or self.default_chunk_size
         self._separators = (
-            splitterConfig["separators"] or self.default_separators
+            ("separators" in splitterConfig and splitterConfig["separators"])
+            or self.default_separators
         ).split("|")
+        print(f"Separators: {self._separators}")
 
         # Set up the splitter configuration for recursive splitting
         self._chunk_overlap_size = (
@@ -51,6 +55,16 @@ class RecursiveCharacterSplitter(Op):
         self._splitting_mode = (
             "splitting_mode" in splitterConfig and splitterConfig["splitting_mode"]
         ) or self.default_splitting_mode
+        self._keep_separator = (
+            True
+            and ("keep_separator" in splitterConfig)
+            and splitterConfig["keep_separator"]
+        )
+        self._is_separator_regex = (
+            ("is_separator_regex" in splitterConfig)
+            and splitterConfig["is_separator_regex"]
+            or False
+        )
 
         self._encoder = tiktoken.encoding_for_model(
             "gpt-3.5"
@@ -118,18 +132,21 @@ class RecursiveCharacterSplitter(Op):
                 break
 
         # Splited by current separator firstly
-        cur_separator = re.escape(cur_separator)
+        cur_separator = (
+            cur_separator if self._is_separator_regex else re.escape(cur_separator)
+        )
         splits = [s for s in re.split(cur_separator, text) if s != ""]
 
         # Then go merging things, recursively splitting longer texts.
-        _tmp_splits, _separator = [], ""
+        _tmp_splits = []
+        merge_separator = "" if self._keep_separator else _separator
         for s in splits:
             if self._get_length(s) <= self._chunk_size:
                 _tmp_splits.append(s)
             else:
                 # merge splitted texts into a chunk
                 if _tmp_splits:
-                    merged_text = self._merge_splits(_tmp_splits, _separator)
+                    merged_text = self._merge_splits(_tmp_splits, merge_separator)
                     final_chunks.extend(merged_text)
                     # reset tmp_splits
                     _tmp_splits = []
@@ -142,7 +159,7 @@ class RecursiveCharacterSplitter(Op):
                     final_chunks.extend(other_info)
 
         if _tmp_splits:
-            merged_text = self._merge_splits(_tmp_splits, _separator)
+            merged_text = self._merge_splits(_tmp_splits, merge_separator)
             final_chunks.extend(merged_text)
 
         return final_chunks
@@ -177,6 +194,7 @@ class RecursiveCharacterSplitter(Op):
                     doc = separator.join(current_doc).strip()
                     if doc is not None:
                         docs.append(doc)
+
                     # Keep on popping if:
                     # - we have a larger chunk than in the chunk overlap
                     # - or if we still have any chunks and the length is long

@@ -11,6 +11,9 @@ from uniflow.op.op import Op
 class PatternSplitter(Op):
     """Pattern Splitter Op Class"""
 
+    default_separators = "\n\n|\n"
+    default_min_chunk_size = 1
+
     def __init__(
         self, splitterConfig: dict[str, any], name: str = "paragraph_split_op"
     ) -> None:
@@ -22,6 +25,12 @@ class PatternSplitter(Op):
         """
         super().__init__(name)
         self._splitter_config = splitterConfig
+        self._separators = (
+            "separators" in splitterConfig and splitterConfig["separators"]
+        ) or self.default_separators
+        self._min_chunk_size = (
+            "min_chunk_size" in splitterConfig and splitterConfig["min_chunk_size"]
+        ) or self.default_min_chunk_size
 
     def __call__(
         self,
@@ -39,8 +48,8 @@ class PatternSplitter(Op):
         for node in nodes:
             value_dict = copy.deepcopy(node.value_dict)
             text = value_dict["text"]
-            text = re.split(self._splitter_config["separators"], text)
-            text = [p for p in text if len(p) > self._splitter_config["min_chunk_size"]]
+            text = re.split(self._separators, text)
+            text = [p for p in text if len(p) > self._min_chunk_size]
             output_nodes.append(
                 Node(
                     name=self.unique_name(),
