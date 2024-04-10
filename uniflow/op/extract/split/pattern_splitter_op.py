@@ -14,9 +14,7 @@ class PatternSplitter(Op):
     default_separators = "\n\n|\n"
     default_min_chunk_size = 1
 
-    def __init__(
-        self, splitterConfig: dict[str, any], name: str = "paragraph_split_op"
-    ) -> None:
+    def __init__(self, splitterConfig: dict, name: str = "paragraph_split_op") -> None:
         """Pattern Splitter Op Constructor
 
         Args:

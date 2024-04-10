@@ -20,7 +20,7 @@ class RecursiveCharacterSplitter(Op):
 
     def __init__(
         self,
-        splitterConfig: dict[str, any],
+        splitterConfig: dict,
         name: str = "recursive_character_splitter_op",
     ) -> None:
         """Recursive Splitter Op Constructor
