@@ -6,7 +6,6 @@ from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.extract.load.pdf_op import ExtractPDFOp, ProcessPDFOp
-from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
 from uniflow.op.model.cv.model import CvModel
 
@@ -17,9 +16,7 @@ class ExtractPDFFlow(Flow):
     TAG = EXTRACT
 
     def __init__(
-        self,
-        model_config: Dict[str, Any],
-        splitter: str = PARAGRAPH_SPLITTER,
+        self, model_config: Dict[str, Any], splitter_config: Dict[str, Any]
     ) -> None:
         """Extract PDF Flow Constructor.
 
@@ -35,7 +32,7 @@ class ExtractPDFFlow(Flow):
             ),
         )
         self._process_pdf_op = ProcessPDFOp(name="process_pdf_op")
-        self._split_op = SplitterOpsFactory.get(splitter)
+        self._split_op = SplitterOpsFactory.get(splitter_config)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Flow.

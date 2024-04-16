@@ -6,9 +6,12 @@ from uniflow.op.extract.split.pattern_splitter_op import PatternSplitter
 
 class TestPatternSplitter(unittest.TestCase):
     def setUp(self):
-        self.splitter = PatternSplitter("test_splitter")
+        self.splitter = PatternSplitter({}, "test_splitter")
 
     def test_special_function_call(self):
+        """
+        Test special function call.
+        """
         node = Node(name="node1", value_dict={"text": "Hello\n\nWorld"})
 
         output_nodes = self.splitter([node])
@@ -17,7 +20,10 @@ class TestPatternSplitter(unittest.TestCase):
         self.assertEqual(output_nodes[0].value_dict["text"], ["Hello", "World"])
 
     def test_special_function_call_with_custom_splitter(self):
-        splitter = PatternSplitter("test_splitter", splitter=" ")
+        splitter = PatternSplitter(
+            {"separators": " "},
+            "test_splitter",
+        )
         node = Node(name="node1", value_dict={"text": "Hello World"})
 
         output_nodes = splitter([node])

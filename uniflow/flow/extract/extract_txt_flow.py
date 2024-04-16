@@ -1,12 +1,11 @@
 """Extract txt flow."""
 
-from typing import Sequence
+from typing import Any, Dict, Sequence
 
 from uniflow.constants import EXTRACT
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.extract.load.txt_op import ExtractTxtOp
-from uniflow.op.extract.split.constants import PARAGRAPH_SPLITTER
 from uniflow.op.extract.split.splitter_factory import SplitterOpsFactory
 
 
@@ -15,11 +14,11 @@ class ExtractTxtFlow(Flow):
 
     TAG = EXTRACT
 
-    def __init__(self, splitter: str = PARAGRAPH_SPLITTER) -> None:
+    def __init__(self, splitter_config: Dict[str, Any]) -> None:
         """Extract txt Flow Constructor."""
         super().__init__()
         self._extract_txt_op = ExtractTxtOp(name="extract_txt_op")
-        self._split_op = SplitterOpsFactory.get(splitter)
+        self._split_op = SplitterOpsFactory.get(splitter_config)
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Extract txt Flow.
