@@ -1,6 +1,6 @@
 """All Uniflow Clients"""
 
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 from typing import Any, List, Mapping
 
 import tiktoken
@@ -14,6 +14,15 @@ from uniflow.op.extract.split.recursive_character_splitter import (
 from uniflow.op.prompt import Context
 
 
+def dataclass_to_dict(dataclass_instance):
+    """Convert dataclass to dict"""
+    if is_dataclass(dataclass_instance):
+        return {k: dataclass_to_dict(v) for k, v in asdict(dataclass_instance).items()}
+    if isinstance(dataclass_instance, (list, tuple)):
+        return [dataclass_to_dict(v) for v in dataclass_instance]
+    return dataclass_instance
+
+
 class ExtractClient:
     """Uniflow Extract Client"""
 
@@ -25,7 +34,7 @@ class ExtractClient:
 
         """
         self._config = config
-        self._server = ExtractServer(asdict(self._config))
+        self._server = ExtractServer(dataclass_to_dict(self._config))
 
     def run(self, input_list: List[Mapping[str, Any]]) -> List[Mapping[str, Any]]:
         """
