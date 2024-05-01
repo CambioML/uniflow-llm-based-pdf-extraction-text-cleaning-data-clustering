@@ -280,7 +280,9 @@ class LlamaParseModelServer(AbsModelServer):
         self._model_config = LlamaParseModelConfig(**self._model_config)
 
         try:
-            import nest_asyncio  # pylint: disable=import-outside-toplevel
+            from llama_parse import (  # pylint: disable=import-outside-toplevel
+                LlamaParse,
+            )
 
         except ModuleNotFoundError as exc:
             raise ModuleNotFoundError(
@@ -318,17 +320,10 @@ class LlamaParseModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-
-        import os
-
-        import nest_asyncio
-
-        nest_asyncio.apply()
-
         from llama_parse import LlamaParse
 
         parser = LlamaParse(
-            api_key=os.getenv("LLAMA_CLOUD_API_KEY"),
+            api_key=self._model_config.api_key,
             result_type=self._model_config.result_type,  # "markdown" and "text" are available
             num_workers=self._model_config.num_wokers,  # if multiple files passed, split in `num_workers` API calls
             verbose=True,
@@ -343,7 +338,7 @@ class LlamaParseModelServer(AbsModelServer):
                 out.append(result[0].text)
         else:
             # TODO: implement async
-            print("running llamaparse async...")
+            raise NotImplementedError("llamaparse async not yet implemeneted")
 
         return out
 
@@ -398,18 +393,15 @@ class OpenParserModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        import os
-
         from open_parser import OpenParser
 
-        cambioml_api_key = os.getenv("CAMBIO_API_KEY")
-        op = OpenParser(cambioml_api_key)
+        op = OpenParser(self._model_config.api_key)
 
         out = []
 
         for pdf in data:
             content_result = op.extract(pdf)
-            out.append(content_result)
+            out.append(content_result[0])
 
         return out
 
@@ -464,8 +456,6 @@ class UnstructuredModelServer(AbsModelServer):
         Returns:
             List[str]: Output data.
         """
-        import os
-
         from unstructured.partition.api import partition_via_api
 
         out = []
@@ -473,8 +463,8 @@ class UnstructuredModelServer(AbsModelServer):
         for pdf in data:
             elements = partition_via_api(
                 filename=pdf,
-                api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                api_url=os.getenv("UNSTRUCTURED_API_URL"),
+                api_key=self._model_config.api_key,
+                api_url=self._model_config.api_url,
             )
             out.append("\n\n".join([str(el) for el in elements]))
 
