@@ -1,10 +1,16 @@
-"""All CV Model Servers including NougatModelServer, LayoutModelServer."""
+"""All CV Model Servers including NougatModelServer, LayoutModelServer, LlamaParseModelServer."""
 
 import logging
 import re
 from typing import Any, Dict, List
 
-from uniflow.op.model.model_config import LayoutModelConfig, NougatModelConfig
+from uniflow.op.model.model_config import (
+    LayoutModelConfig,
+    LlamaParseModelConfig,
+    NougatModelConfig,
+    OpenParserModelConfig,
+    UnstructuredModelConfig,
+)
 from uniflow.op.model.model_server import AbsModelServer
 from uniflow.op.prompt import PromptTemplate
 
@@ -262,3 +268,214 @@ class LayoutModelServer(AbsModelServer):
             out = re.sub(r"\n{3,}", "\n\n", final_md.strip()).strip()
             outs.append(out)
         return outs
+
+
+class LlamaParseModelServer(AbsModelServer):
+    """Llama Parse Model Server"""
+
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
+        super().__init__(prompt_template, model_config)
+        self._model_config = LlamaParseModelConfig(**self._model_config)
+
+        try:
+            import nest_asyncio  # pylint: disable=import-outside-toplevel
+
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install llama_parse to use LlamaModelServer. You can use `pip install llama_parse` to install it."
+            ) from exc
+
+    def _preprocess(self, data: str) -> List[str]:
+        """Preprocess data.
+
+        Args:
+            data (List[str]): Data to preprocess.
+
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: List[str]) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (List[str]): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        return data
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model.
+
+        Args:
+            data (List[str]): Data to run.
+
+        Returns:
+            List[str]: Output data.
+        """
+
+        import os
+
+        import nest_asyncio
+
+        nest_asyncio.apply()
+
+        from llama_parse import LlamaParse
+
+        parser = LlamaParse(
+            api_key=os.getenv("LLAMA_CLOUD_API_KEY"),
+            result_type=self._model_config.result_type,  # "markdown" and "text" are available
+            num_workers=self._model_config.num_wokers,  # if multiple files passed, split in `num_workers` API calls
+            verbose=True,
+            language=self._model_config.language,  # Optionally you can define a language, default=en
+        )
+
+        out = []
+
+        if self._model_config.sync:
+            for pdf in data:
+                result = parser.load_data(pdf)
+                out.append(result[0].text)
+        else:
+            # TODO: implement async
+            print("running llamaparse async...")
+
+        return out
+
+
+class OpenParserModelServer(AbsModelServer):
+    """Open-parser Model Server"""
+
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
+        super().__init__(prompt_template, model_config)
+        self._model_config = OpenParserModelConfig(**self._model_config)
+
+        try:
+            from open_parser import (  # pylint: disable=import-outside-toplevel
+                OpenParser,
+            )
+
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install open_parser to use OpenParserModelServer. You can use `pip install open_parser` to install it."
+            ) from exc
+
+    def _preprocess(self, data: str) -> List[str]:
+        """Preprocess data.
+
+        Args:
+            data (List[str]): Data to preprocess.
+
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: List[str]) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (List[str]): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        return data
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model.
+
+        Args:
+            data (List[str]): Data to run.
+
+        Returns:
+            List[str]: Output data.
+        """
+        import os
+
+        from open_parser import OpenParser
+
+        cambioml_api_key = os.getenv("CAMBIO_API_KEY")
+        op = OpenParser(cambioml_api_key)
+
+        out = []
+
+        for pdf in data:
+            content_result = op.extract(pdf)
+            out.append(content_result)
+
+        return out
+
+
+class UnstructuredModelServer(AbsModelServer):
+    """Unstructured Model Server"""
+
+    def __init__(
+        self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
+    ) -> None:
+        super().__init__(prompt_template, model_config)
+        self._model_config = UnstructuredModelConfig(**self._model_config)
+
+        try:
+            from unstructured.partition.api import (  # pylint: disable=import-outside-toplevel
+                partition_via_api,
+            )
+
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "Please install unstructured to use UnstructuredModelServer. You can use `pip install unstructured` to install it."
+            ) from exc
+
+    def _preprocess(self, data: str) -> List[str]:
+        """Preprocess data.
+
+        Args:
+            data (List[str]): Data to preprocess.
+
+        Returns:
+            List[str]: Preprocessed data.
+        """
+        return data
+
+    def _postprocess(self, data: List[str]) -> List[str]:
+        """Postprocess data.
+
+        Args:
+            data (List[str]): Data to postprocess.
+
+        Returns:
+            List[str]: Postprocessed data.
+        """
+        return data
+
+    def __call__(self, data: List[str]) -> List[str]:
+        """Run model.
+
+        Args:
+            data (List[str]): Data to run.
+
+        Returns:
+            List[str]: Output data.
+        """
+        import os
+
+        from unstructured.partition.api import partition_via_api
+
+        out = []
+
+        for pdf in data:
+            elements = partition_via_api(
+                filename=pdf,
+                api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+                api_url=os.getenv("UNSTRUCTURED_API_URL"),
+            )
+            out.append("\n\n".join([str(el) for el in elements]))
+
+        return out
