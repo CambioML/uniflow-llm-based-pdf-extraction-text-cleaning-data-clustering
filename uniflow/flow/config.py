@@ -27,13 +27,23 @@ from uniflow.op.model.model_config import (
 
 
 @dataclass
+class SplitterConfig:
+    """Splitter Config Class."""
+
+    min_chunk_size: int = 3
+    max_chunk_size: Optional[int] = None
+    separators: str = "\n\n|\n"
+    splitter_func: str = PARAGRAPH_SPLITTER
+
+
+@dataclass
 class ExtractConfig:
     """Extract Config Class."""
 
     flow_name: str
     num_thread: int = 1
     model_config: Optional[ModelConfig] = None
-    splitter: Optional[str] = None
+    splitter_config: Optional[SplitterConfig] = None
     post_extract_fn: Optional[Callable] = None
     credentials_path: str = ""
     token_path: str = ""
@@ -53,6 +63,7 @@ class ExtractTxtConfig(ExtractConfig):
     """Extract Txt Config Class."""
 
     flow_name: str = "ExtractTxtFlow"
+    splitter_config: SplitterConfig = field(default_factory=SplitterConfig)
 
 
 @dataclass
@@ -61,7 +72,7 @@ class ExtractPDFConfig(ExtractConfig):
 
     flow_name: str = "ExtractPDFFlow"
     model_config: ModelConfig = field(default_factory=NougatModelConfig)
-    splitter: str = PARAGRAPH_SPLITTER
+    splitter_config: SplitterConfig = field(default_factory=SplitterConfig)
 
 
 @dataclass

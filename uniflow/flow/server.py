@@ -29,15 +29,15 @@ class ExtractServer:
         """
         # convert from dict to config for type checking
         self._config = ExtractConfig(**config)
-
         self._flow_cls = FlowFactory.get(self._config.flow_name, flow_type=EXTRACT)
         self._num_thread = self._config.num_thread
         self._flow_queue = Queue(self._num_thread)
+
         kwargs = {}
         if self._config.model_config:
             kwargs["model_config"] = self._config.model_config
-        if self._config.splitter:
-            kwargs["splitter"] = self._config.splitter
+        if self._config.splitter_config:
+            kwargs["splitter_config"] = self._config.splitter_config
         if self._config.post_extract_fn:
             kwargs["post_extract_fn"] = self._config.post_extract_fn
         if self._config.credentials_path:
