@@ -100,6 +100,38 @@ class NougatModelConfig(ModelConfig):
 
 
 @dataclass
+class UnstructuredModelConfig(ModelConfig):
+    """Unstructured Model Config Class"""
+
+    model_name: str = "unstructuredio/online"
+    api_key: str = os.getenv("UNSTRUCTURED_API_KEY")
+    api_url: str = os.getenv("UNSTRUCTURED_API_URL")
+    model_server: str = "UnstructuredModelServer"
+
+
+@dataclass
+class LlamaParseModelConfig(ModelConfig):
+    """Llama Parse Model Config Class"""
+
+    model_name: str = "LlamaIndex/LlamaParse"
+    api_key: str = os.getenv("AZURE_API_KEY")
+    num_wokers: int = 4
+    sync: bool = (True,)
+    result_type: str = "markdown"
+    language: str = "en"
+    model_server: str = "LlamaParseModelServer"
+
+
+@dataclass
+class OpenParserModelConfig(ModelConfig):
+    """Open Parser Model Config"""
+
+    model_name: str = "CambioML/open-parser"
+    api_key: str = os.getenv("CAMBIO_API_KEY")
+    model_server: str = "OpenParserModelServer"
+
+
+@dataclass
 class LayoutModelConfig(ModelConfig):
     """Layout Model Config Class."""
 
