@@ -430,6 +430,25 @@ class TransformForClusteringOpenAIGPT4Config:
     )
 
 
+@dataclass
+class GemmaTransformConfig(TransformConfig):
+    model_config: HuggingfaceModelConfig = field(
+        default_factory=lambda: HuggingfaceModelConfig(
+            model_name="google/gemma-7b-it",
+            batch_size=4,
+            max_new_tokens=100,
+            # token is needed for accessing Gemma model
+        )
+    )
+    flow_name: str = "TransformHuggingFaceFlow"
+    prompt_template: PromptTemplate = field(
+        default_factory=lambda: PromptTemplate(
+            instruction="You are Gemma, a large language model trained by Google. Write out your reasoning step-by-step to be sure you get the right answers!",
+            few_shot_prompt=[],
+        )
+    )
+
+
 ###########################################################
 #                   All AutoRater Config                  #
 ###########################################################
