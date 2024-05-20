@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Mapping, Tuple
 from tqdm.auto import tqdm
 
 from uniflow.constants import EXTRACT, RATER, TRANSFORM
-from uniflow.flow.config import ExtractConfig, RaterConfig, TransformConfig
+from uniflow.flow.config import ExtractConfig, RaterConfig
 from uniflow.flow.flow_factory import FlowFactory
 from uniflow.op.op import OpScope
 
@@ -122,27 +122,21 @@ class ExtractServer:
 class TransformServer:
     """Uniflow Transform Server"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, name: str, num_workers: int = 1, batch_size: int = 1) -> None:
         """Server constructor
 
         Args:
-            config (Flow): Flow class to run
-            num_thread (int, optional): Number of threads to run the flow. Defaults to 1.
+            name (str): flow name
+            num_workers (int): Number of threads to run the flow
+            batch_size (int): Batch size for the flow.
         """
         # convert from dict to config for type checking
-        self._config = TransformConfig(**config)
+        print(FlowFactory.list())
 
-        self._flow_cls = FlowFactory.get(self._config.flow_name, flow_type=TRANSFORM)
-        self._num_thread = self._config.num_thread
-        self._flow_queue = Queue(self._num_thread)
-        for i in range(self._num_thread):
-            with OpScope(name="thread_" + str(i)):
-                self._flow_queue.put(
-                    self._flow_cls(
-                        self._config.prompt_template,
-                        self._config.model_config,
-                    )
-                )
+        self._flow_cls = FlowFactory.get(name, flow_type=TRANSFORM)
+        self._num_workers = num_workers
+        self._batch_size = batch_size
+        self._flow_queue = Queue(self._num_workers)
 
     def _run_flow(
         self, input_list: Mapping[str, Any], index: int
@@ -198,11 +192,7 @@ class TransformServer:
         # currently only HuggingFace model support batch.
         # For others, we use a thread pool to invoke remote server
         # multiple times to mock a batch inference.
-        batch_size = self._config.model_config.get("batch_size", None)
-        if not batch_size:
-            batch_size = self._config.model_config.get(
-                "num_thread", 1
-            )  # pylint: disable=no-member
+        batch_size = self._batch_size
 
         if batch_size <= 0:
             raise ValueError("Batch size must be a positive integer.")
@@ -224,8 +214,12 @@ class TransformServer:
         Returns:
             List[Mapping[str, Any]]: List of outputs from the flow
         """
+        for i in range(self._num_workers):
+            with OpScope(name="thread_" + str(i)):
+                self._flow_queue.put(self._flow_cls())
+
         batch_data = self._divide_data_into_batches(input_list)
-        with futures.ThreadPoolExecutor(max_workers=self._num_thread) as executor:
+        with futures.ThreadPoolExecutor(max_workers=self._num_workers) as executor:
             output_futures = {
                 executor.submit(self._run_flow_wrapper, input_data, i): i
                 for i, input_data in enumerate(batch_data)

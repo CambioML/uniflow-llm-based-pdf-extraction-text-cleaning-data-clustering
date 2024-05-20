@@ -16,7 +16,6 @@ from uniflow.op.model.model_config import (
     GoogleModelConfig,
     HuggingfaceModelConfig,
     LMQGModelConfig,
-    OpenAIModelConfig,
     SageMakerModelConfig,
 )
 from uniflow.op.model.model_server import AbsModelServer
@@ -115,7 +114,6 @@ class OpenAIModelServer(AbsModelServer):
         from openai import OpenAI  # pylint: disable=import-outside-toplevel
 
         super().__init__(prompt_template, model_config)
-        self._model_config = OpenAIModelConfig(**self._model_config)
         self._client = OpenAI()
 
     def _preprocess(self, data: List[str]) -> List[str]:
