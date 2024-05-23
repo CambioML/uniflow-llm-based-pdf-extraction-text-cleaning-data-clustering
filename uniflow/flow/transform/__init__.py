@@ -36,6 +36,9 @@ from uniflow.flow.transform.transform_openai_flow import (  # noqa: F401, F403
 from uniflow.flow.transform.transform_question_extractions_flow import (
     TransformQuestionExtractionOpenAIFlow,
 )
+from uniflow.flow.transform.transform_report_generation_flow import (
+    TransformReportGenerationOpenAIFlow,
+)
 
 __all__ = [
     "TransformOpenAIFlow",
@@ -49,4 +52,5 @@ __all__ = [
     "TransformComparisonOpenAIFlow",
     "TransformQuestionExtractionOpenAIFlow",
     "TransformNewsFeedOpenAIFlow",
+    "TransformReportGenerationOpenAIFlow",
 ]

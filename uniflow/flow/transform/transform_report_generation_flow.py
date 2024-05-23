@@ -7,12 +7,13 @@ from uniflow.constants import TRANSFORM
 from uniflow.flow.flow import Flow
 from uniflow.node import Node
 from uniflow.op.basic.expand_op import ExpandOp
+from uniflow.op.basic.group_op import GroupOp
 from uniflow.op.model.lm.model import JsonLmModel, LmModel
 from uniflow.op.model.model_op import ModelOp
 from uniflow.op.prompt import Context, PromptTemplate
 
 
-class OpenAINewsFeedFlow(Flow):
+class OpenAIReportGenerationFlow(Flow):
     """OpenAI Model Flow Class."""
 
     def __init__(
@@ -39,29 +40,21 @@ class OpenAINewsFeedFlow(Flow):
                 model_config=model_config,
             )
 
-        # Another possible option is to pass in questions bank as a node and parse it into list of questions than call ReduceOp
-
         # Expand list of nodes to two or more nodes
         self._expand_from_papers = ExpandOp(
             name="expand_to_paper_node_from_nodes",
             fn=lambda x: [[x[0][i]] for i in range(len(x[0]))],
         )
 
-        # Split into chunks (question node only)
+        # Split into chunks
         self._expand_to_chunks = ExpandOp(
             name="split_to_chunks",
             fn=lambda markdown_content: [
                 [Context(context=item.strip())]
-                for item in re.split(r"\n\s*\n", markdown_content[0].Context)
+                for item in re.split(r"\n", markdown_content[0].context)
                 if item.strip()
             ],
         )
-
-        # question_banks = self._expand_from_papers(node)
-
-        self._model_questions = []
-
-        question_banks = prompt_template.instruction.split("\n")
 
         # Proposal 1: group question into catagory and classify news feed and then only ask specific question
 
@@ -158,67 +151,33 @@ class OpenAINewsFeedFlow(Flow):
             ),
         )
 
+        # Group summaries by label
+        self._group = GroupOp(
+            name="summaries_groupby_labels",
+            preprocss_fn=lambda nodes_1, nodes_2: [
+                (
+                    node_label.value_dict["response"][0],
+                    node_summary.value_dict["response"][0],
+                )
+                for node_label, node_summary in zip(nodes_1, nodes_2)
+            ],
+            fn=lambda labels, summaries: {
+                label: [s for l, s in zip(labels, summaries) if l == label]
+                for label in set(labels)
+            },
+            given_fixed_labels=[
+                "label: 1-Company-Specific Information",
+                "label: 2-Market and Economic Analysis",
+                "label: 3-Governance",
+                "label: 4-Political Factors",
+                "label: 5-Other",
+            ],
+        )
+
         # TODO: potential weighting/count for questions needed each category controlled by users, maybe done in report generation level
         # Ex. only select top 5 questions from compnay specific category and 2 questions from political factor category
 
-        # - Proposal 2: ask regarding what is the relevant question to the news before actually ask the question
-
-        relevancy_instruction = """
-        Given the question, consider if the question is relevant to the context. If so, generate an answer based on the context. If not, respond with question + 'answer: N/A'.
-        Follow the example below.
-        """
-
-        relevancy_few_shot_prompt = [
-            Context(
-                context="Apple continues to invest in research and development (R&D) to drive innovation across its product and service lines. The company is also focusing on sustainability initiatives, aiming to achieve carbon neutrality across its entire supply chain by 2030. Expansion of its services ecosystem and enhancement of customer engagement remain top priorities.",
-                question="What are Apple's key strategic initiatives for the future?",
-                answer="Apple is focusing on sustained innovation through increased investment in R&D, achieving carbon neutrality across its supply chain by 2030, expanding its services ecosystem, and enhancing customer engagement through high-quality products and services.",
-            ),
-            Context(
-                context="Apple continues to invest in research and development (R&D) to drive innovation across its product and service lines. The company is also focusing on sustainability initiatives, aiming to achieve carbon neutrality across its entire supply chain by 2030. Expansion of its services ecosystem and enhancement of customer engagement remain top priorities.",
-                question="How did the gross margin in Q2 2023 compare to Q2 2022?",
-                answer="N/A",
-            ),
-            Context(
-                context="Apple continues to invest in research and development (R&D) to drive innovation across its product and service lines. The company is also focusing on sustainability initiatives, aiming to achieve carbon neutrality across its entire supply chain by 2030. Expansion of its services ecosystem and enhancement of customer engagement remain top priorities.",
-                question="What were Apple's Q2 2023 revenue and net income results?",
-                answer="N/A",
-            ),
-            Context(
-                context="Apple continues to invest in research and development (R&D) to drive innovation across its product and service lines. The company is also focusing on sustainability initiatives, aiming to achieve carbon neutrality across its entire supply chain by 2030. Expansion of its services ecosystem and enhancement of customer engagement remain top priorities.",
-                question="What is the impact of the consumer wallet share gain strategy on revenue and earnings growth?",
-                answer="N/A",
-            ),
-            Context(
-                context="""
-                Apple's Growth Drivers
-                Strong iPhone Sales: Continued high demand for the iPhone 14 series, especially in key markets such as the U.S. and China.
-                Expansion of Services Segment: Growth in services such as Apple Music, iCloud, and the App Store contributed significantly to revenue.
-                Wearables and Accessories: Increased sales of Apple Watch and AirPods.
-                Emerging Markets: Increased penetration in emerging markets, notably India and Southeast Asia.
-                """,
-                question="What is Apple’s strategy for growth in the services segment?",
-                answer="Apple's strategy for growth in the services segment includes expanding offerings such as Apple Music, iCloud, and the App Store, as well as introducing new services to enhance customer engagement and loyalty.",
-            ),
-        ]
-
-        self._model_questions_relevancy = []
-
-        for question in question_banks:
-            self._model_questions_relevancy.append(
-                ModelOp(
-                    name="openai_model_questions",
-                    model=LmModel(
-                        prompt_template=PromptTemplate(
-                            instruction="Assume you are a financial analyst for institutional investors."
-                            + question
-                            + relevancy_instruction,
-                            few_shot_prompt=relevancy_few_shot_prompt,
-                        ),
-                        model_config=model_config,
-                    ),
-                )
-            )
+        # TODO: add a summary model in the end to polish results
 
     def run(self, nodes: Sequence[Node]) -> Sequence[Node]:
         """Run Model Flow.
@@ -229,18 +188,30 @@ class OpenAINewsFeedFlow(Flow):
         Returns:
             Sequence[Node]: Nodes after running.
         """
+        question_node, answer_node = self._expand_from_papers(nodes[0])
 
-        answers = []
+        question_node_chunks = self._expand_to_chunks(question_node)
 
-        for question_model in self._model_questions_relevancy:
-            result = question_model(nodes)
-            # print("DEBUG: ", result[0].value_dict)
-            answers.append(result[0])
+        # for node in question_node_chunks:
+        #     print("debug: ", node.value_dict)
 
-        return answers
+        answer_node_chunks = self._expand_to_chunks(answer_node)
+
+        question_node_labels = self._model_label(question_node_chunks)
+
+        # for node in question_node_labels:
+        #     print("debug: ", node.value_dict)
+
+        # raise Exception("checkpoint")
+
+        answer_node_grouped = self._group(question_node_labels, answer_node_chunks)
+
+        return answer_node_grouped
+
+        # generate report by section on answer_node_grouped
 
 
-class TransformNewsFeedOpenAIFlow(OpenAINewsFeedFlow):
-    """Transform News Feed OpenAI Flow Class."""
+class TransformReportGenerationOpenAIFlow(OpenAIReportGenerationFlow):
+    """Transform Report Generation OpenAI Flow Class."""
 
     TAG = TRANSFORM
