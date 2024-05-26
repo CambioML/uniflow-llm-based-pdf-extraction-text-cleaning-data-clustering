@@ -53,6 +53,9 @@ class GroupOp(Op):
         aggregated_summaries = self._fn(labels, summaries)
         sorted_labels = sorted(aggregated_summaries.keys())
 
+        print("debug labels: ", labels)
+        print("debug summaries: ", summaries)
+
         # Exception handling for missing sections (no summaries are given such label)
         if self._given_fixed_labels:
             for label in self._given_fixed_labels:
@@ -75,9 +78,14 @@ class GroupOp(Op):
 
                 prev_nodes = label_nodes[label]
 
+                # TODO: make it more generalized for node based op
                 for node in nodes_2:
-                    if node.value_dict["response"][0] in summary_list:
+                    if node.value_dict[0].context in summary_list:
                         prev_nodes.append(node)
+
+                # for node in nodes_2:
+                #     if node.value_dict[0].context in summary_list:
+                #         prev_nodes.append(node)
 
                 output_nodes.append(
                     Node(

@@ -29,8 +29,15 @@ from uniflow.flow.transform.transform_huggingface_flow import (  # noqa: F401, F
 from uniflow.flow.transform.transform_lmqg_flow import (  # noqa: F401, F403
     TransformLMQGFlow,
 )
+from uniflow.flow.transform.transform_news_feed_flow import TransformNewsFeedOpenAIFlow
 from uniflow.flow.transform.transform_openai_flow import (  # noqa: F401, F403
     TransformOpenAIFlow,
+)
+from uniflow.flow.transform.transform_question_extractions_flow import (
+    TransformQuestionExtractionOpenAIFlow,
+)
+from uniflow.flow.transform.transform_report_generation_flow import (
+    TransformReportGenerationOpenAIFlow,
 )
 
 __all__ = [
@@ -43,4 +50,7 @@ __all__ = [
     "TransformGoogleMultiModalModelFlow",
     "TransformComparisonGoogleFlow",
     "TransformComparisonOpenAIFlow",
+    "TransformQuestionExtractionOpenAIFlow",
+    "TransformNewsFeedOpenAIFlow",
+    "TransformReportGenerationOpenAIFlow",
 ]
