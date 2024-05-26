@@ -67,105 +67,105 @@ class OpenAINewsFeedFlow(Flow):
 
         # TODO: have finer categories than just ["Company-Specific Information", "Market and Economic Analysis", "Governance", "Political Factors", "Other"]
 
-        label_prompt_template = PromptTemplate(
-            instruction="""
-            Assume you're an financial analyst working for institutional investors. 
-            You must classify the context to be exactly one of the labels below, no extra wording. Classify the paragraph to be one of following catgeories:
-            'label: 1-Company-Specific Information', 'label: 2-Market and Economic Analysis', 'label: 3-Governance', 'label: 4-Political Factors', 'label: 5-Other'.  
-            If you are really unsure about it or don't have access to the content, just strictly return 'label: 5-Other'. Follow the example below.
-            """,
-            few_shot_prompt=[
-                Context(
-                    context="What is the stock symbol for Apple?",
-                    label="1-Company-Specific Information",
-                ),
-                Context(
-                    context="How is Tesla currently valued compared to its expected future performance?",
-                    label="1-Company-Specific Information",
-                ),
-                Context(
-                    context="What factors influence the potential profitability of Rivian and the amount of investment spend into Amazon?",
-                    label="1-Company-Specific Information",
-                ),
-                Context(
-                    context="What new business line did Amazon recently launch?",
-                    label="1-Company-Specific Information",
-                ),
-                Context(
-                    context="What are some of the company-specific concerns contributing to the investment community's aversion to Chinese equities?",
-                    label="2-Market and Economic Analysis",
-                ),
-                Context(
-                    context="How has the U.S.-China trade war impacted Chinese tech stocks?",
-                    label="2-Market and Economic Analysis",
-                ),
-                Context(
-                    context="How do interest rate changes influence equity markets globally?",
-                    label="2-Market and Economic Analysis",
-                ),
-                Context(
-                    context="What is the outlook for global supply chains in the next five years?",
-                    label="2-Market and Economic Analysis",
-                ),
-                Context(
-                    context="How does Tesla approach executive compensation and incentives?",
-                    label="3-Governance",
-                ),
-                Context(
-                    context="What are the main principles guiding corporate governance at Google?",
-                    label="3-Governance",
-                ),
-                Context(
-                    context="How does Scale AI ensure compliance with regulatory requirements?",
-                    label="3-Governance",
-                ),
-                Context(
-                    context="How could the upcoming elections in the U.S. affect fiscal and trade policies?",
-                    label="4-Political Factors",
-                ),
-                Context(
-                    context="What impact do government regulations on data privacy have on technology companies?",
-                    label="4-Political Factors",
-                ),
-                Context(
-                    context="How does the political climate in Latin America affect commodity prices?",
-                    label="4-Political Factors",
-                ),
-                Context(
-                    context="How does consumer sentiment influence retail sales during the holiday season?",
-                    label="5-Other",
-                ),
-                Context(
-                    context="How is the gig economy shaping the future of work and employment?",
-                    label="5-Other",
-                ),
-                Context(
-                    context="How is the rise of telehealth transforming the healthcare industry?",
-                    label="5-Other",
-                ),
-                Context(
-                    context="What are the latest advancements in renewable energy technologies?",
-                    label="5-Other",
-                ),
-            ],
-        )
+        # label_prompt_template = PromptTemplate(
+        #     instruction="""
+        #     Assume you're an financial analyst working for institutional investors.
+        #     You must classify the context to be exactly one of the labels below, no extra wording. Classify the paragraph to be one of following catgeories:
+        #     'label: 1-Company-Specific Information', 'label: 2-Market and Economic Analysis', 'label: 3-Governance', 'label: 4-Political Factors', 'label: 5-Other'.
+        #     If you are really unsure about it or don't have access to the content, just strictly return 'label: 5-Other'. Follow the example below.
+        #     """,
+        #     few_shot_prompt=[
+        #         Context(
+        #             context="What is the stock symbol for Apple?",
+        #             label="1-Company-Specific Information",
+        #         ),
+        #         Context(
+        #             context="How is Tesla currently valued compared to its expected future performance?",
+        #             label="1-Company-Specific Information",
+        #         ),
+        #         Context(
+        #             context="What factors influence the potential profitability of Rivian and the amount of investment spend into Amazon?",
+        #             label="1-Company-Specific Information",
+        #         ),
+        #         Context(
+        #             context="What new business line did Amazon recently launch?",
+        #             label="1-Company-Specific Information",
+        #         ),
+        #         Context(
+        #             context="What are some of the company-specific concerns contributing to the investment community's aversion to Chinese equities?",
+        #             label="2-Market and Economic Analysis",
+        #         ),
+        #         Context(
+        #             context="How has the U.S.-China trade war impacted Chinese tech stocks?",
+        #             label="2-Market and Economic Analysis",
+        #         ),
+        #         Context(
+        #             context="How do interest rate changes influence equity markets globally?",
+        #             label="2-Market and Economic Analysis",
+        #         ),
+        #         Context(
+        #             context="What is the outlook for global supply chains in the next five years?",
+        #             label="2-Market and Economic Analysis",
+        #         ),
+        #         Context(
+        #             context="How does Tesla approach executive compensation and incentives?",
+        #             label="3-Governance",
+        #         ),
+        #         Context(
+        #             context="What are the main principles guiding corporate governance at Google?",
+        #             label="3-Governance",
+        #         ),
+        #         Context(
+        #             context="How does Scale AI ensure compliance with regulatory requirements?",
+        #             label="3-Governance",
+        #         ),
+        #         Context(
+        #             context="How could the upcoming elections in the U.S. affect fiscal and trade policies?",
+        #             label="4-Political Factors",
+        #         ),
+        #         Context(
+        #             context="What impact do government regulations on data privacy have on technology companies?",
+        #             label="4-Political Factors",
+        #         ),
+        #         Context(
+        #             context="How does the political climate in Latin America affect commodity prices?",
+        #             label="4-Political Factors",
+        #         ),
+        #         Context(
+        #             context="How does consumer sentiment influence retail sales during the holiday season?",
+        #             label="5-Other",
+        #         ),
+        #         Context(
+        #             context="How is the gig economy shaping the future of work and employment?",
+        #             label="5-Other",
+        #         ),
+        #         Context(
+        #             context="How is the rise of telehealth transforming the healthcare industry?",
+        #             label="5-Other",
+        #         ),
+        #         Context(
+        #             context="What are the latest advancements in renewable energy technologies?",
+        #             label="5-Other",
+        #         ),
+        #     ],
+        # )
 
-        self._model_label = ModelOp(
-            name="openai_model_label",
-            model=LmModel(
-                prompt_template=label_prompt_template,
-                model_config=model_config,
-            ),
-        )
+        # self._model_label = ModelOp(
+        #     name="openai_model_label",
+        #     model=LmModel(
+        #         prompt_template=label_prompt_template,
+        #         model_config=model_config,
+        #     ),
+        # )
 
         # TODO: potential weighting/count for questions needed each category controlled by users, maybe done in report generation level
         # Ex. only select top 5 questions from compnay specific category and 2 questions from political factor category
 
-        # - Proposal 2: ask regarding what is the relevant question to the news before actually ask the question
+        # - Proposal 2: ask regarding what is the relevant question to the news before actually ask the question [and respond with question + answer]
 
         relevancy_instruction = """
         Given the question, consider if the question is relevant to the context. If so, generate an answer based on the context. If not, respond with question + 'answer: N/A'.
-        Follow the example below.
+        Follow the example below to include both question and answer.
         """
 
         relevancy_few_shot_prompt = [

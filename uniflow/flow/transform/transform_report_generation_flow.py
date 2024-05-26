@@ -157,7 +157,7 @@ class OpenAIReportGenerationFlow(Flow):
             preprocss_fn=lambda nodes_1, nodes_2: [
                 (
                     node_label.value_dict["response"][0],
-                    node_summary.value_dict["response"][0],
+                    node_summary.value_dict[0].context,
                 )
                 for node_label, node_summary in zip(nodes_1, nodes_2)
             ],
@@ -173,6 +173,24 @@ class OpenAIReportGenerationFlow(Flow):
                 "label: 5-Other",
             ],
         )
+
+        summary_prompt_template = PromptTemplate(
+            instruction="""
+            Assume you're an financial analyst working for institutional investors. 
+            Summarize the content.
+            """,
+        )
+
+        # for token limtation
+        self._model_summary = ModelOp(
+            name="openai_model_summarize",
+            model=LmModel(
+                prompt_template=summary_prompt_template,
+                model_config=model_config,
+            ),
+        )
+
+        # [("Politics", 0.3), ...]
 
         # TODO: potential weighting/count for questions needed each category controlled by users, maybe done in report generation level
         # Ex. only select top 5 questions from compnay specific category and 2 questions from political factor category
@@ -202,9 +220,14 @@ class OpenAIReportGenerationFlow(Flow):
         # for node in question_node_labels:
         #     print("debug: ", node.value_dict)
 
+        # for node in answer_node_chunks:
+        #     # print("debug: ", node.value_dict)
+        #     print("debug: ", node.value_dict[0].context)
         # raise Exception("checkpoint")
 
         answer_node_grouped = self._group(question_node_labels, answer_node_chunks)
+
+        # for node in answer_node_grouped:
 
         return answer_node_grouped
 
