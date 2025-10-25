@@ -260,7 +260,11 @@ class AzureOpenAIModelServer(AbsModelServer):
 class HuggingfaceModelServer(AbsModelServer):
     """Huggingface Model Server Class."""
 
-    PATTERN = r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]"
+    MODEL_PATTERNS = {
+        "default": r"\[\/?INST\]|<s>|<<SYS>>|\[ASST\]|\[\/ASST\]",
+        "google/gemma-2b-it": r"<bos><start_of_turn>user|<end_of_turn>|<start_of_turn>model",
+        "google/gemma-7b-it": r"<bos><start_of_turn>user|<end_of_turn>|<start_of_turn>model",
+    }
 
     def __init__(
         self, prompt_template: PromptTemplate, model_config: Dict[str, Any]
@@ -268,6 +272,9 @@ class HuggingfaceModelServer(AbsModelServer):
         # import in class level to avoid installing transformers package
         super().__init__(prompt_template, model_config)
         self._model_config = HuggingfaceModelConfig(**self._model_config)
+        self.pattern = self.MODEL_PATTERNS.get(
+            self._model_config.model_name, self.MODEL_PATTERNS["default"]
+        )
         if self._model_config.neuron is False:
             try:
                 from transformers import (  # pylint: disable=import-outside-toplevel
@@ -349,7 +356,27 @@ class HuggingfaceModelServer(AbsModelServer):
         """
         # add role and content key to data for apply_chat_template
         # as argument
-        data = [[{"role": "user", "content": d}] for d in data]
+
+        if self._model_config.model_name in (
+            "google/gemma-2b-it",
+            "google/gemma-7b-it",
+        ):
+            data = [
+                [
+                    {
+                        "role": "user",
+                        "content": re.sub(
+                            r"(.*)\ncontext:",
+                            r"\1\ncurrent context:",
+                            d,
+                            flags=re.DOTALL,
+                        ),
+                    }
+                ]
+                for d in data
+            ]
+        else:
+            data = [[{"role": "user", "content": d}] for d in data]
         # if response_start_key is provided (few shot mode), add it with colon after
         # the end of instruction token for better instruction following performance.
         # Below is an example, if you have a QA prompt template like this for 1 shot mode:
@@ -360,7 +387,12 @@ class HuggingfaceModelServer(AbsModelServer):
         # answer: ... <-- few shot answer
         # context: ... [/INST] <-- input context with [/INST]
         # question:   <-- response_start_key is added here !!!
-        if self._model_config.response_start_key:
+        # with or without response start key, Gemma has no difference to answer the question
+        if (
+            self._model_config.response_start_key
+            and self._model_config.model_name
+            not in ("google/gemma-2b-it", "google/gemma-7b-it")
+        ):
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False)
                 + f"\n{self._model_config.response_start_key}: "  # noqa: W503
@@ -368,10 +400,22 @@ class HuggingfaceModelServer(AbsModelServer):
             ]
         # if response_start_key is not provided, simply add the instruction token
         # using apply_chat_template
+        # Gemma heavily need add_generation_prompt to generate good response
+        elif self._model_config.model_name in (
+            "google/gemma-2b-it",
+            "google/gemma-7b-it",
+        ):
+            data = [
+                self._tokenizer.apply_chat_template(
+                    d, tokenize=False, add_generation_prompt=True
+                )
+                for d in data
+            ]
         else:
             data = [
                 self._tokenizer.apply_chat_template(d, tokenize=False) for d in data
             ]
+
         return data
 
     def _postprocess(self, data: List[str]) -> List[str]:
@@ -387,7 +431,7 @@ class HuggingfaceModelServer(AbsModelServer):
         # clean up instruction token.
         for output_list in data:
             for d in output_list:
-                response = re.sub(self.PATTERN, "", d["generated_text"]).strip()
+                response = re.sub(self.pattern, "", d["generated_text"]).strip()
                 response_list.append(response)
 
         # if response_format is json_object, parse the response into json_object.
@@ -398,7 +442,10 @@ class HuggingfaceModelServer(AbsModelServer):
         ):
             # if example_keys (through few shot prompt) are provided,
             # parse the response into json_object.
-            if self._example_keys:
+            if self._example_keys and self._model_config.model_name not in (
+                "google/gemma-2b-it",
+                "google/gemma-7b-it",
+            ):
                 keywords = [f"{example_key}:" for example_key in self._example_keys]
                 pattern = "|".join(map(re.escape, keywords))
                 json_response_list = []
